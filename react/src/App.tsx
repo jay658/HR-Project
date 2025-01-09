@@ -10,7 +10,7 @@ function App() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await fetch('http://localhost:3000/api')
+      const res = await fetch('http://localhost:3000/api/user/test')
       const data = await res.json()
 
       console.log(data)
