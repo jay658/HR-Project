@@ -3,7 +3,15 @@ import './App.css'
 import { useEffect, useState } from 'react'
 
 import reactLogo from './assets/react.svg'
+import { styled } from '@mui/material/styles'
 import viteLogo from '/vite.svg'
+
+const StyledDiv = styled('div')(({ theme }) => ({
+  color:theme.palette.primary.contrastText,
+  backgroundColor: theme.palette.primary.main,
+  padding: theme.spacing(1),
+  borderRadius: theme.shape.borderRadius
+}))
 
 function App() {
   const [count, setCount] = useState(0)
@@ -21,6 +29,9 @@ function App() {
 
   return (
     <>
+      <StyledDiv>
+        Styled with theme
+      </StyledDiv>
       <div>
         <a href="https://vite.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />
