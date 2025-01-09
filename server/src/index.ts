@@ -1,6 +1,7 @@
 import cors, { CorsOptions } from 'cors'
 import express, { Express, Request, Response } from 'express'
 
+import apiRouter from './api/api'
 import dotenv from 'dotenv'
 import mongoose from 'mongoose'
 
@@ -20,9 +21,7 @@ const corsOptions: CorsOptions = {
 
 app.use(cors(corsOptions))
 
-app.get('/api', (_req: Request, res: Response) => {
-  res.json('test message')
-})
+app.use('/api', apiRouter)
 
 app.listen(PORT, () => {
   console.log(`Listening to server: ${PORT}`)
