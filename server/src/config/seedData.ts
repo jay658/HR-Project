@@ -1,134 +1,384 @@
 const seedEmployeeUsers = [
   {
-    username: "john.doe",
-    password: "hashed_password_123", 
-    email: "john.doe@example.com",
+    username: 'john.doe',
+    password: 'hashed_password_123',
+    email: 'john.doe@example.com'
   },
   {
-    username: "jane.smith",
-    password: "hashed_password_456",
-    email: "jane.smith@example.com",
+    username: 'jane.smith',
+    password: 'hashed_password_456',
+    email: 'jane.smith@example.com'
   },
   {
-    username: "michael.brown",
-    password: "hashed_password_789",
-    email: "michael.brown@example.com",
+    username: 'michael.brown',
+    password: 'hashed_password_789',
+    email: 'michael.brown@example.com'
   }
-]
+];
 
 const seedApartments = [
   {
-    unit: "A101",
+    unit: 'A101',
     capacity: 4,
-    address: "123 Main Street, New York, NY",
+    address: '123 Main Street, New York, NY'
   },
   {
-    unit: "B202",
+    unit: 'B202',
     capacity: 2,
-    address: "456 Elm Street, San Francisco, CA",
+    address: '456 Elm Street, San Francisco, CA'
   },
   {
-    unit: "C303",
+    unit: 'C303',
     capacity: 3,
-    address: "789 Maple Avenue, Seattle, WA",
+    address: '789 Maple Avenue, Seattle, WA'
   }
-]
+];
 
 const seedOnboarding = [
   {
-    status: "approved",
-    name: "John Doe",
-    gender: "male",
-    dob: "1985-06-15",
-    address: "123 Main Street, New York, NY",
+    status: 'approved',
+    name: 'John Doe',
+    gender: 'male',
+    dob: '1985-06-15',
+    address: '123 Main Street, New York, NY',
     phone: {
-      work: "555-123-4567",
-      cell: "555-987-6543"
+      work: '555-123-4567',
+      cell: '555-987-6543'
     },
     SSN: 123456789,
     carInfo: {
-      make: "Toyota",
-      model: "Camry",
-      color: "Blue"
+      make: 'Toyota',
+      model: 'Camry',
+      color: 'Blue'
     },
-    driversLicense: "NY123456789",
-    residency: "citizen",
-    documents: ["passport.pdf", "SSN_card.jpg"],
-    profilePicture: "john_doe_profile.jpg",
+    driversLicense: 'NY123456789',
+    residency: 'citizen',
+    documents: ['passport.pdf', 'SSN_card.jpg'],
+    profilePicture: 'john_doe_profile.jpg',
     reference: {
-      firstName: "Jane",
-      lastName: "Smith",
-      phone: "555-444-5555",
-      email: "jane.smith@example.com",
-      relationship: "friend"
+      firstName: 'Jane',
+      lastName: 'Smith',
+      phone: '555-444-5555',
+      email: 'jane.smith@example.com',
+      relationship: 'friend'
     },
     emergencyContact: {
-      firstName: "Jane",
-      lastName: "Smith",
-      phone: "555-444-5555",
-      email: "jane.smith@example.com",
-      relationship: "friend"
+      firstName: 'Jane',
+      lastName: 'Smith',
+      phone: '555-444-5555',
+      email: 'jane.smith@example.com',
+      relationship: 'friend'
     }
   },
   {
-    status: "pending",
-    name: "Jane Smith",
-    gender: "female",
-    dob: "1990-02-28",
-    address: "456 Elm Street, San Francisco, CA",
+    status: 'pending',
+    name: 'Jane Smith',
+    gender: 'female',
+    dob: '1990-02-28',
+    address: '456 Elm Street, San Francisco, CA',
     phone: {
-      work: "555-222-3333",
-      cell: "555-444-5555"
+      work: '555-222-3333',
+      cell: '555-444-5555'
     },
     SSN: 987654321,
     carInfo: {
-      make: "Honda",
-      model: "Civic",
-      color: "Red"
+      make: 'Honda',
+      model: 'Civic',
+      color: 'Red'
     },
-    driversLicense: "CA987654321",
-    residency: "permanent resident",
-    documents: ["drivers_license.jpg"],
-    profilePicture: "jane_smith_profile.jpg"
+    driversLicense: 'CA987654321',
+    residency: 'permanent resident',
+    documents: ['drivers_license.jpg'],
+    profilePicture: 'jane_smith_profile.jpg'
   },
   {
-    status: "rejected",
-    name: "Michael Brown",
-    gender: "male",
-    dob: "1980-12-05",
-    address: "789 Maple Avenue, Seattle, WA",
+    status: 'rejected',
+    name: 'Michael Brown',
+    gender: 'male',
+    dob: '1980-12-05',
+    address: '789 Maple Avenue, Seattle, WA',
     phone: {
-      work: "555-666-7777",
-      cell: "555-888-9999"
+      work: '555-666-7777',
+      cell: '555-888-9999'
     },
     SSN: 456789123,
     carInfo: {
-      make: "Ford",
-      model: "Escape",
-      color: "White"
+      make: 'Ford',
+      model: 'Escape',
+      color: 'White'
     },
-    driversLicense: "WA456789123",
-    residency: "nonresident",
-    documents: ["visa.pdf", "passport.jpg"],
-    profilePicture: "michael_brown_profile.jpg"
+    driversLicense: 'WA456789123',
+    residency: 'nonresident',
+    documents: ['visa.pdf', 'passport.jpg'],
+    profilePicture: 'michael_brown_profile.jpg'
   }
-]
+];
 
-const seedVisaApplications = [
+const seedVisaApplications: any[] = [
+  // empty since none of our seed users are f1
+  // if we add f1 users later, we'll add their visa applications here
+];
+
+const seedDocuments = [
+  // john doe (citizen) documents
   {
+    type: 'profilePicture',
     status: 'approved',
+    fileKey: 'dummy/john_profile.jpg',
+    fileUrl: 'http://dummy-s3.com/john_profile.jpg'
   },
   {
-    status: 'rejected'
+    type: 'driverLicense',
+    status: 'approved',
+    fileKey: 'dummy/john_license.pdf',
+    fileUrl: 'http://dummy-s3.com/john_license.pdf'
+  },
+
+  // jane smith (permanent resident) documents
+  {
+    type: 'profilePicture',
+    status: 'approved',
+    fileKey: 'dummy/jane_profile.jpg',
+    fileUrl: 'http://dummy-s3.com/jane_profile.jpg'
   },
   {
-    status: 'pending'
+    type: 'driverLicense',
+    status: 'approved',
+    fileKey: 'dummy/jane_license.pdf',
+    fileUrl: 'http://dummy-s3.com/jane_license.pdf'
+  },
+
+  // michael brown (nonresident/H1B) documents
+  {
+    type: 'profilePicture',
+    status: 'approved',
+    fileKey: 'dummy/michael_profile.jpg',
+    fileUrl: 'http://dummy-s3.com/michael_profile.jpg'
+  },
+  {
+    type: 'driverLicense',
+    status: 'approved',
+    fileKey: 'dummy/michael_license.pdf',
+    fileUrl: 'http://dummy-s3.com/michael_license.pdf'
   }
-]
+];
+
+const seedPersonalInfo = [
+  {
+    // based on john.doe's onboarding data
+    userId: null,
+    name: {
+      firstName: 'John',
+      lastName: 'Doe',
+      middleName: null,
+      preferredName: null
+    },
+    email: 'john.doe@example.com',
+    gender: 'male',
+    dob: '1985-06-15',
+    address: {
+      buildingNumber: '123',
+      streetName: 'Main Street',
+      city: 'New York',
+      state: 'NY',
+      zipCode: '10001'
+    },
+    phone: {
+      work: '555-123-4567',
+      cell: '555-987-6543'
+    },
+    employment: {
+      residencyStatus: 'citizen',
+      visaType: null,
+      documents: []
+    },
+    emergencyContacts: [
+      {
+        firstName: 'Mary',
+        lastName: 'Doe',
+        middleName: null,
+        phone: '555-111-2222',
+        email: 'mary.doe@example.com',
+        relationship: 'spouse'
+      },
+      {
+        firstName: 'James',
+        lastName: 'Doe',
+        middleName: null,
+        phone: '555-333-4444',
+        email: 'james.doe@example.com',
+        relationship: 'father'
+      }
+    ],
+    SSN: '123456789',
+    carInfo: {
+      make: 'Toyota',
+      model: 'Camry',
+      color: 'Blue'
+    },
+    driversLicense: {
+      hasLicense: true,
+      number: 'NY123456789',
+      expirationDate: new Date('2025-01-01')
+    }
+  },
+  {
+    // based on jane.smith's onboarding data
+    userId: null,
+    name: {
+      firstName: 'Jane',
+      lastName: 'Smith',
+      middleName: null,
+      preferredName: null
+    },
+    email: 'jane.smith@example.com',
+    gender: 'female',
+    dob: '1990-02-28',
+    address: {
+      buildingNumber: '456',
+      streetName: 'Elm Street',
+      city: 'San Francisco',
+      state: 'CA',
+      zipCode: '94101'
+    },
+    phone: {
+      work: '555-222-3333',
+      cell: '555-444-5555'
+    },
+    employment: {
+      residencyStatus: 'greenCard',
+      visaType: null,
+      documents: []
+    },
+    emergencyContacts: [
+      {
+        firstName: 'Robert',
+        lastName: 'Smith',
+        middleName: null,
+        phone: '555-555-6666',
+        email: 'robert.smith@example.com',
+        relationship: 'brother'
+      }
+    ],
+    SSN: '987654321',
+    carInfo: {
+      make: 'Honda',
+      model: 'Civic',
+      color: 'Red'
+    },
+    driversLicense: {
+      hasLicense: true,
+      number: 'CA987654321',
+      expirationDate: new Date('2024-12-31')
+    }
+  },
+  {
+    // based on michael.brown's onboarding data
+    userId: null,
+    name: {
+      firstName: 'Michael',
+      lastName: 'Brown',
+      middleName: null,
+      preferredName: null
+    },
+    email: 'michael.brown@example.com',
+    gender: 'male',
+    dob: '1980-12-05',
+    address: {
+      buildingNumber: '789',
+      streetName: 'Maple Avenue',
+      city: 'Seattle',
+      state: 'WA',
+      zipCode: '98101'
+    },
+    phone: {
+      work: '555-666-7777',
+      cell: '555-888-9999'
+    },
+    employment: {
+      residencyStatus: 'nonresident',
+      visaType: 'H1-B',
+      startDate: new Date('2023-03-01'),
+      endDate: new Date('2024-03-01'),
+      documents: []
+    },
+    emergencyContacts: [
+      {
+        firstName: 'Sarah',
+        lastName: 'Brown',
+        middleName: null,
+        phone: '555-777-8888',
+        email: 'sarah.brown@example.com',
+        relationship: 'spouse'
+      },
+      {
+        firstName: 'David',
+        lastName: 'Brown',
+        middleName: null,
+        phone: '555-999-0000',
+        email: 'david.brown@example.com',
+        relationship: 'father'
+      }
+    ],
+    SSN: '456789123',
+    carInfo: {
+      make: 'Ford',
+      model: 'Escape',
+      color: 'White'
+    },
+    driversLicense: {
+      hasLicense: true,
+      number: 'WA456789123',
+      expirationDate: new Date('2025-06-30')
+    }
+  }
+];
+
+const seedFacilityIssue = [
+  {
+    title: 'Broken AC Unit',
+    description: 'The AC unit in apartment A101 is not cooling properly',
+    createdBy: null, // will be set to john.doe's ID
+    status: 'open',
+    comments: [
+      {
+        description: 'The temperature is getting worse',
+        createdBy: null // will be set in seed.ts
+      }
+    ]
+  },
+  {
+    title: 'Leaking Faucet',
+    description: 'Kitchen sink faucet in B202 is constantly dripping',
+    createdBy: null, // will be set to jane.smith's ID
+    status: 'inProgress',
+    comments: [
+      {
+        description: 'Water is now dripping faster',
+        createdBy: null // will be set in seed.ts
+      }
+    ]
+  },
+  {
+    title: 'Broken Window Lock',
+    description: 'Living room window lock in C303 is broken',
+    createdBy: null, // will be set to michael.brown's ID
+    status: 'closed',
+    comments: [
+      {
+        description: 'Window cannot be properly secured',
+        createdBy: null // will be set in seed.ts
+      }
+    ]
+  }
+];
 
 export {
   seedEmployeeUsers,
   seedApartments,
   seedOnboarding,
-  seedVisaApplications
-}
+  seedVisaApplications,
+  seedPersonalInfo,
+  seedFacilityIssue,
+  seedDocuments
+};
