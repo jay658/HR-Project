@@ -1,6 +1,5 @@
-import express, { NextFunction, Request, Response } from 'express'
-
 import apartmentRouter from './routers/apartmentRouter'
+import express from 'express'
 import onboardingRouter from './routers/onboardingRouter'
 import userRouter from './routers/userRouter'
 import visaRouter from './routers/visaRouter'

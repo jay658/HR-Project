@@ -54,7 +54,21 @@ const seedOnboarding = [
     driversLicense: "NY123456789",
     residency: "citizen",
     documents: ["passport.pdf", "SSN_card.jpg"],
-    profilePicture: "john_doe_profile.jpg"
+    profilePicture: "john_doe_profile.jpg",
+    reference: {
+      firstName: "Jane",
+      lastName: "Smith",
+      phone: "555-444-5555",
+      email: "jane.smith@example.com",
+      relationship: "friend"
+    },
+    emergencyContact: {
+      firstName: "Jane",
+      lastName: "Smith",
+      phone: "555-444-5555",
+      email: "jane.smith@example.com",
+      relationship: "friend"
+    }
   },
   {
     status: "pending",
@@ -96,7 +110,6 @@ const seedOnboarding = [
     driversLicense: "WA456789123",
     residency: "nonresident",
     documents: ["visa.pdf", "passport.jpg"],
-    referenceId: null,
     profilePicture: "michael_brown_profile.jpg"
   }
 ]

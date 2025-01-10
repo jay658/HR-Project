@@ -13,15 +13,15 @@ const seed = async () => {
     await Apartment.deleteMany()
     await EmployeeUser.deleteMany()
     
-    const apartments = await Apartment.insertMany(seedApartments)
-    const users = await EmployeeUser.insertMany(seedEmployeeUsers)
-    const onboardingItems = await Onboarding.insertMany(seedOnboarding.map((onboarding, idx) => ({
+    const apartments = await Apartment.create(seedApartments)
+    const users = await EmployeeUser.create(seedEmployeeUsers)
+    const onboardingItems = await Onboarding.create(seedOnboarding.map((onboarding, idx) => ({
       ...onboarding,
       userId: users[idx]._id
     })))
 
-    const visaApplications = await VisaApplication.insertMany(seedVisaApplications.map((onboarding, idx) => ({
-      ...onboarding,
+    const visaApplications = await VisaApplication.insertMany(seedVisaApplications.map((visa, idx) => ({
+      ...visa,
       userId: users[idx]._id
     })))
 
@@ -38,6 +38,13 @@ const seed = async () => {
     })
 
     await Promise.all(apartments.map(apartment => apartment.save()))
+
+    //user without onboarding
+    await EmployeeUser.create({
+      username:"not onboarded user",
+      password: "test",
+      email: 'notonboarded@test.com'
+    })
     
     console.log('DB seeded')
   } catch (err) {

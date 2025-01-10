@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import mongoose, { InferSchemaType } from 'mongoose'
 
 const Schema = mongoose.Schema;
 
@@ -15,49 +15,70 @@ const OnboardingSchema = new Schema({
   },
   name: {
     type: String,
+    default: ''
   },
   gender: {
     type: String,
     enum: ['male', 'female', 'other'],
+    default: null
   },
   dob: {
-    type: String,
+    type: Date,
+    default: null
   },
   address: {
-    type: String
+    type: String, 
+    default: ''
   },
   phone: {
     type: {
       work: {
-        type: String
+        type: String,
+        default: ''
       },
       cell: {
-        type: String
+        type: String,
+        default: ''
       }
+    }, 
+    default: {
+      work: '',
+      cell: ''
     }
   },
   SSN: {
-    type: Number
+    type: Number,
+    default: null
   },
   carInfo: {
     type: {
       make: {
-        type: String
+        type: String,
+        default: ''
       },
       model: {
-        type: String
+        type: String,
+        default: ''
       },
       color: {
-        type: String
+        type: String,
+        default: ''
       }
+    }, 
+    default: {
+      type: '',
+      model: '',
+      color: ''
     }
   },
   driversLicense: {
-    type: String
+    type: String,
+    default: ''
   },
   residency: {
     type: String,
-    enum: ['citizen', 'permanent resident', 'nonresident']
+    enum: ['citizen', 'permanent resident', 'nonresident'],
+    default: null
   },
   documents: {
     type: [{
@@ -65,16 +86,38 @@ const OnboardingSchema = new Schema({
     }],
     default: []
   },
-  referenceId: {
-    type: Schema.Types.ObjectId, 
-    ref: 'EmployeeUser',
+  reference: {
+    type: {
+      firstName: String,
+      lastName: String,
+      middleName: String,
+      phone: String,
+      email: String,
+      relationship: String
+    },
+    default: null
+  },
+  emergencyContact: {
+    type: {
+      firstName: String,
+      lastName: String,
+      middleName: {
+        type: String,
+        default: ''
+      },
+      phone: String,
+      email: String,
+      relationship: String
+    },
     default: null
   },
   profilePicture: {
-    type: String
+    type: String,
+    default: ''
   }
 });
 
 const Onboarding = mongoose.model('Onboarding', OnboardingSchema);
 
+export type OnboardingTypeT = InferSchemaType<typeof OnboardingSchema>
 export default Onboarding;

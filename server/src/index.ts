@@ -1,5 +1,5 @@
 import cors, { CorsOptions } from 'cors'
-import express, { Express, Request, Response } from 'express'
+import express, { Express } from 'express'
 
 import apiRouter from './api/api'
 import dotenv from 'dotenv'
@@ -20,6 +20,7 @@ const corsOptions: CorsOptions = {
 }
 
 app.use(cors(corsOptions))
+app.use(express.json())
 
 app.use('/api', apiRouter)
 
