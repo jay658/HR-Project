@@ -79,11 +79,11 @@ const seed = async () => {
 
     users.forEach((user, idx) => {
       const randomApartmentId = getRandomId(apartments);
-      user.apartmentId = randomApartmentId
+      user.apartmentId = randomApartmentId;
       user.onboardingId = onboardingItems[idx]._id;
       user.personalInfoId = personalInfos[idx]._id;
 
-      apartments.find(apartment => apartment._id === randomApartmentId)?.tenants.push(user._id)
+      apartments.find(apartment => apartment._id === randomApartmentId)?.tenants.push(user._id);
     });
 
     await Promise.all(users.map((user) => user.save()));
