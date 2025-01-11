@@ -14,6 +14,7 @@ import EmployeeUser from '../models/EmployeeUser';
 import FacilityIssue from '../models/FacilityIssue';
 import Onboarding from '../models/Onboarding';
 import PersonalInfo from '../models/PersonalInfo';
+import { Types } from 'mongoose'
 import VisaApplication from '../models/VisaApplication';
 import db from './connection';
 
@@ -73,19 +74,35 @@ const seed = async () => {
       seedVisaApplications
     );
 
-    // TODO: any[] should be dealt with at some point
-    const getRandomUserId = (users: any[]) =>
-      users[Math.floor(Math.random() * users.length)]._id;
+    const getRandomId = <T extends { _id: Types.ObjectId }>(items: T[]) =>
+      items[Math.floor(Math.random() * items.length)]._id;
+
+    users.forEach((user, idx) => {
+      const randomApartmentId = getRandomId(apartments);
+      user.apartmentId = randomApartmentId;
+      user.onboardingId = onboardingItems[idx]._id;
+      user.personalInfoId = personalInfos[idx]._id;
+
+      apartments.find(apartment => apartment._id === randomApartmentId)?.tenants.push(user._id);
+    });
+
+    await Promise.all(users.map((user) => user.save()));
+
+    await Promise.all(apartments.map((apartment) => apartment.save()));
 
     const facilityIssues = await FacilityIssue.insertMany(
-      seedFacilityIssue.map((issue) => ({
-        ...issue,
-        createdBy: getRandomUserId(users),
-        comments: issue.comments.map((comment) => ({
-          ...comment,
-          createdBy: getRandomUserId(users)
-        }))
-      }))
+      seedFacilityIssue.map((issue) => {
+        const createdUserId = getRandomId(users);
+        return ({
+          ...issue,
+          createdBy: createdUserId,
+          apartmentId: users.find(user => user._id === createdUserId)?.apartmentId,
+          comments: issue.comments.map((comment) => ({
+            ...comment,
+            createdBy: getRandomId(users)
+          }))
+        })
+      })
     );
 
     // alternative: creator of the issue will be the first person to comment
@@ -108,20 +125,6 @@ const seed = async () => {
     //     };
     //   })
     // );
-
-    users.forEach((user, idx) => {
-      user.apartmentId = apartments[idx]._id;
-      user.onboardingId = onboardingItems[idx]._id;
-      user.personalInfoId = personalInfos[idx]._id;
-    });
-
-    await Promise.all(users.map((user) => user.save()));
-
-    apartments.forEach((apartment, idx) => {
-      apartment.tenants.push(users[idx]._id);
-    });
-
-    await Promise.all(apartments.map((apartment) => apartment.save()));
 
     //user without onboarding
     await EmployeeUser.create({
