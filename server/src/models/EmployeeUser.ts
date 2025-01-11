@@ -1,11 +1,11 @@
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 
 const EmployeeUserSchema = new Schema({
-  username: { 
-    type: String, 
-    required: true 
+  username: {
+    type: String,
+    required: true
   },
   password: {
     type: String,
@@ -16,17 +16,22 @@ const EmployeeUserSchema = new Schema({
     required: true
   },
   onboardingId: {
-    type: Schema.Types.ObjectId, 
+    type: Schema.Types.ObjectId,
     ref: 'Onboarding',
     default: null
   },
+  personalInfoId: {
+    type: Schema.Types.ObjectId,
+    ref: 'PersonalInfo',
+    default: null
+  },
   visaApplicationId: {
-    type: Schema.Types.ObjectId, 
+    type: Schema.Types.ObjectId,
     ref: 'VisaApplication',
     default: null
   },
   apartmentId: {
-    type: Schema.Types.ObjectId, 
+    type: Schema.Types.ObjectId,
     ref: 'Apartment',
     default: null
   }
