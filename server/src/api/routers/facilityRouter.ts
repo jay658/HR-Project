@@ -5,6 +5,11 @@ import FacilityIssue from '../../models/FacilityIssue';
 
 const facilityIssueRouter = express.Router();
 
+type IssueDetails = {
+  title: string,
+  description: string
+}
+
 facilityIssueRouter
   .get('/test', (_req, res) => {
     try{
@@ -16,7 +21,7 @@ facilityIssueRouter
   .get('/user', async (_req: Request, res: Response) => {
     try{
       // When auth is added, we should get the user info from the JWT token. For now, this is to simulate receiving a user id
-      const testUser = await EmployeeUser.findOne();
+      const testUser = await EmployeeUser.findOne({ username: 'john.doe' });
       const id = testUser?._id;
 
       const facilityIssues = await FacilityIssue.find({
@@ -47,6 +52,24 @@ facilityIssueRouter
     }catch(err){
       console.log(`There was an error fetching the facility reports by apartment id: ${err}`);
     }
-  });
+  })
+  .post('/create', async(req: Request, res: Response) => {
+    try{
+      // When auth is added, we should get the user info from the JWT token. For now, this is to simulate receiving a user id
+      const testUser = await EmployeeUser.findOne({ username: 'john.doe' });
+      const id = testUser?._id;
+      const { issueDetails }: { issueDetails: IssueDetails} = req.body
+
+      const facilityIssue = await FacilityIssue.create({
+        ...issueDetails,
+        createdBy: id,
+        apartmentId: testUser?.apartmentId
+      })
+
+      res.status(201).send(facilityIssue)
+    }catch(err){
+      console.log(`There was an error creating a facility issue: ${err}`)
+    }
+  })
 
 export default facilityIssueRouter;
