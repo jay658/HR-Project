@@ -4,12 +4,13 @@ import express, { Express, Request, Response } from 'express'
 import apiRouter from './api/api'
 import dotenv from 'dotenv'
 import mongoose from 'mongoose'
+import bodyParser from 'body-parser'
 
 dotenv.config()
 
 let uri = process.env.URI || ''
 const password = process.env.PASSWORD || ''
-const username = process.env.USERNAME || ''
+const username = process.env.APP_USERNAME || ''
 uri = uri.replace('<PASSWORD>', password).replace('<USERNAME>', username)
 
 const app: Express = express()
@@ -20,6 +21,10 @@ const corsOptions: CorsOptions = {
 }
 
 app.use(cors(corsOptions))
+
+// Body-parser middleware
+app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.json())
 
 app.use('/api', apiRouter)
 
