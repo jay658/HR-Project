@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, { Document, InferSchemaType, Schema } from 'mongoose';
 
 import { DEFAULT_PROFILE_PICTURE_ID } from './Document';
 
@@ -198,4 +198,5 @@ const PersonalInfoSchema = new Schema({
 
 const PersonalInfo = mongoose.model('PersonalInfo', PersonalInfoSchema);
 
+export type PersonalInfoTypeT = InferSchemaType<typeof PersonalInfoSchema>;
 export default PersonalInfo;
