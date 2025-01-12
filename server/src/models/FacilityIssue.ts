@@ -9,6 +9,11 @@ const FacilityIssueSchema = new Schema(
       ref: 'EmployeeUser',
       required: true
     },
+    apartmentId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Apartment',
+      required: true
+    },
     status: {
       type: String,
       enum: ['open', 'inProgress', 'closed'],
