@@ -92,21 +92,21 @@ const PersonalInfoPage: React.FC = () => {
     setLocalData(personalInfo);
   }, [personalInfo]);
 
-  const handleNameSave = () => {
-    dispatch(updatePersonalInfo({ name: localData.name }));
-  };
+  // const handleNameSave = () => {
+  //   dispatch(updatePersonalInfo({ name: localData.name }));
+  // };
 
-  const handleEmailSave = () => {
-    dispatch(updatePersonalInfo({ email: localData.email }));
-  };
+  // const handleEmailSave = () => {
+  //   dispatch(updatePersonalInfo({ email: localData.email }));
+  // };
 
-  const handleSSNSave = () => {
-    dispatch(updateSSN(localData.SSN));
-  };
+  // const handleSSNSave = () => {
+  //   dispatch(updateSSN(localData.SSN));
+  // };
 
-  const handleDobSave = () => {
-    dispatch(updatePersonalInfo({ dob: localData.dob }));
-  };
+  // const handleDobSave = () => {
+  //   dispatch(updatePersonalInfo({ dob: localData.dob }));
+  // };
 
   const formatDateForInput = (date: string | Date): string => {
     if (!date) return '';
@@ -185,6 +185,22 @@ const PersonalInfoPage: React.FC = () => {
     );
   };
 
+  const handleNameSave = () => {
+    dispatch(
+      updatePersonalInfo({
+        name: localData.name,
+        email: localData.email,
+        dob: localData.dob,
+        gender: localData.gender
+      })
+    );
+
+    // SSN needs to be updated separately since it uses a different thunk
+    if (localData.SSN !== personalInfo.SSN) {
+      dispatch(updateSSN(localData.SSN));
+    }
+  };
+
   return (
     <Box sx={{ p: 3, maxWidth: 600, mx: 'auto', mt: 5 }}>
       <Typography variant='h4' gutterBottom>
@@ -193,6 +209,7 @@ const PersonalInfoPage: React.FC = () => {
       <Typography variant='body1' gutterBottom>
         Update your personal details below.
       </Typography>
+
       {/* NAME */}
       <EditableSection
         title='Name'
@@ -252,17 +269,73 @@ const PersonalInfoPage: React.FC = () => {
               }
             />
           </Grid2>
+          <Grid2 size={6}>
+            <TextField
+              fullWidth
+              label='Email'
+              value={localData.email}
+              onChange={(e) =>
+                setLocalData({
+                  ...localData,
+                  email: e.target.value
+                })
+              }
+            />
+          </Grid2>
+          <Grid2 size={6}>
+            <TextField
+              fullWidth
+              label='SSN'
+              value={localData.SSN}
+              onChange={(e) =>
+                setLocalData({
+                  ...localData,
+                  SSN: e.target.value
+                })
+              }
+            />
+          </Grid2>
+          <Grid2 size={6}>
+            <TextField
+              fullWidth
+              // type='date'
+              label='Date of Birth'
+              value={formatDateForInput(localData.dob)}
+              onChange={(e) =>
+                setLocalData({
+                  ...localData,
+                  dob: e.target.value
+                })
+              }
+            />
+          </Grid2>
+          <FormControl>
+            <InputLabel id='gender-select-label'>Gender</InputLabel>
+            <Select
+              labelId='gender-select-label'
+              id='gender-select'
+              value={localData.gender}
+              label='Gender'
+              onChange={handleGenderChange}
+            >
+              <MenuItem value='male'>Male</MenuItem>
+              <MenuItem value='female'>Female</MenuItem>
+              <MenuItem value='noAnswer'>I do not wish to answer</MenuItem>
+            </Select>
+          </FormControl>
         </Grid2>
       </EditableSection>
+
       {/* PROFILE PICTURE */}
       {/* TODO: display something? */}
-      <EditableSection
+      {/* <EditableSection
         title='Profile Picture'
         onSave={handleNameSave}
         onCancel={() => setLocalData(personalInfo)}
-      ></EditableSection>
+      ></EditableSection> */}
+
       {/* EMAIL */}
-      <EditableSection
+      {/* <EditableSection
         title='Email'
         onSave={handleEmailSave}
         onCancel={() => setLocalData(personalInfo)}
@@ -282,9 +355,10 @@ const PersonalInfoPage: React.FC = () => {
             />
           </Grid2>
         </Grid2>
-      </EditableSection>
+      </EditableSection> */}
+
       {/* SSN */}
-      <EditableSection
+      {/* <EditableSection
         title='Social Security Number'
         onSave={handleSSNSave}
         onCancel={() => setLocalData(personalInfo)}
@@ -304,10 +378,11 @@ const PersonalInfoPage: React.FC = () => {
             />
           </Grid2>
         </Grid2>
-      </EditableSection>
+      </EditableSection> */}
+
       {/* DOB */}
       {/* TODO: needs to be a date selector */}
-      <EditableSection
+      {/* <EditableSection
         title='Date of Birth'
         onSave={handleDobSave}
         onCancel={() => setLocalData(personalInfo)}
@@ -328,20 +403,36 @@ const PersonalInfoPage: React.FC = () => {
             />
           </Grid2>
         </Grid2>
-      </EditableSection>
+      </EditableSection> */}
+
       {/* GENDER */}
-      <EditableSection
+      {/* <EditableSection
         title='Gender'
         onSave={handleGenderSave}
         onCancel={() => setLocalData(personalInfo)}
-      >
-        <FormControl>
+      > */}
+      {/* <FormControl>
           <InputLabel id='gender-select-label'>Gender</InputLabel>
           <Select
             labelId='gender-select-label'
             id='gender-select'
             value={localData.gender}
             label='gender'
+            disabled
+            onChange={handleGenderChange}
+          >
+            <MenuItem value='male'>Male</MenuItem>
+            <MenuItem value='female'>Female</MenuItem>
+            <MenuItem value='noAnswer'>I do not wish to answer</MenuItem>
+          </Select>
+        </FormControl> */}
+      {/* <FormControl>
+          <InputLabel id='gender-select-label'>Gender</InputLabel>
+          <Select
+            labelId='gender-select-label'
+            id='gender-select'
+            value={localData.gender}
+            label='Gender'
             onChange={handleGenderChange}
           >
             <MenuItem value='male'>Male</MenuItem>
@@ -349,7 +440,7 @@ const PersonalInfoPage: React.FC = () => {
             <MenuItem value='noAnswer'>I do not wish to answer</MenuItem>
           </Select>
         </FormControl>
-      </EditableSection>
+      </EditableSection> */}
       {/* ADDRESS */}
       <EditableSection
         title='Address'

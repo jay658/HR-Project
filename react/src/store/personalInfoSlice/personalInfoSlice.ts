@@ -12,8 +12,8 @@ export type PersonalInfo = {
   name: {
     firstName: string;
     lastName: string;
-    middleName: string | null;
-    preferredName: string | null;
+    middleName: string | '';
+    preferredName: string | '';
   };
   profilePicture?: string;
   email: string;
