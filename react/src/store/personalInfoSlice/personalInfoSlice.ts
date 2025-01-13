@@ -34,8 +34,8 @@ export type PersonalInfo = {
   employment: {
     residencyStatus: 'citizen' | 'greenCard' | 'nonresident' | null;
     visaType?: 'H1-B' | 'L2' | 'F1-CPT' | 'F1-OPT' | 'H4' | null;
-    startDate?: string;
-    endDate?: string;
+    startDate?: Date | string;
+    endDate?: Date | string;
     documents?: string[];
   };
   carInfo?: {
