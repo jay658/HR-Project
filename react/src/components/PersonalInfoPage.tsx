@@ -1,5 +1,6 @@
 import { AppDispatch, RootState } from '../store/store';
 import {
+  Avatar,
   Box,
   Button,
   Divider,
@@ -22,6 +23,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 
 import DeleteIcon from '@mui/icons-material/Delete';
+import { DocumentPreview } from '../types/Document';
 import type { PersonalInfo } from '../store/personalInfoSlice/personalInfoSlice';
 
 const US_STATES = [
@@ -193,7 +195,7 @@ const PersonalInfoPage: React.FC = () => {
           Name
         </Typography>
         <Grid2 container spacing={2}>
-          <Grid2 size={6}>
+          {/* <Grid2 size={6}>
             <TextField
               fullWidth
               label='Profile Picture'
@@ -207,6 +209,34 @@ const PersonalInfoPage: React.FC = () => {
                 })
               }
             />
+          </Grid2> */}
+          <Grid2 size={12} display='flex' alignItems='center' gap={2}>
+            <Avatar
+              // await s3 setup
+              // src={personalInfo.profilePicture?.url}
+              sx={{
+                width: 100,
+                height: 100,
+                border: '1px solid #ccc'
+              }}
+            />
+            {isEditing && (
+              <Button variant='contained' component='label' size='small'>
+                Upload Photo
+                <input
+                  type='file'
+                  hidden
+                  accept='image/*'
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      // await s3 setup
+                      console.log(`Upload file: ${file}`);
+                    }
+                  }}
+                />
+              </Button>
+            )}
           </Grid2>
           <Grid2 size={6}>
             <TextField
@@ -577,30 +607,33 @@ const PersonalInfoPage: React.FC = () => {
               <Typography variant='subtitle1' gutterBottom>
                 Contact {index + 1}
               </Typography>
-              <IconButton
-                color='error'
-                disabled={!isEditing}
-                onClick={() => {
-                  // NOTE: do we want custom stylings (i.e. using mui) for these
-                  // pop up windows?
-                  if (
-                    window.confirm(
-                      'Are you sure you want to delete this emergency contact?'
-                    )
-                  ) {
-                    const updatedContacts = localData.emergencyContacts.filter(
-                      (_, i) => i !== index
-                    );
-                    setLocalData({
-                      ...localData,
-                      emergencyContacts: updatedContacts
-                    });
-                  }
-                }}
-                size='small'
-              >
-                <DeleteIcon />
-              </IconButton>
+              {isEditing && (
+                <IconButton
+                  color='error'
+                  disabled={!isEditing}
+                  onClick={() => {
+                    // NOTE: do we want custom stylings (i.e. using mui) for these
+                    // pop up windows?
+                    if (
+                      window.confirm(
+                        'Are you sure you want to delete this emergency contact?'
+                      )
+                    ) {
+                      const updatedContacts =
+                        localData.emergencyContacts.filter(
+                          (_, i) => i !== index
+                        );
+                      setLocalData({
+                        ...localData,
+                        emergencyContacts: updatedContacts
+                      });
+                    }
+                  }}
+                  size='small'
+                >
+                  <DeleteIcon />
+                </IconButton>
+              )}
             </Box>
             <Grid2 container spacing={2}>
               <Grid2 size={4}>
@@ -720,30 +753,32 @@ const PersonalInfoPage: React.FC = () => {
             </Grid2>
           </Box>
         ))}
-        <Button
-          variant='contained'
-          color='primary'
-          sx={{ mt: 2 }}
-          disabled={!isEditing}
-          onClick={() => {
-            setLocalData({
-              ...localData,
-              emergencyContacts: [
-                ...localData.emergencyContacts,
-                {
-                  firstName: '',
-                  lastName: '',
-                  middleName: '',
-                  phone: '',
-                  email: '',
-                  relationship: ''
-                }
-              ]
-            });
-          }}
-        >
-          Add Emergency Contact
-        </Button>
+        {isEditing && (
+          <Button
+            variant='contained'
+            color='primary'
+            sx={{ mt: 2 }}
+            disabled={!isEditing}
+            onClick={() => {
+              setLocalData({
+                ...localData,
+                emergencyContacts: [
+                  ...localData.emergencyContacts,
+                  {
+                    firstName: '',
+                    lastName: '',
+                    middleName: '',
+                    phone: '',
+                    email: '',
+                    relationship: ''
+                  }
+                ]
+              });
+            }}
+          >
+            Add Emergency Contact
+          </Button>
+        )}
       </Box>
 
       {/* DOCUMENTS */}
