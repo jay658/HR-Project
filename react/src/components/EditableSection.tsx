@@ -8,11 +8,11 @@ interface EditableSectionProps {
   onCancel: () => void;
 }
 
-interface EditableElementProps {
-  disabled?: boolean;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  props?: Record<string, unknown>;
-}
+// interface EditableElementProps {
+//   disabled?: boolean;
+//   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+//   props?: Record<string, unknown>;
+// }
 
 const EditableSection: React.FC<EditableSectionProps> = ({
   title,
@@ -34,27 +34,61 @@ const EditableSection: React.FC<EditableSectionProps> = ({
     setIsEditing(false);
   };
 
+  const recursiveCloneChildren = (
+    children: React.ReactNode
+  ): React.ReactNode => {
+    return React.Children.map(children, (child) => {
+      if (!React.isValidElement(child)) {
+        return child;
+      }
+
+      const childProps = {
+        disabled: !isEditing,
+        children: child.props.children
+      };
+
+      if (child.props.children) {
+        childProps.children = recursiveCloneChildren(child.props.children);
+      }
+
+      return React.cloneElement(child, childProps);
+    });
+  };
+
   return (
     <Box sx={{ mb: 4 }}>
-      <Typography variant='h6' sx={{ mb: 2 }}>
-        {title}
-      </Typography>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 2
+        }}
+      >
+        <Typography variant='h6' sx={{ mb: 2 }}>
+          {title}
+        </Typography>
+        {!isEditing && (
+          <Button variant='contained' onClick={() => setIsEditing(true)}>
+            Edit
+          </Button>
+        )}
+      </Box>
 
-      {React.Children.map(children, (child) => {
-        if (React.isValidElement<EditableElementProps>(child)) {
+      {recursiveCloneChildren(children)}
+
+      {/* {React.Children.map(children, (child) => {
+        // if (React.isValidElement<EditableElementProps>(child)) {
+        if (React.isValidElement(child)) {
           return React.cloneElement(child, {
             ...child.props,
-            onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-              if (!isEditing) setIsEditing(true);
-              if (child.props.onChange) {
-                child.props.onChange(e);
-              }
-            }
+            disabled: !isEditing
           });
         }
         return child;
-      })}
+      })} */}
 
+      {/* save & cancel btns */}
       {isEditing && (
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
           <Button variant='outlined' onClick={handleCancel} sx={{ mr: 1 }}>
