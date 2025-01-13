@@ -170,8 +170,8 @@ const seedPersonalInfo = [
     name: {
       firstName: 'John',
       lastName: 'Doe',
-      middleName: null,
-      preferredName: null
+      middleName: '',
+      preferredName: ''
     },
     email: 'john.doe@example.com',
     gender: 'male',
