@@ -1,8 +1,11 @@
 import { AppDispatch, RootState } from '../store/store';
 import {
   Box,
+  Button,
+  Divider,
   FormControl,
   Grid2,
+  IconButton,
   InputLabel,
   MenuItem,
   Select,
@@ -17,6 +20,7 @@ import {
 } from '../store/personalInfoSlice/personalInfoThunks';
 import { useDispatch, useSelector } from 'react-redux';
 
+import DeleteIcon from '@mui/icons-material/Delete';
 import EditableSection from './EditableSection';
 import type { PersonalInfo } from '../store/personalInfoSlice/personalInfoSlice';
 
@@ -144,10 +148,19 @@ const PersonalInfoPage: React.FC = () => {
     });
   };
 
+  const handleEmergencyContactSave = () => {
+    dispatch(
+      updatePersonalInfo({ emergencyContacts: localData.emergencyContacts })
+    );
+  };
+
   return (
     <Box sx={{ p: 3, maxWidth: 600, mx: 'auto', mt: 5 }}>
       <Typography variant='h4' gutterBottom>
         Personal Information
+      </Typography>
+      <Typography variant='body1' gutterBottom>
+        Update your personal details below.
       </Typography>
       {/* NAME */}
       <EditableSection
@@ -172,12 +185,12 @@ const PersonalInfoPage: React.FC = () => {
           <Grid2 size={6}>
             <TextField
               fullWidth
-              label='Preferred Name'
-              value={localData.name.preferredName}
+              label='Last Name'
+              value={localData.name.lastName}
               onChange={(e) =>
                 setLocalData({
                   ...localData,
-                  name: { ...localData.name, preferredName: e.target.value }
+                  name: { ...localData.name, lastName: e.target.value }
                 })
               }
             />
@@ -198,12 +211,12 @@ const PersonalInfoPage: React.FC = () => {
           <Grid2 size={6}>
             <TextField
               fullWidth
-              label='Last Name'
-              value={localData.name.lastName}
+              label='Preferred Name'
+              value={localData.name.preferredName}
               onChange={(e) =>
                 setLocalData({
                   ...localData,
-                  name: { ...localData.name, lastName: e.target.value }
+                  name: { ...localData.name, preferredName: e.target.value }
                 })
               }
             />
@@ -426,6 +439,191 @@ const PersonalInfoPage: React.FC = () => {
           )}
         </Grid2>
       </EditableSection>
+      {/* EMERGENCY CONTACT */}
+      <EditableSection
+        title='Emergency Contacts'
+        onSave={handleEmergencyContactSave}
+        onCancel={() => setLocalData(personalInfo)}
+      >
+        {localData.emergencyContacts.map((contact, index) => (
+          <Box
+            key={index}
+            sx={{
+              mb: index !== localData.emergencyContacts.length - 1 ? 3 : 0,
+              position: 'relative'
+            }}
+          >
+            {index > 0 && <Divider sx={{ my: 2 }} />}
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                mb: 1
+              }}
+            >
+              <Typography variant='subtitle1' gutterBottom>
+                Contact {index + 1}
+              </Typography>
+              {/* TODO: not saving delete changes correctly */}
+              <IconButton
+                color='error'
+                onClick={() => {
+                  const updatedContacts = localData.emergencyContacts.filter(
+                    (_, i) => i !== index
+                  );
+                  setLocalData({
+                    ...localData,
+                    emergencyContacts: updatedContacts
+                  });
+                }}
+                size='small'
+              >
+                <DeleteIcon />
+              </IconButton>
+            </Box>
+            <Grid2 container spacing={2}>
+              <Grid2 size={4}>
+                <TextField
+                  fullWidth
+                  label='First Name'
+                  value={contact.firstName}
+                  onChange={(e) => {
+                    const updatedContacts = [...localData.emergencyContacts];
+                    updatedContacts[index] = {
+                      ...contact,
+                      firstName: e.target.value
+                    };
+                    setLocalData({
+                      ...localData,
+                      emergencyContacts: updatedContacts
+                    });
+                  }}
+                />
+              </Grid2>
+              <Grid2 size={4}>
+                <TextField
+                  fullWidth
+                  label='Last Name'
+                  value={contact.lastName}
+                  onChange={(e) => {
+                    const updatedContacts = [...localData.emergencyContacts];
+                    updatedContacts[index] = {
+                      ...contact,
+                      lastName: e.target.value
+                    };
+                    setLocalData({
+                      ...localData,
+                      emergencyContacts: updatedContacts
+                    });
+                  }}
+                />
+              </Grid2>
+              <Grid2 size={4}>
+                <TextField
+                  fullWidth
+                  label='Middle Name'
+                  value={contact.middleName || ''}
+                  onChange={(e) => {
+                    const updatedContacts = [...localData.emergencyContacts];
+                    updatedContacts[index] = {
+                      ...contact,
+                      middleName: e.target.value
+                    };
+                    setLocalData({
+                      ...localData,
+                      emergencyContacts: updatedContacts
+                    });
+                  }}
+                />
+              </Grid2>
+              <Grid2 size={4}>
+                <TextField
+                  fullWidth
+                  label='Phone'
+                  value={contact.phone}
+                  onChange={(e) => {
+                    const updatedContacts = [...localData.emergencyContacts];
+                    updatedContacts[index] = {
+                      ...contact,
+                      phone: e.target.value
+                    };
+                    setLocalData({
+                      ...localData,
+                      emergencyContacts: updatedContacts
+                    });
+                  }}
+                />
+              </Grid2>
+              <Grid2 size={5}>
+                <TextField
+                  fullWidth
+                  label='Email'
+                  value={contact.email}
+                  onChange={(e) => {
+                    const updatedContacts = [...localData.emergencyContacts];
+                    updatedContacts[index] = {
+                      ...contact,
+                      email: e.target.value
+                    };
+                    setLocalData({
+                      ...localData,
+                      emergencyContacts: updatedContacts
+                    });
+                  }}
+                />
+              </Grid2>
+              <Grid2 size={3}>
+                <TextField
+                  fullWidth
+                  label='Relationship'
+                  value={contact.relationship}
+                  onChange={(e) => {
+                    const updatedContacts = [...localData.emergencyContacts];
+                    updatedContacts[index] = {
+                      ...contact,
+                      relationship: e.target.value
+                    };
+                    setLocalData({
+                      ...localData,
+                      emergencyContacts: updatedContacts
+                    });
+                  }}
+                />
+              </Grid2>
+            </Grid2>
+          </Box>
+        ))}
+        <Button
+          variant='contained'
+          color='primary'
+          sx={{ mt: 2 }}
+          onClick={() => {
+            setLocalData({
+              ...localData,
+              emergencyContacts: [
+                ...localData.emergencyContacts,
+                {
+                  firstName: '',
+                  lastName: '',
+                  middleName: '',
+                  phone: '',
+                  email: '',
+                  relationship: ''
+                }
+              ]
+            });
+          }}
+        >
+          Add Emergency Contact
+        </Button>
+      </EditableSection>
+      {/* DOCUMENTS */}
+      {/* <EditableSection
+        title='Documents'
+        onSave={handleEmploymentSave}
+        onCancel={() => setLocalData(personalInfo)}
+      ></EditableSection> */}
     </Box>
   );
 };
