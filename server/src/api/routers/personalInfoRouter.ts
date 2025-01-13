@@ -28,7 +28,9 @@ personalInfoRouter
         throw Error('User has not onboard yet');
       }
 
-      const personalInfo = await PersonalInfo.findById(user.personalInfoId);
+      const personalInfo = await PersonalInfo.findById(user.personalInfoId)
+        .select('+SSN')
+        .exec();
       if (!personalInfo) throw Error('Failed to fetch personal information');
 
       res.json(personalInfo);
@@ -51,7 +53,7 @@ personalInfoRouter
         user.personalInfoId,
         updates,
         { new: true }
-      );
+      ).select('+SSN');
 
       res.json(updateInfo);
     } catch (error: unknown) {
