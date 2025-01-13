@@ -114,7 +114,15 @@ const PersonalInfoPage: React.FC = () => {
     return d.toISOString().split('T')[0];
   };
 
+  const handleGenderChange = (event: SelectChangeEvent) => {
+    setLocalData({
+      ...localData,
+      gender: event.target.value as 'male' | 'female' | 'noAnswer'
+    });
+  };
+
   const handleGenderSave = () => {
+    console.log(`Current localData: ${localData.gender}`);
     dispatch(updatePersonalInfo({ gender: localData.gender }));
   };
 
@@ -327,8 +335,6 @@ const PersonalInfoPage: React.FC = () => {
         onSave={handleGenderSave}
         onCancel={() => setLocalData(personalInfo)}
       >
-        {/* <Grid2 container spacing={2}>
-          <Grid2 size={6}> */}
         <FormControl>
           <InputLabel id='gender-select-label'>Gender</InputLabel>
           <Select
@@ -336,15 +342,13 @@ const PersonalInfoPage: React.FC = () => {
             id='gender-select'
             value={localData.gender}
             label='gender'
-            onChange={handleGenderSave}
+            onChange={handleGenderChange}
           >
             <MenuItem value='male'>Male</MenuItem>
             <MenuItem value='female'>Female</MenuItem>
             <MenuItem value='noAnswer'>I do not wish to answer</MenuItem>
           </Select>
         </FormControl>
-        {/* </Grid2>
-        </Grid2> */}
       </EditableSection>
       {/* ADDRESS */}
       <EditableSection
