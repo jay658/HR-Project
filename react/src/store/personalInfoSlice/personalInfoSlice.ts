@@ -19,7 +19,7 @@ export type PersonalInfo = {
   email: string;
   SSN: string;
   dob: Date | string;
-  gender: 'male' | 'female' | 'noAnswer' | null;
+  gender: 'male' | 'female' | 'noAnswer';
   address: {
     buildingNumber: string;
     streetName: string;
@@ -77,7 +77,7 @@ const initialState: PersonalInfo = {
   email: '',
   SSN: '',
   dob: '',
-  gender: null,
+  gender: 'male',
   address: {
     buildingNumber: '',
     streetName: '',

@@ -16,7 +16,8 @@ import {
 import React, { useEffect, useState } from 'react';
 import {
   fetchPersonalInfo,
-  updatePersonalInfo
+  updatePersonalInfo,
+  updateSSN
 } from '../store/personalInfoSlice/personalInfoThunks';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -93,6 +94,28 @@ const PersonalInfoPage: React.FC = () => {
 
   const handleNameSave = () => {
     dispatch(updatePersonalInfo({ name: localData.name }));
+  };
+
+  const handleEmailSave = () => {
+    dispatch(updatePersonalInfo({ email: localData.email }));
+  };
+
+  const handleSSNSave = () => {
+    dispatch(updateSSN(localData.SSN));
+  };
+
+  const handleDobSave = () => {
+    dispatch(updatePersonalInfo({ dob: localData.dob }));
+  };
+
+  const formatDateForInput = (date: string | Date): string => {
+    if (!date) return '';
+    const d = new Date(date);
+    return d.toISOString().split('T')[0];
+  };
+
+  const handleGenderSave = () => {
+    dispatch(updatePersonalInfo({ gender: localData.gender }));
   };
 
   const handleAddressSave = () => {
@@ -222,6 +245,106 @@ const PersonalInfoPage: React.FC = () => {
             />
           </Grid2>
         </Grid2>
+      </EditableSection>
+      {/* PROFILE PICTURE */}
+      {/* TODO: display something? */}
+      <EditableSection
+        title='Profile Picture'
+        onSave={handleNameSave}
+        onCancel={() => setLocalData(personalInfo)}
+      ></EditableSection>
+      {/* EMAIL */}
+      <EditableSection
+        title='Email'
+        onSave={handleEmailSave}
+        onCancel={() => setLocalData(personalInfo)}
+      >
+        <Grid2 container spacing={2}>
+          <Grid2 size={6}>
+            <TextField
+              fullWidth
+              label='Email'
+              value={localData.email}
+              onChange={(e) =>
+                setLocalData({
+                  ...localData,
+                  email: e.target.value
+                })
+              }
+            />
+          </Grid2>
+        </Grid2>
+      </EditableSection>
+      {/* SSN */}
+      <EditableSection
+        title='Social Security Number'
+        onSave={handleSSNSave}
+        onCancel={() => setLocalData(personalInfo)}
+      >
+        <Grid2 container spacing={2}>
+          <Grid2 size={6}>
+            <TextField
+              fullWidth
+              label='SSN'
+              value={localData.SSN}
+              onChange={(e) =>
+                setLocalData({
+                  ...localData,
+                  SSN: e.target.value
+                })
+              }
+            />
+          </Grid2>
+        </Grid2>
+      </EditableSection>
+      {/* DOB */}
+      {/* TODO: needs to be a date selector */}
+      <EditableSection
+        title='Date of Birth'
+        onSave={handleDobSave}
+        onCancel={() => setLocalData(personalInfo)}
+      >
+        <Grid2 container spacing={2}>
+          <Grid2 size={6}>
+            <TextField
+              fullWidth
+              // type='date'
+              label='Date of Birth'
+              value={formatDateForInput(localData.dob)}
+              onChange={(e) =>
+                setLocalData({
+                  ...localData,
+                  dob: e.target.value
+                })
+              }
+            />
+          </Grid2>
+        </Grid2>
+      </EditableSection>
+      {/* GENDER */}
+      <EditableSection
+        title='Gender'
+        onSave={handleGenderSave}
+        onCancel={() => setLocalData(personalInfo)}
+      >
+        {/* <Grid2 container spacing={2}>
+          <Grid2 size={6}> */}
+        <FormControl>
+          <InputLabel id='gender-select-label'>Gender</InputLabel>
+          <Select
+            labelId='gender-select-label'
+            id='gender-select'
+            value={localData.gender}
+            label='gender'
+            onChange={handleGenderSave}
+          >
+            <MenuItem value='male'>Male</MenuItem>
+            <MenuItem value='female'>Female</MenuItem>
+            <MenuItem value='noAnswer'>I do not wish to answer</MenuItem>
+          </Select>
+        </FormControl>
+        {/* </Grid2>
+        </Grid2> */}
       </EditableSection>
       {/* ADDRESS */}
       <EditableSection
@@ -415,7 +538,6 @@ const PersonalInfoPage: React.FC = () => {
                       }
                     })
                   }
-                  InputLabelProps={{ shrink: true }}
                 />
               </Grid2>
               <Grid2 size={6}>
@@ -469,13 +591,21 @@ const PersonalInfoPage: React.FC = () => {
               <IconButton
                 color='error'
                 onClick={() => {
-                  const updatedContacts = localData.emergencyContacts.filter(
-                    (_, i) => i !== index
-                  );
-                  setLocalData({
-                    ...localData,
-                    emergencyContacts: updatedContacts
-                  });
+                  // NOTE: do we want custom stylings (i.e. using mui) for these
+                  // pop up windows?
+                  if (
+                    window.confirm(
+                      'Are you sure you want to delete this emergency contact?'
+                    )
+                  ) {
+                    const updatedContacts = localData.emergencyContacts.filter(
+                      (_, i) => i !== index
+                    );
+                    setLocalData({
+                      ...localData,
+                      emergencyContacts: updatedContacts
+                    });
+                  }
                 }}
                 size='small'
               >
@@ -619,11 +749,11 @@ const PersonalInfoPage: React.FC = () => {
         </Button>
       </EditableSection>
       {/* DOCUMENTS */}
-      {/* <EditableSection
+      <EditableSection
         title='Documents'
         onSave={handleEmploymentSave}
         onCancel={() => setLocalData(personalInfo)}
-      ></EditableSection> */}
+      ></EditableSection>
     </Box>
   );
 };
