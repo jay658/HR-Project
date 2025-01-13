@@ -23,7 +23,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 
 import DeleteIcon from '@mui/icons-material/Delete';
-import { DocumentPreview } from '../types/Document';
+import { DocumentsSection } from './DocumentSection';
 import type { PersonalInfo } from '../store/personalInfoSlice/personalInfoSlice';
 
 const US_STATES = [
@@ -783,9 +783,7 @@ const PersonalInfoPage: React.FC = () => {
 
       {/* DOCUMENTS */}
       <Box sx={{ mb: 4 }}>
-        <Typography variant='h6' sx={{ mb: 2 }}>
-          Documents
-        </Typography>
+        <DocumentsSection isEditing={isEditing} />
       </Box>
     </Box>
   );
