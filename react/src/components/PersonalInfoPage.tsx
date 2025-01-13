@@ -24,7 +24,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import DeleteIcon from '@mui/icons-material/Delete';
 import type { PersonalInfo } from '../store/personalInfoSlice/personalInfoSlice';
 
-// NOTE: should i put this in a separate file?
 const US_STATES = [
   { code: 'AL' },
   { code: 'AK' },
@@ -107,7 +106,7 @@ const PersonalInfoPage: React.FC = () => {
     }
   };
 
-  const formatDateForInput = (date: string | Date): string => {
+  const formatDateForInput = (date: string | Date | undefined): string => {
     if (!date) return '';
     const d = new Date(date);
     return d.toISOString().split('T')[0];
@@ -297,8 +296,8 @@ const PersonalInfoPage: React.FC = () => {
           <Grid2 size={6}>
             <TextField
               fullWidth
-              // type='date'
-              label='Date of Birth'
+              type='date'
+              label='Birthday'
               value={formatDateForInput(localData.dob)}
               disabled={!isEditing}
               onChange={(e) =>
@@ -517,7 +516,7 @@ const PersonalInfoPage: React.FC = () => {
                   fullWidth
                   type='date'
                   label='Start Date'
-                  value={localData.employment.startDate || ''}
+                  value={formatDateForInput(localData.employment.startDate)}
                   disabled={!isEditing}
                   onChange={(e) =>
                     setLocalData({
@@ -535,7 +534,7 @@ const PersonalInfoPage: React.FC = () => {
                   fullWidth
                   type='date'
                   label='End Date'
-                  value={localData.employment.endDate || ''}
+                  value={formatDateForInput(localData.employment.endDate)}
                   disabled={!isEditing}
                   onChange={(e) =>
                     setLocalData({
@@ -578,7 +577,6 @@ const PersonalInfoPage: React.FC = () => {
               <Typography variant='subtitle1' gutterBottom>
                 Contact {index + 1}
               </Typography>
-              {/* TODO: not saving delete changes correctly */}
               <IconButton
                 color='error'
                 disabled={!isEditing}
