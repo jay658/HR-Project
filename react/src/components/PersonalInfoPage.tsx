@@ -22,7 +22,6 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 
 import DeleteIcon from '@mui/icons-material/Delete';
-import EditableSection from './EditableSection';
 import type { PersonalInfo } from '../store/personalInfoSlice/personalInfoSlice';
 
 // NOTE: should i put this in a separate file?
@@ -83,6 +82,7 @@ const PersonalInfoPage: React.FC = () => {
   const personalInfo = useSelector((state: RootState) => state.personalInfo);
   const dispatch = useDispatch<AppDispatch>();
   const [localData, setLocalData] = useState<PersonalInfo>(personalInfo);
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     dispatch(fetchPersonalInfo());
@@ -92,21 +92,20 @@ const PersonalInfoPage: React.FC = () => {
     setLocalData(personalInfo);
   }, [personalInfo]);
 
-  // const handleNameSave = () => {
-  //   dispatch(updatePersonalInfo({ name: localData.name }));
-  // };
+  const handleSaveAll = () => {
+    dispatch(updatePersonalInfo(localData));
+    if (localData.SSN !== personalInfo.SSN) {
+      dispatch(updateSSN(localData.SSN));
+    }
+    setIsEditing(false);
+  };
 
-  // const handleEmailSave = () => {
-  //   dispatch(updatePersonalInfo({ email: localData.email }));
-  // };
-
-  // const handleSSNSave = () => {
-  //   dispatch(updateSSN(localData.SSN));
-  // };
-
-  // const handleDobSave = () => {
-  //   dispatch(updatePersonalInfo({ dob: localData.dob }));
-  // };
+  const handleCancelAll = () => {
+    if (window.confirm('Are you sure you want to discard all changes?')) {
+      setLocalData(personalInfo);
+      setIsEditing(false);
+    }
+  };
 
   const formatDateForInput = (date: string | Date): string => {
     if (!date) return '';
@@ -121,15 +120,6 @@ const PersonalInfoPage: React.FC = () => {
     });
   };
 
-  const handleGenderSave = () => {
-    console.log(`Current localData: ${localData.gender}`);
-    dispatch(updatePersonalInfo({ gender: localData.gender }));
-  };
-
-  const handleAddressSave = () => {
-    dispatch(updatePersonalInfo({ address: localData.address }));
-  };
-
   const handleStateChange = (event: SelectChangeEvent) => {
     console.log('State changed:', event.target.value);
     setLocalData({
@@ -139,14 +129,6 @@ const PersonalInfoPage: React.FC = () => {
         state: event.target.value
       }
     });
-  };
-
-  const handleContactSave = () => {
-    dispatch(updatePersonalInfo({ phone: localData.phone }));
-  };
-
-  const handleEmploymentSave = () => {
-    dispatch(updatePersonalInfo({ employment: localData.employment }));
   };
 
   const handleResidencyStatusChange = (event: SelectChangeEvent) => {
@@ -179,49 +161,61 @@ const PersonalInfoPage: React.FC = () => {
     });
   };
 
-  const handleEmergencyContactSave = () => {
-    dispatch(
-      updatePersonalInfo({ emergencyContacts: localData.emergencyContacts })
-    );
-  };
-
-  const handleNameSave = () => {
-    dispatch(
-      updatePersonalInfo({
-        name: localData.name,
-        email: localData.email,
-        dob: localData.dob,
-        gender: localData.gender
-      })
-    );
-
-    // SSN needs to be updated separately since it uses a different thunk
-    if (localData.SSN !== personalInfo.SSN) {
-      dispatch(updateSSN(localData.SSN));
-    }
-  };
-
   return (
     <Box sx={{ p: 3, maxWidth: 600, mx: 'auto', mt: 5 }}>
-      <Typography variant='h4' gutterBottom>
-        Personal Information
-      </Typography>
-      <Typography variant='body1' gutterBottom>
-        Update your personal details below.
-      </Typography>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 4
+        }}
+      >
+        <Typography variant='h4'>Personal Information</Typography>
+        {!isEditing ? (
+          <Button variant='contained' onClick={() => setIsEditing(true)}>
+            Edit
+          </Button>
+        ) : (
+          <Box>
+            <Button variant='outlined' onClick={handleCancelAll} sx={{ mr: 1 }}>
+              Cancel
+            </Button>
+            <Button variant='contained' onClick={handleSaveAll}>
+              Save All
+            </Button>
+          </Box>
+        )}
+      </Box>
 
       {/* NAME */}
-      <EditableSection
-        title='Name'
-        onSave={handleNameSave}
-        onCancel={() => setLocalData(personalInfo)}
-      >
+      <Box sx={{ mb: 4 }}>
+        <Typography variant='h6' sx={{ mb: 2 }}>
+          Name
+        </Typography>
         <Grid2 container spacing={2}>
+          <Grid2 size={6}>
+            <TextField
+              fullWidth
+              label='Profile Picture'
+              value={localData.profilePicture}
+              // enable when we are in editing state
+              disabled={!isEditing}
+              onChange={(e) =>
+                setLocalData({
+                  ...localData,
+                  profilePicture: e.target.value
+                })
+              }
+            />
+          </Grid2>
           <Grid2 size={6}>
             <TextField
               fullWidth
               label='First Name'
               value={localData.name.firstName}
+              // enable when we are in editing state
+              disabled={!isEditing}
               onChange={(e) =>
                 setLocalData({
                   ...localData,
@@ -235,6 +229,7 @@ const PersonalInfoPage: React.FC = () => {
               fullWidth
               label='Last Name'
               value={localData.name.lastName}
+              disabled={!isEditing}
               onChange={(e) =>
                 setLocalData({
                   ...localData,
@@ -248,6 +243,7 @@ const PersonalInfoPage: React.FC = () => {
               fullWidth
               label='Middle Name'
               value={localData.name.middleName}
+              disabled={!isEditing}
               onChange={(e) =>
                 setLocalData({
                   ...localData,
@@ -261,6 +257,7 @@ const PersonalInfoPage: React.FC = () => {
               fullWidth
               label='Preferred Name'
               value={localData.name.preferredName}
+              disabled={!isEditing}
               onChange={(e) =>
                 setLocalData({
                   ...localData,
@@ -274,6 +271,7 @@ const PersonalInfoPage: React.FC = () => {
               fullWidth
               label='Email'
               value={localData.email}
+              disabled={!isEditing}
               onChange={(e) =>
                 setLocalData({
                   ...localData,
@@ -287,6 +285,7 @@ const PersonalInfoPage: React.FC = () => {
               fullWidth
               label='SSN'
               value={localData.SSN}
+              disabled={!isEditing}
               onChange={(e) =>
                 setLocalData({
                   ...localData,
@@ -301,6 +300,7 @@ const PersonalInfoPage: React.FC = () => {
               // type='date'
               label='Date of Birth'
               value={formatDateForInput(localData.dob)}
+              disabled={!isEditing}
               onChange={(e) =>
                 setLocalData({
                   ...localData,
@@ -315,6 +315,7 @@ const PersonalInfoPage: React.FC = () => {
               labelId='gender-select-label'
               id='gender-select'
               value={localData.gender}
+              disabled={!isEditing}
               label='Gender'
               onChange={handleGenderChange}
             >
@@ -324,135 +325,20 @@ const PersonalInfoPage: React.FC = () => {
             </Select>
           </FormControl>
         </Grid2>
-      </EditableSection>
+      </Box>
 
-      {/* PROFILE PICTURE */}
-      {/* TODO: display something? */}
-      {/* <EditableSection
-        title='Profile Picture'
-        onSave={handleNameSave}
-        onCancel={() => setLocalData(personalInfo)}
-      ></EditableSection> */}
-
-      {/* EMAIL */}
-      {/* <EditableSection
-        title='Email'
-        onSave={handleEmailSave}
-        onCancel={() => setLocalData(personalInfo)}
-      >
-        <Grid2 container spacing={2}>
-          <Grid2 size={6}>
-            <TextField
-              fullWidth
-              label='Email'
-              value={localData.email}
-              onChange={(e) =>
-                setLocalData({
-                  ...localData,
-                  email: e.target.value
-                })
-              }
-            />
-          </Grid2>
-        </Grid2>
-      </EditableSection> */}
-
-      {/* SSN */}
-      {/* <EditableSection
-        title='Social Security Number'
-        onSave={handleSSNSave}
-        onCancel={() => setLocalData(personalInfo)}
-      >
-        <Grid2 container spacing={2}>
-          <Grid2 size={6}>
-            <TextField
-              fullWidth
-              label='SSN'
-              value={localData.SSN}
-              onChange={(e) =>
-                setLocalData({
-                  ...localData,
-                  SSN: e.target.value
-                })
-              }
-            />
-          </Grid2>
-        </Grid2>
-      </EditableSection> */}
-
-      {/* DOB */}
-      {/* TODO: needs to be a date selector */}
-      {/* <EditableSection
-        title='Date of Birth'
-        onSave={handleDobSave}
-        onCancel={() => setLocalData(personalInfo)}
-      >
-        <Grid2 container spacing={2}>
-          <Grid2 size={6}>
-            <TextField
-              fullWidth
-              // type='date'
-              label='Date of Birth'
-              value={formatDateForInput(localData.dob)}
-              onChange={(e) =>
-                setLocalData({
-                  ...localData,
-                  dob: e.target.value
-                })
-              }
-            />
-          </Grid2>
-        </Grid2>
-      </EditableSection> */}
-
-      {/* GENDER */}
-      {/* <EditableSection
-        title='Gender'
-        onSave={handleGenderSave}
-        onCancel={() => setLocalData(personalInfo)}
-      > */}
-      {/* <FormControl>
-          <InputLabel id='gender-select-label'>Gender</InputLabel>
-          <Select
-            labelId='gender-select-label'
-            id='gender-select'
-            value={localData.gender}
-            label='gender'
-            disabled
-            onChange={handleGenderChange}
-          >
-            <MenuItem value='male'>Male</MenuItem>
-            <MenuItem value='female'>Female</MenuItem>
-            <MenuItem value='noAnswer'>I do not wish to answer</MenuItem>
-          </Select>
-        </FormControl> */}
-      {/* <FormControl>
-          <InputLabel id='gender-select-label'>Gender</InputLabel>
-          <Select
-            labelId='gender-select-label'
-            id='gender-select'
-            value={localData.gender}
-            label='Gender'
-            onChange={handleGenderChange}
-          >
-            <MenuItem value='male'>Male</MenuItem>
-            <MenuItem value='female'>Female</MenuItem>
-            <MenuItem value='noAnswer'>I do not wish to answer</MenuItem>
-          </Select>
-        </FormControl>
-      </EditableSection> */}
       {/* ADDRESS */}
-      <EditableSection
-        title='Address'
-        onSave={handleAddressSave}
-        onCancel={() => setLocalData(personalInfo)}
-      >
+      <Box sx={{ mb: 4 }}>
+        <Typography variant='h6' sx={{ mb: 2 }}>
+          Address
+        </Typography>
         <Grid2 container spacing={2}>
           <Grid2 size={8}>
             <TextField
               fullWidth
               label='Street'
               value={localData.address.streetName}
+              disabled={!isEditing}
               onChange={(e) =>
                 setLocalData({
                   ...localData,
@@ -469,6 +355,7 @@ const PersonalInfoPage: React.FC = () => {
               fullWidth
               label='Building/Apartment #'
               value={localData.address.buildingNumber}
+              disabled={!isEditing}
               onChange={(e) =>
                 setLocalData({
                   ...localData,
@@ -485,6 +372,7 @@ const PersonalInfoPage: React.FC = () => {
               fullWidth
               label='City'
               value={localData.address.city}
+              disabled={!isEditing}
               onChange={(e) =>
                 setLocalData({
                   ...localData,
@@ -503,6 +391,7 @@ const PersonalInfoPage: React.FC = () => {
                 labelId='state-select-label'
                 id='state-select'
                 value={localData.address.state}
+                disabled={!isEditing}
                 label='State'
                 onChange={handleStateChange}
               >
@@ -519,6 +408,7 @@ const PersonalInfoPage: React.FC = () => {
               fullWidth
               label='Zip Code'
               value={localData.address.zipCode}
+              disabled={!isEditing}
               onChange={(e) =>
                 setLocalData({
                   ...localData,
@@ -531,19 +421,20 @@ const PersonalInfoPage: React.FC = () => {
             />
           </Grid2>
         </Grid2>
-      </EditableSection>
+      </Box>
+
       {/* CONTACT INFO */}
-      <EditableSection
-        title='Contact Info'
-        onSave={handleContactSave}
-        onCancel={() => setLocalData(personalInfo)}
-      >
+      <Box sx={{ mb: 4 }}>
+        <Typography variant='h6' sx={{ mb: 2 }}>
+          Contact Information
+        </Typography>
         <Grid2 container spacing={2}>
           <Grid2 size={6}>
             <TextField
               fullWidth
               label='Cell Phone #'
               value={localData.phone.cell}
+              disabled={!isEditing}
               onChange={(e) =>
                 setLocalData({
                   ...localData,
@@ -560,6 +451,7 @@ const PersonalInfoPage: React.FC = () => {
               fullWidth
               label='Work Phone #'
               value={localData.phone.work}
+              disabled={!isEditing}
               onChange={(e) =>
                 setLocalData({
                   ...localData,
@@ -572,13 +464,13 @@ const PersonalInfoPage: React.FC = () => {
             />
           </Grid2>
         </Grid2>
-      </EditableSection>
+      </Box>
+
       {/* EMPLOYMENT */}
-      <EditableSection
-        title='Employment'
-        onSave={handleEmploymentSave}
-        onCancel={() => setLocalData(personalInfo)}
-      >
+      <Box sx={{ mb: 4 }}>
+        <Typography variant='h6' sx={{ mb: 2 }}>
+          Employment
+        </Typography>
         <Grid2 container spacing={2}>
           <Grid2 size={5}>
             <FormControl fullWidth>
@@ -589,6 +481,7 @@ const PersonalInfoPage: React.FC = () => {
                 labelId='residency-select-label'
                 id='residency-select'
                 value={localData.employment.residencyStatus || ''}
+                disabled={!isEditing}
                 label='Residency Status'
                 onChange={handleResidencyStatusChange}
               >
@@ -607,6 +500,7 @@ const PersonalInfoPage: React.FC = () => {
                     labelId='visa-select-label'
                     id='visa-select'
                     value={localData.employment.visaType || ''}
+                    disabled={!isEditing}
                     label='Visa Type'
                     onChange={handleVisaTypeChange}
                   >
@@ -624,6 +518,7 @@ const PersonalInfoPage: React.FC = () => {
                   type='date'
                   label='Start Date'
                   value={localData.employment.startDate || ''}
+                  disabled={!isEditing}
                   onChange={(e) =>
                     setLocalData({
                       ...localData,
@@ -641,6 +536,7 @@ const PersonalInfoPage: React.FC = () => {
                   type='date'
                   label='End Date'
                   value={localData.employment.endDate || ''}
+                  disabled={!isEditing}
                   onChange={(e) =>
                     setLocalData({
                       ...localData,
@@ -655,13 +551,13 @@ const PersonalInfoPage: React.FC = () => {
             </>
           )}
         </Grid2>
-      </EditableSection>
+      </Box>
+
       {/* EMERGENCY CONTACT */}
-      <EditableSection
-        title='Emergency Contacts'
-        onSave={handleEmergencyContactSave}
-        onCancel={() => setLocalData(personalInfo)}
-      >
+      <Box sx={{ mb: 4 }}>
+        <Typography variant='h6' sx={{ mb: 2 }}>
+          Emergency Contact
+        </Typography>
         {localData.emergencyContacts.map((contact, index) => (
           <Box
             key={index}
@@ -685,6 +581,7 @@ const PersonalInfoPage: React.FC = () => {
               {/* TODO: not saving delete changes correctly */}
               <IconButton
                 color='error'
+                disabled={!isEditing}
                 onClick={() => {
                   // NOTE: do we want custom stylings (i.e. using mui) for these
                   // pop up windows?
@@ -713,6 +610,7 @@ const PersonalInfoPage: React.FC = () => {
                   fullWidth
                   label='First Name'
                   value={contact.firstName}
+                  disabled={!isEditing}
                   onChange={(e) => {
                     const updatedContacts = [...localData.emergencyContacts];
                     updatedContacts[index] = {
@@ -731,6 +629,7 @@ const PersonalInfoPage: React.FC = () => {
                   fullWidth
                   label='Last Name'
                   value={contact.lastName}
+                  disabled={!isEditing}
                   onChange={(e) => {
                     const updatedContacts = [...localData.emergencyContacts];
                     updatedContacts[index] = {
@@ -749,6 +648,7 @@ const PersonalInfoPage: React.FC = () => {
                   fullWidth
                   label='Middle Name'
                   value={contact.middleName || ''}
+                  disabled={!isEditing}
                   onChange={(e) => {
                     const updatedContacts = [...localData.emergencyContacts];
                     updatedContacts[index] = {
@@ -767,6 +667,7 @@ const PersonalInfoPage: React.FC = () => {
                   fullWidth
                   label='Phone'
                   value={contact.phone}
+                  disabled={!isEditing}
                   onChange={(e) => {
                     const updatedContacts = [...localData.emergencyContacts];
                     updatedContacts[index] = {
@@ -785,6 +686,7 @@ const PersonalInfoPage: React.FC = () => {
                   fullWidth
                   label='Email'
                   value={contact.email}
+                  disabled={!isEditing}
                   onChange={(e) => {
                     const updatedContacts = [...localData.emergencyContacts];
                     updatedContacts[index] = {
@@ -803,6 +705,7 @@ const PersonalInfoPage: React.FC = () => {
                   fullWidth
                   label='Relationship'
                   value={contact.relationship}
+                  disabled={!isEditing}
                   onChange={(e) => {
                     const updatedContacts = [...localData.emergencyContacts];
                     updatedContacts[index] = {
@@ -823,6 +726,7 @@ const PersonalInfoPage: React.FC = () => {
           variant='contained'
           color='primary'
           sx={{ mt: 2 }}
+          disabled={!isEditing}
           onClick={() => {
             setLocalData({
               ...localData,
@@ -842,13 +746,14 @@ const PersonalInfoPage: React.FC = () => {
         >
           Add Emergency Contact
         </Button>
-      </EditableSection>
+      </Box>
+
       {/* DOCUMENTS */}
-      <EditableSection
-        title='Documents'
-        onSave={handleEmploymentSave}
-        onCancel={() => setLocalData(personalInfo)}
-      ></EditableSection>
+      <Box sx={{ mb: 4 }}>
+        <Typography variant='h6' sx={{ mb: 2 }}>
+          Documents
+        </Typography>
+      </Box>
     </Box>
   );
 };
