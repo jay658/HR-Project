@@ -3,16 +3,17 @@ import {
   testOnboardingRouter,
   updateOnboardingForUser,
   uploadOnboardingFile
-} from '../../../controllers/employeeControllers/onboarding'
+} from '../../../controllers/employeeControllers/onboarding';
 
-import express from 'express'
+import { authenticateToken } from '../../../middleware/authMiddleware';
+import express from 'express';
 
-const onboardingRouter = express.Router()
+const onboardingRouter = express.Router();
 
 onboardingRouter
   .get('/test', testOnboardingRouter)
-  .get('/', getOnboardingForUser)
-  .post('/upload', uploadOnboardingFile)
-  .put('/update', updateOnboardingForUser)
+  .get('/', authenticateToken, getOnboardingForUser)
+  .post('/upload', authenticateToken, uploadOnboardingFile)
+  .put('/update', authenticateToken, updateOnboardingForUser);
 
-export default onboardingRouter
+export default onboardingRouter;
