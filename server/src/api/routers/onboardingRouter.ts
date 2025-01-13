@@ -49,6 +49,7 @@ onboardingRouter
         { new: true }
       )
 
+      
       res.send(updatedOnboarding)
     }catch(err: unknown){
       console.log(`There was an error updating the onboarding form.`)

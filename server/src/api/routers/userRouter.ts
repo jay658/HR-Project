@@ -22,6 +22,7 @@ userRouter.get('/allusers', async (req : Request, res : Response) : Promise<any>
 
 // Register user
 userRouter.post('/register', async (req : Request, res : Response) : Promise<any> => {
+  try{
   const {username, email, password} = req.body
 
   // Check if username exists
@@ -36,7 +37,7 @@ userRouter.post('/register', async (req : Request, res : Response) : Promise<any
     return res.status(409).json({error : "Email Already Exists"})
   }
 
-  try{
+  
     //Create Hash Password
     const passwords = await bcrypt.hash(password, Number(process.env.SALT));
 

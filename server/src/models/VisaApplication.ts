@@ -80,4 +80,5 @@ const VisaApplication = mongoose.model<IVisaApplication>(
   VisaApplicationSchema
 );
 
+export type {IVisaApplication};
 export default VisaApplication;
