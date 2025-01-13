@@ -1,15 +1,18 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box, TextField, Button, Typography } from "@mui/material";
+import { useAuth } from "../auth/AuthContext";
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleLogin = () => {
     if (username === "test" && password === "password") {
       localStorage.setItem("isLoggedIn", "true");
+      login();
       navigate("/onboarding");
     } else {
       alert("Invalid credentials");
