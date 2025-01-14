@@ -1,21 +1,51 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Box, TextField, Button, Typography } from "@mui/material";
+import { Box, TextField, Button, Typography, Alert } from "@mui/material";
 import { useAuth } from "../auth/AuthContext";
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [error, setError] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  const handleLogin = () => {
-    if (username === "test" && password === "password") {
-      localStorage.setItem("isLoggedIn", "true");
-      login();
-      navigate("/onboarding");
-    } else {
-      alert("Invalid credentials");
+  const handleLogin = async () => {
+    try {
+      setError("");
+      setIsLoading(true);
+
+      const response = await fetch("/api/user/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Login failed");
+      }
+
+      // Store token in localStorage
+      localStorage.setItem("token", data.token);
+
+      // Update auth context
+      login(data.user);
+
+      // Redirect based on onboarding status
+      if (data.user.onboardingId) {
+        navigate("/dashboard");
+      } else {
+        navigate("/onboarding");
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -24,6 +54,11 @@ const LoginPage: React.FC = () => {
       <Typography variant="h4" gutterBottom>
         Login
       </Typography>
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {error}
+        </Alert>
+      )}
       <TextField
         fullWidth
         margin="normal"
@@ -31,6 +66,7 @@ const LoginPage: React.FC = () => {
         variant="outlined"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
+        disabled={isLoading}
       />
       <TextField
         fullWidth
@@ -40,14 +76,16 @@ const LoginPage: React.FC = () => {
         variant="outlined"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
+        disabled={isLoading}
       />
       <Button
         variant="contained"
         color="primary"
         fullWidth
         onClick={handleLogin}
+        disabled={isLoading}
       >
-        Login
+        {isLoading ? "Logging in..." : "Login"}
       </Button>
     </Box>
   );
