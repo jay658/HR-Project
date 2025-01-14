@@ -5,6 +5,7 @@ import EmployeeUser from "../../models/EmployeeUser";
 import { authenticateToken } from "../auth/authMiddleware";
 import Apartment from "../../models/Apartment";
 
+
 interface AuthRequest extends Request {
   user?: {
     userId: string;
@@ -122,5 +123,6 @@ userRouter.get(
     }
   }
 );
+
 
 export default userRouter;
