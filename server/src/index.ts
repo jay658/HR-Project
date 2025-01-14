@@ -2,6 +2,7 @@ import cors, { CorsOptions } from 'cors'
 import express, { Express } from 'express'
 
 import apiRouter from './api/api'
+import connectToDB from './config/connection'
 import dotenv from 'dotenv'
 import mongoose from 'mongoose'
 
@@ -26,16 +27,6 @@ app.use('/api', apiRouter)
 
 app.listen(PORT, () => {
   console.log(`Listening to server: ${PORT}`)
-})
+});
 
-async function runDB() {
-  try {
-    await mongoose.connect(uri);
-    await mongoose.connection.db?.admin().command({ ping: 1 })
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
-  }catch(err){
-    console.log(`There was an error connecting to the db: ${err}`)
-  }
-}
-
-runDB()
+connectToDB();

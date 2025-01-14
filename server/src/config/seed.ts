@@ -16,10 +16,12 @@ import Onboarding from '../models/Onboarding';
 import PersonalInfo from '../models/PersonalInfo';
 import { Types } from 'mongoose'
 import VisaApplication from '../models/VisaApplication';
-import db from './connection';
+import connectToDB from './connection';
+import mongoose from 'mongoose';
 
 const seed = async () => {
   try {
+    await connectToDB();
     await VisaApplication.deleteMany();
     await Onboarding.deleteMany();
     await Apartment.deleteMany();
@@ -137,7 +139,8 @@ const seed = async () => {
   } catch (err) {
     console.error(`There was an error seeding the data: ${err}`);
   } finally {
-    if (db && db.close) await db.close();
+    await mongoose.connection.close();
+    console.log('DB connection closed');
   }
 };
 
