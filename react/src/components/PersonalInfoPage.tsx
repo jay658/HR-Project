@@ -18,7 +18,10 @@ import {
 } from '@mui/material';
 import { AppDispatch, RootState } from '../store/store';
 import React, { useEffect, useState } from 'react';
-import { ValidationErrors, validatePersonalInfo } from '../utils/validation';
+import {
+  ValidationErrors,
+  validatePersonalInfo
+} from '../utils/personalInfoValidation';
 import {
   fetchPersonalInfo,
   updatePersonalInfo,
@@ -86,6 +89,7 @@ const US_STATES = [
 const PersonalInfoPage: React.FC = () => {
   const personalInfo = useSelector((state: RootState) => state.personalInfo);
   const dispatch = useDispatch<AppDispatch>();
+
   const [localData, setLocalData] = useState<PersonalInfo>(personalInfo);
   const [isEditing, setIsEditing] = useState(false);
   const [errors, setErrors] = useState<ValidationErrors>({});
@@ -644,6 +648,11 @@ const PersonalInfoPage: React.FC = () => {
         <Typography variant='h6' sx={{ mb: 2 }}>
           Emergency Contact
         </Typography>
+        {errors.emergencyContacts?.[0]?.firstName && (
+          <Typography color='error'>
+            {errors.emergencyContacts[0].firstName}
+          </Typography>
+        )}
         {localData.emergencyContacts.map((contact, index) => (
           <Box
             key={index}
@@ -710,6 +719,8 @@ const PersonalInfoPage: React.FC = () => {
                       emergencyContacts: updatedContacts
                     });
                   }}
+                  error={Boolean(errors.emergencyContacts?.[index]?.firstName)}
+                  helperText={errors.emergencyContacts?.[index]?.firstName}
                 />
               </Grid2>
               <Grid2 size={4}>
@@ -729,6 +740,8 @@ const PersonalInfoPage: React.FC = () => {
                       emergencyContacts: updatedContacts
                     });
                   }}
+                  error={Boolean(errors.emergencyContacts?.[index]?.lastName)}
+                  helperText={errors.emergencyContacts?.[index]?.lastName}
                 />
               </Grid2>
               <Grid2 size={4}>
@@ -767,6 +780,8 @@ const PersonalInfoPage: React.FC = () => {
                       emergencyContacts: updatedContacts
                     });
                   }}
+                  error={Boolean(errors.emergencyContacts?.[index]?.phone)}
+                  helperText={errors.emergencyContacts?.[index]?.phone}
                 />
               </Grid2>
               <Grid2 size={5}>
@@ -807,6 +822,10 @@ const PersonalInfoPage: React.FC = () => {
                       emergencyContacts: updatedContacts
                     });
                   }}
+                  error={Boolean(
+                    errors.emergencyContacts?.[index]?.relationship
+                  )}
+                  helperText={errors.emergencyContacts?.[index]?.relationship}
                 />
               </Grid2>
             </Grid2>

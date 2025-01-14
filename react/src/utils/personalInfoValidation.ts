@@ -1,4 +1,5 @@
 import { PersonalInfo } from '../types/PersonalInfo';
+import { validateEmail, validatePhone, validateSSN, validateZipCode } from './validators';
 
 interface EmergencyContactErrors {
   firstName?: string;
@@ -40,22 +41,6 @@ export interface ValidationErrors {
   };
   emergencyContacts?: (EmergencyContactErrors | undefined)[];
 }
-
-export const validateEmail = (email: string): boolean => {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-};
-
-export const validatePhone = (phone: string): boolean => {
-  return /^\d{10}$/.test(phone.replace(/\D/g, ''));
-};
-
-export const validateSSN = (ssn: string): boolean => {
-  return /^\d{9}$/.test(ssn.replace(/\D/g, ''));
-};
-
-export const validateZipCode = (zipCode: string): boolean => {
-  return /^\d{5}(-\d{4})?$/.test(zipCode);
-};
 
 export const validatePersonalInfo = (data: PersonalInfo): ValidationErrors => {
   const errors: ValidationErrors = {};
@@ -204,6 +189,11 @@ export const validatePersonalInfo = (data: PersonalInfo): ValidationErrors => {
       }
       if (!contact.relationship?.trim())
         contactErrors.relationship = 'Relationship is required';
+      if (!contact.email?.trim()) {
+        contactErrors.email = 'Email is required';
+      } else if (!validateEmail(contact.email)) {
+        contactErrors.email = 'Invalid email format';
+      }
       return Object.keys(contactErrors).length ? contactErrors : undefined;
     });
     if (errors.emergencyContacts.every((e) => e === undefined)) {
