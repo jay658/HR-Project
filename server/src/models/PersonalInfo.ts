@@ -181,7 +181,7 @@ const PersonalInfoSchema = new Schema({
   profilePicture: {
     type: Schema.Types.ObjectId,
     ref: 'Document',
-    default: null
+    default: DEFAULT_PROFILE_PICTURE_ID
   },
   // a employee can have multiple emergency contacts
   emergencyContacts: [
