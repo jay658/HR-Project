@@ -1,20 +1,24 @@
-import { AppDispatch, RootState } from '../store/store';
 import {
+  Alert,
   Avatar,
   Box,
   Button,
   Divider,
   FormControl,
+  FormHelperText,
   Grid2,
   IconButton,
   InputLabel,
   MenuItem,
   Select,
   SelectChangeEvent,
+  Snackbar,
   TextField,
   Typography
 } from '@mui/material';
+import { AppDispatch, RootState } from '../store/store';
 import React, { useEffect, useState } from 'react';
+import { ValidationErrors, validatePersonalInfo } from '../utils/validation';
 import {
   fetchPersonalInfo,
   updatePersonalInfo,
@@ -24,7 +28,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import DeleteIcon from '@mui/icons-material/Delete';
 import { DocumentsSection } from './DocumentSection';
-import type { PersonalInfo } from '../store/personalInfoSlice/personalInfoSlice';
+import type { PersonalInfo } from '../types/PersonalInfo';
 
 const US_STATES = [
   { code: 'AL' },
@@ -84,6 +88,7 @@ const PersonalInfoPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [localData, setLocalData] = useState<PersonalInfo>(personalInfo);
   const [isEditing, setIsEditing] = useState(false);
+  const [errors, setErrors] = useState<ValidationErrors>({});
 
   useEffect(() => {
     dispatch(fetchPersonalInfo());
@@ -93,12 +98,51 @@ const PersonalInfoPage: React.FC = () => {
     setLocalData(personalInfo);
   }, [personalInfo]);
 
-  const handleSaveAll = () => {
-    dispatch(updatePersonalInfo(localData));
-    if (localData.SSN !== personalInfo.SSN) {
-      dispatch(updateSSN(localData.SSN));
+  const [notification, setNotification] = useState<{
+    open: boolean;
+    message: string;
+    severity: 'success' | 'error';
+  }>({
+    open: false,
+    message: '',
+    severity: 'success'
+  });
+
+  const handleCloseNotification = () => {
+    setNotification((prev) => ({ ...prev, open: false }));
+  };
+
+  const handleSaveAll = async () => {
+    const validationErrors = validatePersonalInfo(localData);
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      setNotification({
+        open: true,
+        message: 'Please fix the validation errors before saving.',
+        severity: 'error'
+      });
+      return;
     }
-    setIsEditing(false);
+
+    try {
+      await dispatch(updatePersonalInfo(localData));
+      if (localData.SSN !== personalInfo.SSN) {
+        await dispatch(updateSSN(localData.SSN));
+      }
+      setIsEditing(false);
+      setNotification({
+        open: true,
+        message: 'Changes saved successfully!',
+        severity: 'success'
+      });
+    } catch (error) {
+      console.log(`Failed to save changes in personal info page: ${error}`);
+      setNotification({
+        open: true,
+        message: 'Failed to save changes. Please try again.',
+        severity: 'error'
+      });
+    }
   };
 
   const handleCancelAll = () => {
@@ -195,21 +239,6 @@ const PersonalInfoPage: React.FC = () => {
           Name
         </Typography>
         <Grid2 container spacing={2}>
-          {/* <Grid2 size={6}>
-            <TextField
-              fullWidth
-              label='Profile Picture'
-              value={localData.profilePicture}
-              // enable when we are in editing state
-              disabled={!isEditing}
-              onChange={(e) =>
-                setLocalData({
-                  ...localData,
-                  profilePicture: e.target.value
-                })
-              }
-            />
-          </Grid2> */}
           <Grid2 size={12} display='flex' alignItems='center' gap={2}>
             <Avatar
               // await s3 setup
@@ -251,6 +280,8 @@ const PersonalInfoPage: React.FC = () => {
                   name: { ...localData.name, firstName: e.target.value }
                 })
               }
+              error={Boolean(errors.name?.firstName)}
+              helperText={errors.name?.firstName}
             />
           </Grid2>
           <Grid2 size={6}>
@@ -265,6 +296,8 @@ const PersonalInfoPage: React.FC = () => {
                   name: { ...localData.name, lastName: e.target.value }
                 })
               }
+              error={Boolean(errors.name?.lastName)}
+              helperText={errors.name?.lastName}
             />
           </Grid2>
           <Grid2 size={6}>
@@ -307,6 +340,8 @@ const PersonalInfoPage: React.FC = () => {
                   email: e.target.value
                 })
               }
+              error={Boolean(errors.email)}
+              helperText={errors.email}
             />
           </Grid2>
           <Grid2 size={6}>
@@ -321,6 +356,8 @@ const PersonalInfoPage: React.FC = () => {
                   SSN: e.target.value
                 })
               }
+              error={Boolean(errors.SSN)}
+              helperText={errors.SSN}
             />
           </Grid2>
           <Grid2 size={6}>
@@ -336,6 +373,8 @@ const PersonalInfoPage: React.FC = () => {
                   dob: e.target.value
                 })
               }
+              error={Boolean(errors.dob)}
+              helperText={errors.dob}
             />
           </Grid2>
           <FormControl>
@@ -473,6 +512,8 @@ const PersonalInfoPage: React.FC = () => {
                   }
                 })
               }
+              error={Boolean(errors.phone?.cell)}
+              helperText={errors.phone?.cell}
             />
           </Grid2>
           <Grid2 size={6}>
@@ -490,6 +531,8 @@ const PersonalInfoPage: React.FC = () => {
                   }
                 })
               }
+              error={Boolean(errors.phone?.work)}
+              helperText={errors.phone?.work}
             />
           </Grid2>
         </Grid2>
@@ -518,6 +561,11 @@ const PersonalInfoPage: React.FC = () => {
                 <MenuItem value='greenCard'>Permanent Resident</MenuItem>
                 <MenuItem value='nonresident'>Non-Resident</MenuItem>
               </Select>
+              {errors.employment?.residencyStatus && (
+                <FormHelperText>
+                  {errors.employment.residencyStatus}
+                </FormHelperText>
+              )}
             </FormControl>
           </Grid2>
           {localData.employment.residencyStatus === 'nonresident' && (
@@ -539,6 +587,11 @@ const PersonalInfoPage: React.FC = () => {
                     <MenuItem value='F1-OPT'>F1-OPT</MenuItem>
                     <MenuItem value='H4'>H4</MenuItem>
                   </Select>
+                  {errors.employment?.visaType && (
+                    <FormHelperText>
+                      {errors.employment.visaType}
+                    </FormHelperText>
+                  )}
                 </FormControl>
               </Grid2>
               <Grid2 size={6}>
@@ -557,6 +610,8 @@ const PersonalInfoPage: React.FC = () => {
                       }
                     })
                   }
+                  error={Boolean(errors.employment?.startDate)}
+                  helperText={errors.employment?.startDate}
                 />
               </Grid2>
               <Grid2 size={6}>
@@ -575,6 +630,8 @@ const PersonalInfoPage: React.FC = () => {
                       }
                     })
                   }
+                  error={Boolean(errors.employment?.endDate)}
+                  helperText={errors.employment?.endDate}
                 />
               </Grid2>
             </>
@@ -729,6 +786,8 @@ const PersonalInfoPage: React.FC = () => {
                       emergencyContacts: updatedContacts
                     });
                   }}
+                  error={Boolean(errors.emergencyContacts?.[index]?.email)}
+                  helperText={errors.emergencyContacts?.[index]?.email}
                 />
               </Grid2>
               <Grid2 size={3}>
@@ -785,6 +844,22 @@ const PersonalInfoPage: React.FC = () => {
       <Box sx={{ mb: 4 }}>
         <DocumentsSection isEditing={isEditing} />
       </Box>
+
+      <Snackbar
+        open={notification.open}
+        autoHideDuration={2000}
+        onClose={handleCloseNotification}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={handleCloseNotification}
+          severity={notification.severity}
+          variant='filled'
+          sx={{ width: '100%' }}
+        >
+          {notification.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
