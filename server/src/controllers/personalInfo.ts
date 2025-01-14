@@ -1,8 +1,9 @@
-import PersonalInfo, { PersonalInfoTypeT } from "../models/PersonalInfo";
-import { Request, Response } from "express";
+import { Request, Response } from 'express';
 
-import EmployeeUser from "../models/EmployeeUser";
-import Onboarding from "../models/Onboarding";
+import EmployeeUser from '../models/EmployeeUser';
+import { IPersonalInfoData } from '../models/shared/types';
+import Onboarding from '../models/Onboarding';
+import PersonalInfo from '../models/PersonalInfo';
 
 // temp test user, await auth
 const currentTestUser = 'john.doe';
@@ -11,11 +12,9 @@ const testPersonalInfoRouter = (_req: Request, res: Response) => {
   try {
     res.json('Successfully hit personal info router');
   } catch (error) {
-    console.log(
-      `There was an error in the personal info test route: ${error}`
-    );
+    console.log(`There was an error in the personal info test route: ${error}`);
   }
-}
+};
 
 const getPersonalInfo = async (_req: Request, res: Response) => {
   try {
@@ -34,11 +33,11 @@ const getPersonalInfo = async (_req: Request, res: Response) => {
   } catch (error: unknown) {
     console.log(`Error fetching personal information: ${error}`);
   }
-}
+};
 
 const updatePersonalInfo = async (req: Request, res: Response) => {
   try {
-    const { updates }: { updates: Partial<PersonalInfoTypeT> } = req.body;
+    const { updates }: { updates: Partial<IPersonalInfoData> } = req.body;
     const user = await EmployeeUser.findOne({ username: currentTestUser });
     if (!user) throw Error('User not found');
 
@@ -57,10 +56,6 @@ const updatePersonalInfo = async (req: Request, res: Response) => {
   } catch (error: unknown) {
     console.log(`Error updating personal information: ${error}`);
   }
-}
+};
 
-export {
-  testPersonalInfoRouter,
-  getPersonalInfo,
-  updatePersonalInfo
-}
+export { testPersonalInfoRouter, getPersonalInfo, updatePersonalInfo };
