@@ -14,7 +14,7 @@ import EmployeeUser from '../models/EmployeeUser';
 import FacilityIssue from '../models/FacilityIssue';
 import Onboarding from '../models/Onboarding';
 import PersonalInfo from '../models/PersonalInfo';
-import { Types } from 'mongoose'
+import { Types } from 'mongoose';
 import VisaApplication from '../models/VisaApplication';
 import connectToDB from './connection';
 import mongoose from 'mongoose';
@@ -32,12 +32,6 @@ const seed = async () => {
 
     const apartments = await Apartment.insertMany(seedApartments);
     const users = await EmployeeUser.insertMany(seedEmployeeUsers);
-    const onboardingItems = await Onboarding.insertMany(
-      seedOnboarding.map((onboarding, idx) => ({
-        ...onboarding,
-        userId: users[idx]._id
-      }))
-    );
 
     const documents = await Document.insertMany(
       seedDocuments.map((doc) => {
@@ -50,6 +44,24 @@ const seed = async () => {
           userId = users[2]._id;
         }
         return { ...doc, userId };
+      })
+    );
+
+    const onboardingItems = await Onboarding.insertMany(
+      seedOnboarding.map((onboarding, idx) => {
+        const userDocs = documents.filter((d) =>
+          d.userId.equals(users[idx]._id)
+        );
+        return {
+          ...onboarding,
+          userId: users[idx]._id,
+          profilePicture: userDocs.find((d) => d.type === 'profilePicture')
+            ?._id,
+          driversLicense: {
+            ...onboarding.driversLicense,
+            document: userDocs.find((d) => d.type === 'driverLicense')?._id
+          }
+        };
       })
     );
 
@@ -85,7 +97,9 @@ const seed = async () => {
       user.onboardingId = onboardingItems[idx]._id;
       user.personalInfoId = personalInfos[idx]._id;
 
-      apartments.find(apartment => apartment._id === randomApartmentId)?.tenants.push(user._id);
+      apartments
+        .find((apartment) => apartment._id === randomApartmentId)
+        ?.tenants.push(user._id);
     });
 
     await Promise.all(users.map((user) => user.save()));
@@ -95,38 +109,18 @@ const seed = async () => {
     const facilityIssues = await FacilityIssue.insertMany(
       seedFacilityIssue.map((issue) => {
         const createdUserId = getRandomId(users);
-        return ({
+        return {
           ...issue,
           createdBy: createdUserId,
-          apartmentId: users.find(user => user._id === createdUserId)?.apartmentId,
+          apartmentId: users.find((user) => user._id === createdUserId)
+            ?.apartmentId,
           comments: issue.comments.map((comment) => ({
             ...comment,
             createdBy: getRandomId(users)
           }))
-        })
+        };
       })
     );
-
-    // alternative: creator of the issue will be the first person to comment
-    // subsequently, comments come from random users; comments should technically
-    // be limited to the creator of the issue and hr personel, right? other users
-    // should not be able to see them, im not sure
-    // const facilityIssues = await FacilityIssue.insertMany(
-    //   seedFacilityIssue.map((issue) => {
-    //     const creator = users[Math.floor(Math.random() * users.length)];
-    //     return {
-    //       ...issue,
-    //       createdBy: creator._id,
-    //       comments: issue.comments.map((comment, idx) => ({
-    //         ...comment,
-    //         createdBy: {
-    //           userId: idx === 0 ? creator._id : getRandomUserId(users),
-    //           userType: 'EmployeeUser'
-    //         }
-    //       }))
-    //     };
-    //   })
-    // );
 
     //user without onboarding
     await EmployeeUser.create({

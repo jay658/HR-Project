@@ -1,10 +1,20 @@
-import mongoose, { InferSchemaType } from 'mongoose'
-
-const Schema = mongoose.Schema;
+import {
+  addressSchema,
+  carInfoSchema,
+  contactSchema,
+  driversLicenseSchema,
+  employmentSchema,
+  genderSchema,
+  nameSchema,
+  phoneSchema,
+  profilePictureSchema,
+  ssnSchema
+} from './shared/commonSchemas';
+import mongoose, { InferSchemaType, Schema } from 'mongoose';
 
 const OnboardingSchema = new Schema({
   userId: {
-    type: Schema.Types.ObjectId, 
+    type: Schema.Types.ObjectId,
     ref: 'EmployeeUser',
     required: true
   },
@@ -13,111 +23,24 @@ const OnboardingSchema = new Schema({
     enum: ['approved', 'rejected', 'pending'],
     default: 'pending'
   },
-  name: {
-    type: String,
-    default: ''
-  },
-  gender: {
-    type: String,
-    enum: ['male', 'female', 'other'],
-    default: null
-  },
-  dob: {
-    type: Date,
-    default: null
-  },
-  address: {
-    type: String, 
-    default: ''
-  },
-  phone: {
-    type: {
-      work: {
-        type: String,
-        default: ''
-      },
-      cell: {
-        type: String,
-        default: ''
-      }
-    }, 
-    default: {
-      work: '',
-      cell: ''
-    }
-  },
-  SSN: {
-    type: Number,
-    default: null
-  },
+  name: { type: nameSchema, required: true },
+  profilePicture: profilePictureSchema,
+  gender: genderSchema,
+  dob: { type: Date, required: true },
+  address: { type: addressSchema, required: true },
+  phone: { type: phoneSchema, required: true },
+  SSN: ssnSchema,
   carInfo: {
-    type: {
-      make: {
-        type: String,
-        default: ''
-      },
-      model: {
-        type: String,
-        default: ''
-      },
-      color: {
-        type: String,
-        default: ''
-      }
-    }, 
-    default: {
-      type: '',
-      model: '',
-      color: ''
-    }
+    type: carInfoSchema,
+    default: { make: null, model: null, color: null }
   },
-  driversLicense: {
-    type: String,
-    default: ''
-  },
-  residency: {
-    type: String,
-    enum: ['citizen', 'permanent resident', 'nonresident'],
-    default: null
-  },
-  documents: {
-    type: [{
-      type: String
-    }],
-    default: []
-  },
-  reference: {
-    type: {
-      firstName: String,
-      lastName: String,
-      middleName: String,
-      phone: String,
-      email: String,
-      relationship: String
-    },
-    default: null
-  },
-  emergencyContact: {
-    type: {
-      firstName: String,
-      lastName: String,
-      middleName: {
-        type: String,
-        default: ''
-      },
-      phone: String,
-      email: String,
-      relationship: String
-    },
-    default: null
-  },
-  profilePicture: {
-    type: String,
-    default: ''
-  }
+  driversLicense: driversLicenseSchema,
+  employment: { type: employmentSchema, required: true },
+  reference: { type: contactSchema, default: null },
+  emergencyContact: { type: [contactSchema], required: true }
 });
 
 const Onboarding = mongoose.model('Onboarding', OnboardingSchema);
 
-export type OnboardingTypeT = InferSchemaType<typeof OnboardingSchema>
+export type OnboardingTypeT = InferSchemaType<typeof OnboardingSchema>;
 export default Onboarding;

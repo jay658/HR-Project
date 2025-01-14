@@ -37,24 +37,39 @@ const seedApartments = [
 const seedOnboarding = [
   {
     status: 'approved',
-    name: 'John Doe',
+    name: {
+      firstName: 'John',
+      lastName: 'Doe'
+    },
     gender: 'male',
-    dob: '1985-06-15',
-    address: '123 Main Street, New York, NY',
+    dob: new Date('1985-06-15'),
+    address: {
+      buildingNumber: '123',
+      streetName: 'Main Street',
+      city: 'New York',
+      state: 'NY',
+      zipCode: '10001'
+    },
     phone: {
       work: '555-123-4567',
       cell: '555-987-6543'
     },
-    SSN: 123456789,
+    SSN: '123456789',
     carInfo: {
       make: 'Toyota',
       model: 'Camry',
       color: 'Blue'
     },
-    driversLicense: 'NY123456789',
-    residency: 'citizen',
-    documents: ['passport.pdf', 'SSN_card.jpg'],
-    profilePicture: 'john_doe_profile.jpg',
+    driversLicense: {
+      hasLicense: true,
+      number: 'NY123456789',
+      expirationDate: new Date('2025-01-01'),
+      document: null
+    },
+    employment: {
+      residencyStatus: 'citizen'
+    },
+    profilePicture: null,
     reference: {
       firstName: 'Jane',
       lastName: 'Smith',
@@ -62,55 +77,134 @@ const seedOnboarding = [
       email: 'jane.smith@example.com',
       relationship: 'friend'
     },
-    emergencyContact: {
-      firstName: 'Jane',
-      lastName: 'Smith',
-      phone: '555-444-5555',
-      email: 'jane.smith@example.com',
-      relationship: 'friend'
-    }
+    emergencyContact: [
+      {
+        firstName: 'Mary',
+        lastName: 'Doe',
+        middleName: null,
+        phone: '555-111-2222',
+        email: 'mary.doe@example.com',
+        relationship: 'spouse'
+      },
+      {
+        firstName: 'James',
+        lastName: 'Doe',
+        middleName: null,
+        phone: '555-333-4444',
+        email: 'james.doe@example.com',
+        relationship: 'father'
+      }
+    ]
   },
   {
     status: 'pending',
-    name: 'Jane Smith',
+    name: {
+      firstName: 'Jane',
+      lastName: 'Smith'
+    },
     gender: 'female',
-    dob: '1990-02-28',
-    address: '456 Elm Street, San Francisco, CA',
+    dob: new Date('1990-02-28'),
+    address: {
+      buildingNumber: '456',
+      streetName: 'Elm Street',
+      city: 'San Francisco',
+      state: 'CA',
+      zipCode: '94101'
+    },
     phone: {
       work: '555-222-3333',
       cell: '555-444-5555'
     },
-    SSN: 987654321,
+    SSN: '987654321',
     carInfo: {
       make: 'Honda',
       model: 'Civic',
       color: 'Red'
     },
-    driversLicense: 'CA987654321',
-    residency: 'permanent resident',
-    documents: ['drivers_license.jpg'],
-    profilePicture: 'jane_smith_profile.jpg'
+    driversLicense: {
+      hasLicense: true,
+      number: 'CA987654321',
+      expirationDate: new Date('2024-12-31'),
+      document: null
+    },
+    employment: {
+      residencyStatus: 'greenCard'
+    },
+    profilePicture: null,
+    emergencyContact: [
+      {
+        firstName: 'Robert',
+        lastName: 'Smith',
+        middleName: null,
+        phone: '555-555-6666',
+        email: 'robert.smith@example.com',
+        relationship: 'brother'
+      },
+      {
+        firstName: 'Margaret',
+        lastName: 'Wilson',
+        middleName: null,
+        phone: '555-777-8888',
+        email: 'margaret.wilson@example.com',
+        relationship: 'mother'
+      }
+    ]
   },
   {
     status: 'rejected',
-    name: 'Michael Brown',
-    gender: 'male',
-    dob: '1980-12-05',
-    address: '789 Maple Avenue, Seattle, WA',
-    phone: {
-      work: '555-666-7777',
-      cell: '555-888-9999'
+    name: {
+      firstName: 'Michael',
+      lastName: 'Brown',
+      middleName: 'Conversion',
+      preferredName: 'Test'
     },
-    SSN: 456789123,
+    gender: 'male',
+    dob: new Date('1980-12-05'),
+    address: {
+      buildingNumber: '789',
+      streetName: 'Maple Avenue',
+      city: 'Seattle',
+      state: 'WA',
+      zipCode: '98101'
+    },
+    phone: {
+      cell: '555-999-0000'
+    },
+    SSN: '456789123',
     carInfo: {
       make: 'Ford',
       model: 'Escape',
       color: 'White'
     },
-    driversLicense: 'WA456789123',
-    residency: 'nonresident',
-    documents: ['visa.pdf', 'passport.jpg'],
-    profilePicture: 'michael_brown_profile.jpg'
+    driversLicense: {
+      hasLicense: true,
+      number: 'WA456789123',
+      expirationDate: new Date('2025-06-30'),
+      document: null
+    },
+    employment: {
+      residencyStatus: 'nonresident',
+      visaType: 'H1-B',
+      startDate: new Date('2023-03-01'),
+      endDate: new Date('2024-03-01')
+    },
+    profilePicture: null,
+    emergencyContact: [
+      {
+        firstName: 'Sarah',
+        lastName: 'Brown',
+        phone: '555-999-0000',
+        email: 'sarah.brown@example.com',
+        relationship: 'spouse'
+      },
+      {
+        firstName: 'David',
+        lastName: 'Brown',
+        phone: '555-222-3333',
+        email: 'david.brown@example.com',
+        relationship: 'father'
+      }
+    ]
   }
 ];
 
@@ -169,13 +263,11 @@ const seedPersonalInfo = [
     userId: null,
     name: {
       firstName: 'John',
-      lastName: 'Doe',
-      middleName: null,
-      preferredName: null
+      lastName: 'Doe'
     },
     email: 'john.doe@example.com',
     gender: 'male',
-    dob: '1985-06-15',
+    dob: new Date('1985-06-15'),
     address: {
       buildingNumber: '123',
       streetName: 'Main Street',
@@ -187,12 +279,30 @@ const seedPersonalInfo = [
       work: '555-123-4567',
       cell: '555-987-6543'
     },
-    employment: {
-      residencyStatus: 'citizen',
-      visaType: null,
-      documents: []
+    SSN: '123456789',
+    carInfo: {
+      make: 'Toyota',
+      model: 'Camry',
+      color: 'Blue'
     },
-    emergencyContacts: [
+    driversLicense: {
+      hasLicense: true,
+      number: 'NY123456789',
+      expirationDate: new Date('2025-01-01'),
+      document: null
+    },
+    employment: {
+      residencyStatus: 'citizen'
+    },
+    profilePicture: 'john_profile.jpg',
+    reference: {
+      firstName: 'Jane',
+      lastName: 'Smith',
+      phone: '555-444-5555',
+      email: 'jane.smith@example.com',
+      relationship: 'friend'
+    },
+    emergencyContact: [
       {
         firstName: 'Mary',
         lastName: 'Doe',
@@ -209,31 +319,18 @@ const seedPersonalInfo = [
         email: 'james.doe@example.com',
         relationship: 'father'
       }
-    ],
-    SSN: '123456789',
-    carInfo: {
-      make: 'Toyota',
-      model: 'Camry',
-      color: 'Blue'
-    },
-    driversLicense: {
-      hasLicense: true,
-      number: 'NY123456789',
-      expirationDate: new Date('2025-01-01')
-    }
+    ]
   },
   {
     // based on jane.smith's onboarding data
     userId: null,
     name: {
       firstName: 'Jane',
-      lastName: 'Smith',
-      middleName: null,
-      preferredName: null
+      lastName: 'Smith'
     },
     email: 'jane.smith@example.com',
     gender: 'female',
-    dob: '1990-02-28',
+    dob: new Date('1990-02-28'),
     address: {
       buildingNumber: '456',
       streetName: 'Elm Street',
@@ -245,21 +342,6 @@ const seedPersonalInfo = [
       work: '555-222-3333',
       cell: '555-444-5555'
     },
-    employment: {
-      residencyStatus: 'greenCard',
-      visaType: null,
-      documents: []
-    },
-    emergencyContacts: [
-      {
-        firstName: 'Robert',
-        lastName: 'Smith',
-        middleName: null,
-        phone: '555-555-6666',
-        email: 'robert.smith@example.com',
-        relationship: 'brother'
-      }
-    ],
     SSN: '987654321',
     carInfo: {
       make: 'Honda',
@@ -269,21 +351,42 @@ const seedPersonalInfo = [
     driversLicense: {
       hasLicense: true,
       number: 'CA987654321',
-      expirationDate: new Date('2024-12-31')
-    }
+      expirationDate: new Date('2024-12-31'),
+      document: null
+    },
+    employment: {
+      residencyStatus: 'greenCard'
+    },
+    profilePicture: 'jane_profile.jpg',
+    emergencyContact: [
+      {
+        firstName: 'Robert',
+        lastName: 'Smith',
+        middleName: null,
+        phone: '555-555-6666',
+        email: 'robert.smith@example.com',
+        relationship: 'brother'
+      },
+      {
+        firstName: 'Margaret',
+        lastName: 'Wilson',
+        middleName: null,
+        phone: '555-777-8888',
+        email: 'margaret.wilson@example.com',
+        relationship: 'mother'
+      }
+    ]
   },
   {
     // based on michael.brown's onboarding data
     userId: null,
     name: {
       firstName: 'Michael',
-      lastName: 'Brown',
-      middleName: null,
-      preferredName: null
+      lastName: 'Brown'
     },
     email: 'michael.brown@example.com',
     gender: 'male',
-    dob: '1980-12-05',
+    dob: new Date('1980-12-05'),
     address: {
       buildingNumber: '789',
       streetName: 'Maple Avenue',
@@ -292,34 +395,8 @@ const seedPersonalInfo = [
       zipCode: '98101'
     },
     phone: {
-      work: '555-666-7777',
-      cell: '555-888-9999'
+      cell: '555-999-0000'
     },
-    employment: {
-      residencyStatus: 'nonresident',
-      visaType: 'H1-B',
-      startDate: new Date('2023-03-01'),
-      endDate: new Date('2024-03-01'),
-      documents: []
-    },
-    emergencyContacts: [
-      {
-        firstName: 'Sarah',
-        lastName: 'Brown',
-        middleName: null,
-        phone: '555-777-8888',
-        email: 'sarah.brown@example.com',
-        relationship: 'spouse'
-      },
-      {
-        firstName: 'David',
-        lastName: 'Brown',
-        middleName: null,
-        phone: '555-999-0000',
-        email: 'david.brown@example.com',
-        relationship: 'father'
-      }
-    ],
     SSN: '456789123',
     carInfo: {
       make: 'Ford',
@@ -329,8 +406,32 @@ const seedPersonalInfo = [
     driversLicense: {
       hasLicense: true,
       number: 'WA456789123',
-      expirationDate: new Date('2025-06-30')
-    }
+      expirationDate: new Date('2025-06-30'),
+      document: null
+    },
+    employment: {
+      residencyStatus: 'nonresident',
+      visaType: 'H1-B',
+      startDate: new Date('2023-03-01'),
+      endDate: new Date('2024-03-01')
+    },
+    profilePicture: 'michael_profile.jpg',
+    emergencyContact: [
+      {
+        firstName: 'Sarah',
+        lastName: 'Brown',
+        phone: '555-999-0000',
+        email: 'sarah.brown@example.com',
+        relationship: 'spouse'
+      },
+      {
+        firstName: 'David',
+        lastName: 'Brown',
+        phone: '555-222-3333',
+        email: 'david.brown@example.com',
+        relationship: 'father'
+      }
+    ]
   }
 ];
 
