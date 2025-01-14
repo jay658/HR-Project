@@ -1,13 +1,8 @@
 import express from 'express'
+import { testUserRouter } from '../../controllers/user'
 
 const userRouter = express.Router()
 
-userRouter.get('/test', (_req, res) => {
-  try{
-    res.json('Successfully hit user router')
-  }catch(err){
-    console.log(`There was an error in the user test route: ${err}`)
-  }
-})
+userRouter.get('/test', testUserRouter)
 
 export default userRouter

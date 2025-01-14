@@ -1,13 +1,8 @@
 import express from 'express'
+import { testApartmentRouter } from '../../controllers/apartment'
 
 const apartmentRouter = express.Router()
 
-apartmentRouter.get('/test', (_req, res) => {
-  try{
-    res.json('Successfully hit apartment router')
-  }catch(err){
-    console.log(`There was an error in the apartment test route: ${err}`)
-  }
-})
+apartmentRouter.get('/test', testApartmentRouter)
 
 export default apartmentRouter
