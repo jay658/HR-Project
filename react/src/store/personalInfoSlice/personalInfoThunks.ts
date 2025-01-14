@@ -1,4 +1,4 @@
-import { PersonalInfo } from './personalInfoSlice';
+import { PersonalInfo } from '../../types/PersonalInfo';
 import axios from 'axios';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
