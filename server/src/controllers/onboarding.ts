@@ -2,6 +2,7 @@ import Onboarding, { OnboardingTypeT } from "../models/Onboarding";
 import { Request, Response } from "express";
 
 import EmployeeUser from "../models/EmployeeUser";
+import { uploadFileToAWS } from "../utility/AWS/aws";
 
 const testOnboardingRouter =  (_req: Request, res: Response) => {
   try{
@@ -75,9 +76,29 @@ const updateOnboardingStatus = async(req: Request, res: Response) => {
   }
 };
 
+const uploadOnboardingFile = async(req: Request, res: Response) => {
+  try{
+    const file = req.files?.file
+    
+    // When onboarding model is updated, we can check if the document type is okay and then save the url on the user's onboarding.
+    // const { type } = req.body
+    // const user = EmployeeUser.findOne({ username: 'john.doe'})
+    
+    if(!file) throw Error('No file uploaded')
+    if(Array.isArray(file)) throw new Error('Only one file at a time')
+    
+    const url = await uploadFileToAWS(file)
+    
+    res.json(url)
+  }catch(err: unknown){
+    console.log(`There was an error uploading the file: ${err}`)
+  }
+}
+
 export {
   testOnboardingRouter,
   getOnboardingForUser,
   updateOnboardingForUser,
-  updateOnboardingStatus
+  updateOnboardingStatus,
+  uploadOnboardingFile
 };
