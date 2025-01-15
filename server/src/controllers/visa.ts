@@ -174,6 +174,33 @@ const getVisaStatus = async (req : Request, res : Response) : Promise<any> => {
 }
 
 
+// Check Visa Type from Personal Info
+const checkVisaType = async (req : Request, res : Response) : Promise<any> => {
+  try{
+    const { username } = req.body;
+
+    // Find user
+    const user = await EmployeeUser.findOne({username : username});
+    if (!user) {
+      return res.status(404).json({error : "User not found"})
+    }
+
+    // Get personal info
+    const personalInfo = await PersonalInfo.findOne({userId:user._id})
+    if(!personalInfo){
+      return res.status(404).json({error : "Personal Info not found"})
+    }
+  } catch (error){
+    console.log("There was an error in checking Visa Type: ", error)
+    return res.status(400).json({error})
+  }
+
+  
+
+
+}
+
+
 
 export {
   testVisaRouter,

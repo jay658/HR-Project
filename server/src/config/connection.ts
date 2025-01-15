@@ -4,7 +4,7 @@ import mongoose from 'mongoose';
 dotenv.config();
 let uri = process.env.URI || '';
 const password = process.env.PASSWORD || '';
-const username = process.env.USERNAME || '';
+const username = process.env.APP_USERNAME || '';
 
 uri = uri.replace('<PASSWORD>', password).replace('<USERNAME>', username);
 

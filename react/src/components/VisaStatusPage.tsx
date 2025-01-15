@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -9,6 +9,8 @@ import {
 } from "@mui/material";
 
 const VisaStatusPage: React.FC = () => {
+  const [visaType, setVisaType] = useState("")
+
   return (
     <Box sx={{ p: 3, maxWidth: 600, mx: "auto", mt: 5 }}>
       <Typography variant="h4" gutterBottom>
