@@ -23,7 +23,7 @@ const getPersonalInfo = async (_req: Request, res: Response) => {
 
     const onboarding = await Onboarding.findById(user.onboardingId);
     if (!onboarding || onboarding.status !== 'approved') {
-      throw Error('User has not onboard yet');
+      throw Error('User has not onboarded yet');
     }
 
     const personalInfo = await PersonalInfo.findById(user.personalInfoId);
@@ -43,7 +43,7 @@ const updatePersonalInfo = async (req: Request, res: Response) => {
 
     const onboarding = await Onboarding.findById(user.onboardingId);
     if (!onboarding || onboarding.status !== 'approved') {
-      throw Error('User has not onboard yet');
+      throw Error('User has not onboarded yet');
     }
 
     const updateInfo = await PersonalInfo.findByIdAndUpdate(
