@@ -21,12 +21,7 @@ const getOnboardingForUser = async (_req: Request, res: Response) => {
     if (!user) throw Error('User not found');
 
     let onboarding = await Onboarding.findById(user.onboardingId);
-
-    if (!onboarding) {
-      onboarding = await Onboarding.create({ userId: user._id });
-      user.onboardingId = onboarding._id;
-      await user.save();
-    }
+    if (!onboarding) throw Error('User has not onboarded yet');
 
     res.json(onboarding);
   } catch (err: unknown) {
@@ -45,18 +40,37 @@ const updateOnboardingForUser = async (req: Request, res: Response) => {
     const user = await EmployeeUser.findOne({ username: 'michael.brown' });
     if (!user) throw Error('User not found');
 
-    const updatedOnboarding = await Onboarding.findByIdAndUpdate(
-      user.onboardingId,
-      {
+    let updatedOnboarding;
+
+    if (!user.onboardingId) {
+      // create new onboarding record with the initial data
+      const newOnboarding = await Onboarding.create({
+        userId: user._id,
         ...updates,
         status: 'pending'
-      },
-      { new: true }
-    );
+      });
+
+      // associate the new onboarding with the user
+      user.onboardingId = newOnboarding._id;
+      await user.save();
+
+      updatedOnboarding = newOnboarding;
+    } else {
+      // update existing onboarding record
+      updatedOnboarding = await Onboarding.findByIdAndUpdate(
+        user.onboardingId,
+        {
+          ...updates,
+          status: 'pending'
+        },
+        { new: true }
+      );
+    }
 
     res.send(updatedOnboarding);
   } catch (err: unknown) {
     console.log(`There was an error updating the onboarding form: ${err}`);
+    res.status(500).json({ message: `${err}` });
   }
 };
 
