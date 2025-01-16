@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { Box, TextField, Button, Typography, Alert } from "@mui/material";
 import { useAuth } from "../auth/AuthContext";
 
+const API_BASE_URL = 'http://localhost:3000/api'
+
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -16,7 +18,7 @@ const LoginPage: React.FC = () => {
       setError("");
       setIsLoading(true);
 
-      const response = await fetch("/api/user/login", {
+      const response = await fetch(`${API_BASE_URL}/user/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

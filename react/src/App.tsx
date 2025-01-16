@@ -19,6 +19,7 @@ import HousingPage from "./components/HousingPage";
 import DashboardPage from "./components/DashboardPage"; // You'll need to create this
 import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider, useAuth } from "./auth/AuthContext";
+import FacilityIssuesPage from "./components/FacilityIssuePage";
 
 // Create theme
 const theme = createTheme({
@@ -92,6 +93,15 @@ const App: React.FC = () => {
               }
             />
 
+            <Route
+              path="/facilityissue"
+              element={
+                <ProtectedRoute requireOnboarding={true}>
+                  <FacilityIssuesPage />   
+                </ProtectedRoute>
+              }
+            />
+
             {/* Protected routes that don't require onboarding */}
             <Route
               path="/onboarding"
@@ -112,3 +122,4 @@ const App: React.FC = () => {
 };
 
 export default App;
+

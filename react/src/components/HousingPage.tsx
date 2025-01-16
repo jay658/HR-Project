@@ -9,6 +9,9 @@ import {
 } from "@mui/material";
 import { Home, Users, Mail } from "lucide-react";
 
+const API_BASE_URL = 'http://localhost:3000/api'; 
+
+
 interface Roommate {
   id: string;
   username: string;
@@ -50,7 +53,7 @@ const HousingPage: React.FC = () => {
       setLoading(true);
       const token = localStorage.getItem("token");
 
-      const response = await axios.get("/api/user/housing", {
+      const response = await axios.get(`${API_BASE_URL}/user/housing`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
