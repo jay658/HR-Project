@@ -3,6 +3,7 @@ import { Box, TextField, Button, Typography } from "@mui/material";
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from '../store/store';
 import { registerUser } from "../store/registrationSlice/registrationThunks";
+import { useNavigate } from "react-router-dom";
 
 const RegistrationPage: React.FC = () => {
   const [username, setUsername] = useState<string>("");
@@ -11,6 +12,7 @@ const RegistrationPage: React.FC = () => {
   
   const dispatch = useDispatch<AppDispatch>();
   const registrationState = useSelector((state: RootState) => state.registration);
+  const navigate = useNavigate();
 
   const handleRegister = async () => {
     const registerData = {
@@ -21,11 +23,14 @@ const RegistrationPage: React.FC = () => {
 
     const result = await dispatch(registerUser(registerData));
 
+    console.log(result)
+
 
     if(!result.hasOwnProperty('error')){
       setUsername("");
       setPassword("");
       setEmail('')
+      navigate('/login');
     }
   };
 
