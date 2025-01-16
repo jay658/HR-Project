@@ -88,6 +88,7 @@ const US_STATES = [
 
 const PersonalInfoPage: React.FC = () => {
   const personalInfo = useSelector((state: RootState) => state.personalInfo);
+  console.log(`this is personalInfo: ${JSON.stringify(personalInfo)}`);
   const dispatch = useDispatch<AppDispatch>();
 
   const [localData, setLocalData] = useState<PersonalInfo>(personalInfo);
@@ -648,16 +649,16 @@ const PersonalInfoPage: React.FC = () => {
         <Typography variant='h6' sx={{ mb: 2 }}>
           Emergency Contact
         </Typography>
-        {errors.emergencyContacts?.[0]?.firstName && (
+        {errors.emergencyContact?.[0]?.firstName && (
           <Typography color='error'>
-            {errors.emergencyContacts[0].firstName}
+            {errors.emergencyContact[0].firstName}
           </Typography>
         )}
-        {localData.emergencyContacts.map((contact, index) => (
+        {localData.emergencyContact.map((contact, index) => (
           <Box
             key={index}
             sx={{
-              mb: index !== localData.emergencyContacts.length - 1 ? 3 : 0,
+              mb: index !== localData.emergencyContact.length - 1 ? 3 : 0,
               position: 'relative'
             }}
           >
@@ -685,13 +686,12 @@ const PersonalInfoPage: React.FC = () => {
                         'Are you sure you want to delete this emergency contact?'
                       )
                     ) {
-                      const updatedContacts =
-                        localData.emergencyContacts.filter(
-                          (_, i) => i !== index
-                        );
+                      const updatedContacts = localData.emergencyContact.filter(
+                        (_, i) => i !== index
+                      );
                       setLocalData({
                         ...localData,
-                        emergencyContacts: updatedContacts
+                        emergencyContact: updatedContacts
                       });
                     }
                   }}
@@ -709,18 +709,18 @@ const PersonalInfoPage: React.FC = () => {
                   value={contact.firstName}
                   disabled={!isEditing}
                   onChange={(e) => {
-                    const updatedContacts = [...localData.emergencyContacts];
+                    const updatedContacts = [...localData.emergencyContact];
                     updatedContacts[index] = {
                       ...contact,
                       firstName: e.target.value
                     };
                     setLocalData({
                       ...localData,
-                      emergencyContacts: updatedContacts
+                      emergencyContact: updatedContacts
                     });
                   }}
-                  error={Boolean(errors.emergencyContacts?.[index]?.firstName)}
-                  helperText={errors.emergencyContacts?.[index]?.firstName}
+                  error={Boolean(errors.emergencyContact?.[index]?.firstName)}
+                  helperText={errors.emergencyContact?.[index]?.firstName}
                 />
               </Grid2>
               <Grid2 size={4}>
@@ -730,18 +730,18 @@ const PersonalInfoPage: React.FC = () => {
                   value={contact.lastName}
                   disabled={!isEditing}
                   onChange={(e) => {
-                    const updatedContacts = [...localData.emergencyContacts];
+                    const updatedContacts = [...localData.emergencyContact];
                     updatedContacts[index] = {
                       ...contact,
                       lastName: e.target.value
                     };
                     setLocalData({
                       ...localData,
-                      emergencyContacts: updatedContacts
+                      emergencyContact: updatedContacts
                     });
                   }}
-                  error={Boolean(errors.emergencyContacts?.[index]?.lastName)}
-                  helperText={errors.emergencyContacts?.[index]?.lastName}
+                  error={Boolean(errors.emergencyContact?.[index]?.lastName)}
+                  helperText={errors.emergencyContact?.[index]?.lastName}
                 />
               </Grid2>
               <Grid2 size={4}>
@@ -751,14 +751,14 @@ const PersonalInfoPage: React.FC = () => {
                   value={contact.middleName || ''}
                   disabled={!isEditing}
                   onChange={(e) => {
-                    const updatedContacts = [...localData.emergencyContacts];
+                    const updatedContacts = [...localData.emergencyContact];
                     updatedContacts[index] = {
                       ...contact,
                       middleName: e.target.value
                     };
                     setLocalData({
                       ...localData,
-                      emergencyContacts: updatedContacts
+                      emergencyContact: updatedContacts
                     });
                   }}
                 />
@@ -770,18 +770,18 @@ const PersonalInfoPage: React.FC = () => {
                   value={contact.phone}
                   disabled={!isEditing}
                   onChange={(e) => {
-                    const updatedContacts = [...localData.emergencyContacts];
+                    const updatedContacts = [...localData.emergencyContact];
                     updatedContacts[index] = {
                       ...contact,
                       phone: e.target.value
                     };
                     setLocalData({
                       ...localData,
-                      emergencyContacts: updatedContacts
+                      emergencyContact: updatedContacts
                     });
                   }}
-                  error={Boolean(errors.emergencyContacts?.[index]?.phone)}
-                  helperText={errors.emergencyContacts?.[index]?.phone}
+                  error={Boolean(errors.emergencyContact?.[index]?.phone)}
+                  helperText={errors.emergencyContact?.[index]?.phone}
                 />
               </Grid2>
               <Grid2 size={5}>
@@ -791,18 +791,18 @@ const PersonalInfoPage: React.FC = () => {
                   value={contact.email}
                   disabled={!isEditing}
                   onChange={(e) => {
-                    const updatedContacts = [...localData.emergencyContacts];
+                    const updatedContacts = [...localData.emergencyContact];
                     updatedContacts[index] = {
                       ...contact,
                       email: e.target.value
                     };
                     setLocalData({
                       ...localData,
-                      emergencyContacts: updatedContacts
+                      emergencyContact: updatedContacts
                     });
                   }}
-                  error={Boolean(errors.emergencyContacts?.[index]?.email)}
-                  helperText={errors.emergencyContacts?.[index]?.email}
+                  error={Boolean(errors.emergencyContact?.[index]?.email)}
+                  helperText={errors.emergencyContact?.[index]?.email}
                 />
               </Grid2>
               <Grid2 size={3}>
@@ -812,20 +812,20 @@ const PersonalInfoPage: React.FC = () => {
                   value={contact.relationship}
                   disabled={!isEditing}
                   onChange={(e) => {
-                    const updatedContacts = [...localData.emergencyContacts];
+                    const updatedContacts = [...localData.emergencyContact];
                     updatedContacts[index] = {
                       ...contact,
                       relationship: e.target.value
                     };
                     setLocalData({
                       ...localData,
-                      emergencyContacts: updatedContacts
+                      emergencyContact: updatedContacts
                     });
                   }}
                   error={Boolean(
-                    errors.emergencyContacts?.[index]?.relationship
+                    errors.emergencyContact?.[index]?.relationship
                   )}
-                  helperText={errors.emergencyContacts?.[index]?.relationship}
+                  helperText={errors.emergencyContact?.[index]?.relationship}
                 />
               </Grid2>
             </Grid2>
@@ -840,8 +840,8 @@ const PersonalInfoPage: React.FC = () => {
             onClick={() => {
               setLocalData({
                 ...localData,
-                emergencyContacts: [
-                  ...localData.emergencyContacts,
+                emergencyContact: [
+                  ...localData.emergencyContact,
                   {
                     firstName: '',
                     lastName: '',

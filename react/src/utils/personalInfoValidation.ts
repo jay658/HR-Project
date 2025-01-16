@@ -1,5 +1,11 @@
+import {
+  validateEmail,
+  validatePhone,
+  validateSSN,
+  validateZipCode
+} from './validators';
+
 import { PersonalInfo } from '../types/PersonalInfo';
-import { validateEmail, validatePhone, validateSSN, validateZipCode } from './validators';
 
 interface EmergencyContactErrors {
   firstName?: string;
@@ -39,7 +45,7 @@ export interface ValidationErrors {
     number?: string;
     expirationDate?: string;
   };
-  emergencyContacts?: (EmergencyContactErrors | undefined)[];
+  emergencyContact?: (EmergencyContactErrors | undefined)[];
 }
 
 export const validatePersonalInfo = (data: PersonalInfo): ValidationErrors => {
@@ -145,7 +151,7 @@ export const validatePersonalInfo = (data: PersonalInfo): ValidationErrors => {
     if (data.employment.startDate && data.employment.endDate) {
       const startDate = new Date(data.employment.startDate);
       const endDate = new Date(data.employment.endDate);
-      
+
       if (startDate >= endDate) {
         errors.employment = {
           ...errors.employment,
@@ -173,12 +179,12 @@ export const validatePersonalInfo = (data: PersonalInfo): ValidationErrors => {
   }
 
   // emergency contacts validation
-  if (data.emergencyContacts.length === 0) {
-    errors.emergencyContacts = [
+  if (data.emergencyContact.length === 0) {
+    errors.emergencyContact = [
       { firstName: 'At least one emergency contact is required' }
     ];
   } else {
-    errors.emergencyContacts = data.emergencyContacts.map((contact) => {
+    errors.emergencyContact = data.emergencyContact.map((contact) => {
       const contactErrors: EmergencyContactErrors = {};
       if (!contact.firstName?.trim())
         contactErrors.firstName = 'First name is required';
@@ -196,8 +202,8 @@ export const validatePersonalInfo = (data: PersonalInfo): ValidationErrors => {
       }
       return Object.keys(contactErrors).length ? contactErrors : undefined;
     });
-    if (errors.emergencyContacts.every((e) => e === undefined)) {
-      delete errors.emergencyContacts;
+    if (errors.emergencyContact.every((e) => e === undefined)) {
+      delete errors.emergencyContact;
     }
   }
 

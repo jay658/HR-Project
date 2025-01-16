@@ -38,7 +38,7 @@ const initialState: PersonalInfo = {
   driversLicense: {
     hasLicense: false
   },
-  emergencyContacts: []
+  emergencyContact: []
 };
 
 const personalInfoSlice = createSlice({

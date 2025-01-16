@@ -47,7 +47,7 @@ export interface PersonalInfo {
     email: string;
     relationship: string;
   };
-  emergencyContacts: Array<{
+  emergencyContact: Array<{
     firstName: string;
     lastName: string;
     middleName?: string;
