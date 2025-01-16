@@ -5,7 +5,6 @@ import EmployeeUser from "../../models/EmployeeUser";
 import { authenticateToken } from "../auth/authMiddleware";
 import Apartment from "../../models/Apartment";
 
-
 interface AuthRequest extends Request {
   user?: {
     userId: string;
@@ -119,10 +118,9 @@ userRouter.get(
     } catch (error) {
       console.error("Housing info error:", error);
       res.status(500).json({ message: "Error fetching housing information" });
-      return; // Explicitly return for consistency
+      return;
     }
   }
 );
-
 
 export default userRouter;

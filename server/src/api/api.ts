@@ -5,10 +5,12 @@ import onboardingRouter from "./routers/onboardingRouter";
 import personalInfoRouter from "./routers/personalInfoRouter";
 import userRouter from "./routers/userRouter";
 import visaRouter from "./routers/visaRouter";
+import { authenticateToken } from "./auth/authMiddleware";
 
 const apiRouter = express.Router();
 
 apiRouter.use("/user", userRouter);
+apiRouter.use(authenticateToken);
 apiRouter.use("/apartment", apartmentRouter);
 apiRouter.use("/onboarding", onboardingRouter);
 apiRouter.use("/visa", visaRouter);
