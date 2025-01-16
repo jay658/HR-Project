@@ -36,7 +36,7 @@ const theme = createTheme({
 
 // Root redirect component
 const RootRedirect: React.FC = () => {
-  const { isLoggedIn, user, loading } = useSelector(
+  const { isLoggedIn, loading, user } = useSelector(
     (state: RootState) => state.auth
   );
   const dispatch = useDispatch();
@@ -46,19 +46,22 @@ const RootRedirect: React.FC = () => {
     dispatch(loadUserFromStorage());
   }, [dispatch]);
 
-  // Don't redirect until the loading is complete
+  // Show loading spinner while checking user state
   if (loading) {
-    return null; // Or a loading spinner if desired
+    return <div>Loading...</div>; // Replace with a styled spinner if needed
   }
 
+  // Redirect logic based on user state
   if (!isLoggedIn) {
     return <Navigate to="/login" replace />;
   }
 
+  // Redirect to onboarding if not yet completed
   if (!user?.onboardingId) {
     return <Navigate to="/onboarding" replace />;
   }
 
+  // Otherwise, redirect to dashboard
   return <Navigate to="/dashboard" replace />;
 };
 

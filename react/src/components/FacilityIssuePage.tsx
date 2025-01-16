@@ -12,18 +12,36 @@ import {
   TextField,
   DialogActions,
 } from "@mui/material";
-
 import axios from "axios";
 
 const API_BASE_URL = "http://localhost:3000/api";
 
+// Utility to retrieve the token from localStorage
+const getAuthToken = () => localStorage.getItem("token");
+
+// Axios instance
+const axiosInstance = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    Authorization: `Bearer ${getAuthToken()}`,
+  },
+});
+
+// API calls
 export const fetchIssuesForUser = async () => {
-  const response = await axios.get(`${API_BASE_URL}/facility/issues/user`);
+  const response = await axiosInstance.get(`/facility/user`);
   return response.data;
 };
 
 export const fetchIssueById = async (id: string) => {
-  const response = await axios.get(`${API_BASE_URL}/facility/issues/${id}`);
+  const response = await axiosInstance.get(`/facility/issue/${id}`);
+  return response.data;
+};
+
+export const fetchIssuesForApartment = async (apartmentId: string) => {
+  const response = await axiosInstance.get(
+    `/facility/apartment/${apartmentId}`
+  );
   return response.data;
 };
 
@@ -31,60 +49,79 @@ export const createFacilityIssue = async (issueDetails: {
   title: string;
   description: string;
 }) => {
-  const response = await axios.post(`${API_BASE_URL}/facility/issues`, {
-    issueDetails,
-  });
+  const response = await axiosInstance.post(`/facility/create`, issueDetails);
   return response.data;
 };
 
-export const addCommentToIssue = async (id: string, comment: string) => {
-  const response = await axios.post(
-    `${API_BASE_URL}/facility/issues/${id}/comment`,
+export const addCommentToIssue = async (
+  facilityIssueId: string,
+  comment: string
+) => {
+  const response = await axiosInstance.put(
+    `/facility/comment/${facilityIssueId}`,
     { comment }
   );
   return response.data;
 };
 
-export const closeIssue = async (id: string) => {
-  const response = await axios.post(
-    `${API_BASE_URL}/facility/issues/${id}/close`
+export const closeIssue = async (facilityIssueId: string) => {
+  const response = await axiosInstance.put(
+    `/facility/close/${facilityIssueId}`
   );
   return response.data;
 };
 
+// Component
 const FacilityIssuesPage = () => {
   const [issues, setIssues] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
   const [newIssue, setNewIssue] = useState({ title: "", description: "" });
   const [comment, setComment] = useState("");
 
+  // Load issues for user on component mount
   useEffect(() => {
     const loadIssues = async () => {
-      const data = await fetchIssuesForUser();
-      setIssues(data);
+      try {
+        const data = await fetchIssuesForUser();
+        setIssues(data);
+      } catch (error) {
+        console.error("Error fetching issues:", error);
+      }
     };
     loadIssues();
   }, []);
 
   const handleCreateIssue = async () => {
-    await createFacilityIssue(newIssue);
-    setOpenDialog(false);
-    setNewIssue({ title: "", description: "" });
-    const data = await fetchIssuesForUser();
-    setIssues(data);
+    try {
+      await createFacilityIssue(newIssue);
+      setOpenDialog(false);
+      setNewIssue({ title: "", description: "" });
+      const data = await fetchIssuesForUser();
+      setIssues(data);
+    } catch (error) {
+      console.error("Error creating issue:", error);
+    }
   };
 
-  const handleAddComment = async (id: string) => {
-    await addCommentToIssue(id, comment);
-    setComment("");
-    const data = await fetchIssuesForUser();
-    setIssues(data);
+  const handleAddComment = async (facilityIssueId: string) => {
+    try {
+      await addCommentToIssue(facilityIssueId, comment);
+      setComment("");
+      const data = await fetchIssuesForUser();
+      setIssues(data);
+    } catch (error) {
+      console.error("Error adding comment:", error);
+    }
   };
 
-  const handleCloseIssue = async (id: string) => {
-    await closeIssue(id);
-    const data = await fetchIssuesForUser();
-    setIssues(data);
+  const handleCloseIssue = async (facilityIssueId: string) => {
+    try {
+      await closeIssue(facilityIssueId);
+      const data = await fetchIssuesForUser();
+      setIssues(data);
+    } catch (error) {
+      console.error("Error closing issue:", error);
+    }
   };
 
   return (

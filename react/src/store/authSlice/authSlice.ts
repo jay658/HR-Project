@@ -14,7 +14,7 @@ interface AuthState {
   isLoggedIn: boolean;
   user: User | null;
   token: string | null;
-  loading: boolean; // Add loading state
+  loading: boolean;
 }
 
 const initialState: AuthState = {
@@ -34,6 +34,7 @@ const authSlice = createSlice({
       state.token = action.payload.token;
       localStorage.setItem("user", JSON.stringify(action.payload.user));
       localStorage.setItem("token", action.payload.token);
+      localStorage.setItem("isLoggedIn", "true"); // Storing isLoggedIn flag
       state.loading = false; // End loading after login
     },
     logout(state) {
@@ -42,13 +43,15 @@ const authSlice = createSlice({
       state.token = null;
       localStorage.removeItem("user");
       localStorage.removeItem("token");
+      localStorage.removeItem("isLoggedIn"); // Remove isLoggedIn from localStorage
       state.loading = false; // End loading after logout
     },
     loadUserFromStorage(state) {
       const storedUser = localStorage.getItem("user");
       const storedToken = localStorage.getItem("token");
+      const storedIsLoggedIn = localStorage.getItem("isLoggedIn");
 
-      if (storedUser && storedToken) {
+      if (storedUser && storedToken && storedIsLoggedIn === "true") {
         try {
           state.isLoggedIn = true;
           state.user = JSON.parse(storedUser);

@@ -37,7 +37,7 @@ const LoginPage: React.FC = () => {
       localStorage.setItem("token", data.token);
 
       // Dispatch login action to update Redux state
-      dispatch(login(data.user));
+      dispatch(login(data));
 
       // Redirect based on onboarding status
       if (data.user.onboardingId) {
