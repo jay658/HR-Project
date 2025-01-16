@@ -3,7 +3,6 @@ import VisaApplication from "../models/VisaApplication";
 import EmployeeUser from "../models/EmployeeUser";
 import PersonalInfo from "../models/PersonalInfo";
 import Document from "../models/Document";
-
 import mongoose from "mongoose";
 
 const testVisaRouter = (_req: Request, res: Response) => {
@@ -219,5 +218,5 @@ export {
   getNextRequiredDocument,
   uploadNewDocument,
   getVisaStatus,
-  getVisaType
+  getVisaType,
 }
