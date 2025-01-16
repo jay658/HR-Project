@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit"
 import { fetchVisaType, fetchNextDocument, fetchAllDocument,
-    uploadFile, createVisa } from "./visaThunks";
+    uploadFile, createVisa, fetchFileURL } from "./visaThunks";
 
 interface Document {
     _id: string;
@@ -22,9 +22,10 @@ interface Document {
 interface visaState {   
     visaType : string,
     documentType : string, // This is next-document
-    documents: Document[];
-    action: string;
-    error: string | null;
+    documents: Document[],
+    action: string,
+    url: string,
+    error: string | null,
 }
 
 const initialState: visaState = {
@@ -32,6 +33,7 @@ const initialState: visaState = {
     documentType: "",
     documents: [],
     action:"Please start your document submission process.",
+    url:"null",
     error: null
 }
 
@@ -161,7 +163,6 @@ const visaSlice = createSlice({
                 state.documents = action.payload.documents
                 const actionInfo = getActionMessage(action.payload.documents);
                 state.action = actionInfo.message;
-                console.log("Documents Array",state.documents)
             })
         builder
             .addCase(uploadFile.fulfilled, (state) => {
@@ -178,6 +179,11 @@ const visaSlice = createSlice({
         builder
             .addCase(createVisa.fulfilled, (state) => {
                 state.error = null;
+            })
+        builder
+            .addCase(fetchFileURL.fulfilled, (state, action) => {
+                console.log("visaSlice:",action.payload.fileURL)
+                state.url = action.payload.fileURL
             })
     },
     

@@ -1,7 +1,7 @@
 import { AppDispatch, RootState } from '../store/store';
 import React, { useEffect, useRef } from "react";
 import { fetchVisaType, fetchNextDocument, fetchAllDocument,
-  uploadFile, createVisa
+  uploadFile, createVisa, fetchFileURL
  } from "../store/visaSlice/visaThunks";
 import { useDispatch, useSelector } from 'react-redux'
 import {
@@ -12,6 +12,7 @@ import {
   ListItemText,
   Button,
   Stack,
+  Link
 } from "@mui/material";
 
 const VisaStatusPage: React.FC = () => {
@@ -38,12 +39,16 @@ const VisaStatusPage: React.FC = () => {
     if (file && selectedDocType) {
       // Handle file
       console.log(`Uploading file for ${selectedDocType}:`, file);
+
+      const fileURLResult = await dispatch(fetchFileURL(file)).unwrap()
+
+      console.log("This is handle file: ",fileURLResult.fileURL)
       
       const uploadNewDocument = {
         username: "user5",
         type: selectedDocType,
         fileKey: file.name,
-        fileURL: "http://localhost:3000/url"
+        fileURL: fileURLResult.fileURL
       }
       
       await dispatch(uploadFile(uploadNewDocument));
@@ -54,6 +59,7 @@ const VisaStatusPage: React.FC = () => {
       }
     }
   };
+  
 
   const handleFileSubmit = async (docType: string) => {
     const uploadNewDocument = {
@@ -124,7 +130,7 @@ const VisaStatusPage: React.FC = () => {
     <Typography variant="h4" gutterBottom>
       {visaState.visaType}
     </Typography>
-    {visaState.visaType === 'F1-OPT' ? (
+    {visaState.visaType === 'F1(CPT/OPT)' ? (
       <>
         <Typography variant="body1" gutterBottom>
           Manage your work authorization documents here.
@@ -140,7 +146,28 @@ const VisaStatusPage: React.FC = () => {
                 <ListItem key={doc._id}>
                   <ListItemText
                     primary={doc.type} 
-                    secondary={`Status: ${doc.status} | File: ${doc.fileKey}`} 
+                    secondary={
+                      <React.Fragment>
+                      <Typography component="span" display="block">
+                        Status: {doc.status}
+                      </Typography>
+                      <Typography component="span" display="block">
+                        File Uploaded: <Link
+                          href={doc.fileUrl}
+                          target="_blank"
+                          sx={{
+                            textDecoration: 'underline',
+                            '&:hover': {
+                              textDecoration: 'none'
+                            }
+                          }}
+                        >
+                          {doc.fileKey}
+                        </Link>
+                      </Typography>
+                    </React.Fragment>
+                    }
+                     
                   />
                   {doc.status === 'pending' && (
                     

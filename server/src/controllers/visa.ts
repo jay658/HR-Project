@@ -4,6 +4,7 @@ import EmployeeUser from "../models/EmployeeUser";
 import PersonalInfo from "../models/PersonalInfo";
 import Document from "../models/Document";
 import mongoose from "mongoose";
+import { uploadFileToAWS } from "../utility/AWS/aws";
 
 const testVisaRouter = (_req: Request, res: Response) => {
   try{
@@ -211,6 +212,28 @@ const getVisaType = async (req : Request, res : Response) : Promise<any> => {
 
 }
 
+const getFileURL  = async (req : Request, res : Response) : Promise<any> => {
+  try{
+    const file = req.files?.file
+
+    if(!file){
+      return res.json(404).json({mssg: "No File Uploaded"})
+    }
+    if(Array.isArray(file)) {
+      throw new Error('Only one file at a time')
+    }
+  
+    const url = await uploadFileToAWS(file)
+
+    return res.status(200).json({fileURL: url})
+
+  }catch (error){
+    console.log("There was an error in checking Visa Type: ", error)
+    return res.status(400).json({error})
+  }
+ 
+}
+
 export {
   testVisaRouter,
   getAllExistVisa,
@@ -219,4 +242,5 @@ export {
   uploadNewDocument,
   getVisaStatus,
   getVisaType,
+  getFileURL
 }
