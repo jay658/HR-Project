@@ -1,27 +1,23 @@
-import React, { useEffect } from "react";
-import { Navigate, useLocation } from "react-router-dom";
-import { useAuth } from "../auth/AuthContext";
+import React from "react";
+import { useSelector } from "react-redux";
+import { Navigate } from "react-router-dom";
+import { RootState } from "../store/store";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  requireOnboarding?: boolean;
+  requireOnboarding: boolean;
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children,
-  requireOnboarding = true,
+  requireOnboarding,
 }) => {
-  const { isLoggedIn, user } = useAuth();
-  const location = useLocation();
+  const { isLoggedIn, user } = useSelector((state: RootState) => state.auth);
 
-  // If not logged in, redirect to login
   if (!isLoggedIn) {
-    // Save the attempted URL for redirect after login
-    sessionStorage.setItem("redirectUrl", location.pathname);
     return <Navigate to="/login" replace />;
   }
 
-  // If onboarding is required and user hasn't completed it
   if (requireOnboarding && !user?.onboardingId) {
     return <Navigate to="/onboarding" replace />;
   }

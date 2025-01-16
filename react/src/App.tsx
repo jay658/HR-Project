@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { Provider, useDispatch, useSelector } from "react-redux";
+import { store } from "./store/store"; // Path to your store file
 import {
   BrowserRouter as Router,
   Routes,
@@ -16,10 +18,13 @@ import OnboardingPage from "./components/OnboardingPage";
 import PersonalInfoPage from "./components/PersonalInfoPage";
 import VisaStatusPage from "./components/VisaStatusPage";
 import HousingPage from "./components/HousingPage";
-import DashboardPage from "./components/DashboardPage"; // You'll need to create this
+import DashboardPage from "./components/DashboardPage";
 import ProtectedRoute from "./components/ProtectedRoute";
-import { AuthProvider, useAuth } from "./auth/AuthContext";
 import FacilityIssuesPage from "./components/FacilityIssuePage";
+
+// Redux Slice Imports
+import { loadUserFromStorage } from "./store/authSlice/authSlice"; // Adjust path accordingly
+import { RootState } from "./store/store"; // Adjust path accordingly
 
 // Create theme
 const theme = createTheme({
@@ -31,7 +36,20 @@ const theme = createTheme({
 
 // Root redirect component
 const RootRedirect: React.FC = () => {
-  const { isLoggedIn, user } = useAuth();
+  const { isLoggedIn, user, loading } = useSelector(
+    (state: RootState) => state.auth
+  );
+  const dispatch = useDispatch();
+
+  // Load user from localStorage when the app loads
+  useEffect(() => {
+    dispatch(loadUserFromStorage());
+  }, [dispatch]);
+
+  // Don't redirect until the loading is complete
+  if (loading) {
+    return null; // Or a loading spinner if desired
+  }
 
   if (!isLoggedIn) {
     return <Navigate to="/login" replace />;
@@ -46,7 +64,7 @@ const RootRedirect: React.FC = () => {
 
 const App: React.FC = () => {
   return (
-    <AuthProvider>
+    <Provider store={store}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <Router>
@@ -92,12 +110,11 @@ const App: React.FC = () => {
                 </ProtectedRoute>
               }
             />
-
             <Route
               path="/facilityissue"
               element={
                 <ProtectedRoute requireOnboarding={true}>
-                  <FacilityIssuesPage />   
+                  <FacilityIssuesPage />
                 </ProtectedRoute>
               }
             />
@@ -117,9 +134,8 @@ const App: React.FC = () => {
           </Routes>
         </Router>
       </ThemeProvider>
-    </AuthProvider>
+    </Provider>
   );
 };
 
 export default App;
-

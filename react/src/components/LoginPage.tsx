@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box, TextField, Button, Typography, Alert } from "@mui/material";
-import { useAuth } from "../auth/AuthContext";
+import { useDispatch } from "react-redux";
+import { login } from "../store/authSlice/authSlice"; // Import the login action
 
-const API_BASE_URL = 'http://localhost:3000/api'
+const API_BASE_URL = "http://localhost:3000/api";
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState<string>("");
@@ -11,7 +12,7 @@ const LoginPage: React.FC = () => {
   const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const dispatch = useDispatch(); // Initialize dispatch
 
   const handleLogin = async () => {
     try {
@@ -35,8 +36,8 @@ const LoginPage: React.FC = () => {
       // Store token in localStorage
       localStorage.setItem("token", data.token);
 
-      // Update auth context
-      login(data.user);
+      // Dispatch login action to update Redux state
+      dispatch(login(data.user));
 
       // Redirect based on onboarding status
       if (data.user.onboardingId) {

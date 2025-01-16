@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -8,66 +7,23 @@ import {
   Typography,
 } from "@mui/material";
 import { Home, Users, Mail } from "lucide-react";
-
-const API_BASE_URL = 'http://localhost:3000/api'; 
-
-
-interface Roommate {
-  id: string;
-  username: string;
-  email: string;
-  isCurrentUser: boolean;
-}
-
-interface Apartment {
-  _id: string;
-  unit: string;
-  capacity: number;
-  address: string;
-  status: "available" | "unavailable";
-}
-
-interface HousingDetails {
-  apartment: Apartment;
-  currentUser: {
-    id: string;
-    username: string;
-    email: string;
-  };
-  roommates: Roommate[];
-}
+import { useAppDispatch, useAppSelector } from "../store/hook";
+import {
+  fetchHousingDetails,
+  selectHousingDetails,
+  selectHousingLoading,
+  selectHousingError,
+} from "../store/housingSlice/housingSlice";
 
 const HousingPage: React.FC = () => {
-  const [housingDetails, setHousingDetails] = useState<HousingDetails | null>(
-    null
-  );
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const dispatch = useAppDispatch();
+  const housingDetails = useAppSelector(selectHousingDetails);
+  const loading = useAppSelector(selectHousingLoading);
+  const error = useAppSelector(selectHousingError);
 
   useEffect(() => {
-    fetchHousingDetails();
-  }, []);
-
-  const fetchHousingDetails = async () => {
-    try {
-      setLoading(true);
-      const token = localStorage.getItem("token");
-
-      const response = await axios.get(`${API_BASE_URL}/user/housing`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      setHousingDetails(response.data.housingDetails);
-      setError("");
-    } catch (err) {
-      setError("Failed to fetch housing details");
-      console.error("Error fetching housing details:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    dispatch(fetchHousingDetails());
+  }, [dispatch]);
 
   if (loading) {
     return (
