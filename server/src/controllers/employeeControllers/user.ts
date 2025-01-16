@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
-import EmployeeUser from "../models/EmployeeUser";
+
+import EmployeeUser from "../../models/EmployeeUser";
 import bcrypt from 'bcryptjs'
+import config from "../../utility/configs";
 
 // Test Router
 const testUserRouter = (_req: Request, res: Response) => {
@@ -35,7 +37,7 @@ const registerRouter = async (req : Request, res : Response) : Promise<any> => {
   }
 
     //Create Hash Password
-    const passwords = await bcrypt.hash(password, Number(process.env.SALT));
+    const passwords = await bcrypt.hash(password, Number(config.SALT));
 
     //Create User
     const user = await EmployeeUser.create({username, email, password: passwords})

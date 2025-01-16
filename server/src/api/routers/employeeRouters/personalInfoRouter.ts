@@ -1,4 +1,4 @@
-import { getPersonalInfo, testPersonalInfoRouter, updatePersonalInfo } from '../../controllers/personalInfo';
+import { getPersonalInfo, testPersonalInfoRouter, updatePersonalInfo } from '../../../controllers/employeeControllers/personalInfo';
 
 import express from 'express';
 

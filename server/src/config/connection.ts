@@ -1,10 +1,9 @@
-import dotenv from 'dotenv';
+import config from '../utility/configs';
 import mongoose from 'mongoose';
 
-dotenv.config();
-let uri = process.env.URI || '';
-const password = process.env.PASSWORD || '';
-const username = process.env.USERNAME || '';
+let uri = config.URI;
+const password = config.PASSWORD;
+const username = config.USERNAME;
 
 uri = uri.replace('<PASSWORD>', password).replace('<USERNAME>', username);
 

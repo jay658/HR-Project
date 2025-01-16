@@ -1,10 +1,10 @@
-import Onboarding, { OnboardingTypeT } from '../models/Onboarding';
+import Onboarding, { OnboardingTypeT } from '../../models/Onboarding';
 import { Request, Response } from 'express';
 
-import EmployeeUser from '../models/EmployeeUser';
-import PersonalInfo from '../models/PersonalInfo';
-import { onboardingToPersonalInfo } from './utils/converters';
-import { uploadFileToAWS } from '../utility/AWS/aws';
+import EmployeeUser from '../../models/EmployeeUser';
+import PersonalInfo from '../../models/PersonalInfo';
+import { onboardingToPersonalInfo } from '../utils/converters';
+import { uploadFileToAWS } from '../../utility/AWS/aws';
 
 const testOnboardingRouter = (_req: Request, res: Response) => {
   try {

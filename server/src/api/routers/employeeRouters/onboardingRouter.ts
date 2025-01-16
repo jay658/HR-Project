@@ -4,7 +4,7 @@ import {
   updateOnboardingForUser,
   updateOnboardingStatus,
   uploadOnboardingFile
-} from '../../controllers/onboarding'
+} from '../../../controllers/employeeControllers/onboarding'
 
 import express from 'express'
 

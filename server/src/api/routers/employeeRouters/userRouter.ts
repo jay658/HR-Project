@@ -1,5 +1,6 @@
+import { getAllUserRouter, registerRouter, testUserRouter } from '../../../controllers/employeeControllers/user'
+
 import express from 'express'
-import { testUserRouter, getAllUserRouter, registerRouter} from '../../controllers/user'
 
 const userRouter = express.Router()
 
