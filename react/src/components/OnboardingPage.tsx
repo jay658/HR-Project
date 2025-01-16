@@ -10,6 +10,8 @@ const OnboardingPage: React.FC = () => {
   const onboarding = useSelector((state: RootState) => state.onboarding);
   const dispatch = useDispatch<AppDispatch>();
 
+  
+
   useEffect(() => {
     dispatch(fetchOnboarding())
   }, [])
