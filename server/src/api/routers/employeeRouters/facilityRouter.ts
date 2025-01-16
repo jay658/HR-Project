@@ -6,7 +6,7 @@ import {
   getFacilityIssuesForApartment,
   getIssuesForUser,
   testFacilityRouter
-} from '../../controllers/facility';
+} from '../../../controllers/employeeControllers/facility';
 
 import express from 'express';
 

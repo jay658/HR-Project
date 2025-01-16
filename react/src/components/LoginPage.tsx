@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import { Box, Button, TextField, Typography } from "@mui/material";
+import React, { useEffect, useState } from "react";
+
 import { useNavigate } from "react-router-dom";
-import { Box, TextField, Button, Typography } from "@mui/material";
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState<string>("");
@@ -15,7 +16,17 @@ const LoginPage: React.FC = () => {
       alert("Invalid credentials");
     }
   };
+  useEffect(() => {
+    const fetchData = async() => {
+      const res = await fetch('http://localhost:3000/api/hr/user/test')
+      const data = await res.json()
+      console.log(data)
+    }
 
+    fetchData()
+  }, [])
+
+  
   return (
     <Box sx={{ p: 3, maxWidth: 500, mx: "auto", mt: 5 }}>
       <Typography variant="h4" gutterBottom>

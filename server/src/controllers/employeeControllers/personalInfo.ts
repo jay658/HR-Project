@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 
-import EmployeeUser from '../models/EmployeeUser';
-import { IPersonalInfoData } from '../models/shared/types';
-import Onboarding from '../models/Onboarding';
-import PersonalInfo from '../models/PersonalInfo';
+import EmployeeUser from '../../models/EmployeeUser';
+import { IPersonalInfoData } from '../../models/shared/types';
+import Onboarding from '../../models/Onboarding';
+import PersonalInfo from '../../models/PersonalInfo';
 
 // temp test user, await auth
 const currentTestUser = 'john.doe';

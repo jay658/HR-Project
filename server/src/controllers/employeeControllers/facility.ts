@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 
-import EmployeeUser from "../models/EmployeeUser";
-import FacilityIssue from "../models/FacilityIssue";
+import EmployeeUser from "../../models/EmployeeUser";
+import FacilityIssue from "../../models/FacilityIssue";
 
 type IssueDetails = {
   title: string,
