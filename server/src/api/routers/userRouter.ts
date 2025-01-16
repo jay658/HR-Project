@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import EmployeeUser from "../../models/EmployeeUser";
 import { authenticateToken } from "../auth/authMiddleware";
 import Apartment from "../../models/Apartment";
+import { testUserRouter, getAllUserRouter, registerRouter} from '../../controllers/user'
 
 
 interface AuthRequest extends Request {
