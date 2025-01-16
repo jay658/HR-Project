@@ -4,7 +4,7 @@ import express, { Express } from 'express'
 import apiRouter from './api/api'
 import connectToDB from './config/connection'
 import dotenv from 'dotenv'
-import mongoose from 'mongoose'
+import fileUpload from 'express-fileupload'
 
 dotenv.config()
 
@@ -22,6 +22,7 @@ const corsOptions: CorsOptions = {
 
 app.use(cors(corsOptions))
 app.use(express.json())
+app.use(fileUpload())
 
 app.use('/api', apiRouter)
 
