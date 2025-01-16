@@ -83,10 +83,25 @@ const uploadFile = createAsyncThunk(
     }
 )
 
+const createVisa = createAsyncThunk(
+    'visa/fetchVisa',
+    async (userData: userData, {rejectWithValue}) => {
+        try{
+            const response = await axios.post('http://localhost:3000/api/visa/create', userData)
+            console.log("Visa",response.data)
+            return response.data
+        } catch (error : any){
+            console.log(error.response.data)
+            return rejectWithValue(error.response?.data?.error || 'Failed to fetch visa type')
+        }
+    }
+)
+
   
 export { 
     fetchVisaType,
     fetchNextDocument,
     fetchAllDocument,
-    uploadFile
+    uploadFile,
+    createVisa
   }

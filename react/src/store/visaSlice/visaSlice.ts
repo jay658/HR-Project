@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit"
-import { fetchVisaType, 
-    fetchNextDocument, fetchAllDocument, uploadFile } from "./visaThunks";
+import { fetchVisaType, fetchNextDocument, fetchAllDocument,
+    uploadFile, createVisa } from "./visaThunks";
 
 interface Document {
     _id: string;
@@ -169,9 +169,16 @@ const visaSlice = createSlice({
                 state.action = actionInfo.message;
                 state.error = null;
             })
+            .addCase(uploadFile.pending, (state) => {
+                state.action = "Refreshing";
+            })
             .addCase(uploadFile.rejected, (state, action) => {
                 state.error = action.payload as string;
             });
+        builder
+            .addCase(createVisa.fulfilled, (state) => {
+                state.error = null;
+            })
     },
     
 });
