@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 
 interface User {
   id: string;
@@ -15,36 +15,62 @@ interface AuthState {
   user: User | null;
   token: string | null;
   loading: boolean;
+  error: string | null;
 }
 
 const initialState: AuthState = {
   isLoggedIn: false,
   user: null,
   token: null,
-  loading: true, // Initial loading state
+  loading: false,
+  error: null,
 };
+
+const API_BASE_URL = "http://localhost:3000/api";
+
+export const loginUser = createAsyncThunk(
+  "auth/loginUser",
+  async (
+    { username, password }: { username: string; password: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/user/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.message || "Login failed");
+      }
+
+      const data = await response.json();
+      localStorage.setItem("user", JSON.stringify(data.user));
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("isLoggedIn", "true");
+      return data;
+    } catch (error) {
+      return rejectWithValue(error instanceof Error ? error.message : "An error occurred");
+    }
+  }
+);
 
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    login(state, action: PayloadAction<{ user: User; token: string }>) {
-      state.isLoggedIn = true;
-      state.user = action.payload.user;
-      state.token = action.payload.token;
-      localStorage.setItem("user", JSON.stringify(action.payload.user));
-      localStorage.setItem("token", action.payload.token);
-      localStorage.setItem("isLoggedIn", "true"); // Storing isLoggedIn flag
-      state.loading = false; // End loading after login
-    },
     logout(state) {
       state.isLoggedIn = false;
       state.user = null;
       state.token = null;
       localStorage.removeItem("user");
       localStorage.removeItem("token");
-      localStorage.removeItem("isLoggedIn"); // Remove isLoggedIn from localStorage
-      state.loading = false; // End loading after logout
+      localStorage.removeItem("isLoggedIn");
+      state.loading = false;
     },
     loadUserFromStorage(state) {
       const storedUser = localStorage.getItem("user");
@@ -56,11 +82,7 @@ const authSlice = createSlice({
           state.isLoggedIn = true;
           state.user = JSON.parse(storedUser);
           state.token = storedToken;
-        } catch (error) {
-          console.error(
-            "Error parsing user or token from localStorage:",
-            error
-          );
+        } catch {
           state.isLoggedIn = false;
           state.user = null;
           state.token = null;
@@ -70,10 +92,27 @@ const authSlice = createSlice({
         state.user = null;
         state.token = null;
       }
-      state.loading = false; // End loading when data is loaded
+      state.loading = false;
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(loginUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(loginUser.fulfilled, (state, action) => {
+        state.isLoggedIn = true;
+        state.user = action.payload.user;
+        state.token = action.payload.token;
+        state.loading = false;
+      })
+      .addCase(loginUser.rejected, (state, action) => {
+        state.error = action.payload as string;
+        state.loading = false;
+      });
   },
 });
 
-export const { login, logout, loadUserFromStorage } = authSlice.actions;
+export const { logout, loadUserFromStorage } = authSlice.actions;
 export default authSlice.reducer;

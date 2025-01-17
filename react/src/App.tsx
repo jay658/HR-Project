@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Provider, useDispatch, useSelector } from "react-redux";
-import { store } from "./store/store"; // Path to your store file
+import { store } from "./store/store"; 
 import {
   BrowserRouter as Router,
   Routes,

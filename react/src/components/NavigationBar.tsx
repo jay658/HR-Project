@@ -1,8 +1,12 @@
+// NavigationBar.tsx
 import React from "react";
 import { AppBar, Toolbar, Typography, Button, Box } from "@mui/material";
 import { Link } from "react-router-dom";
 
+
 const NavigationBar: React.FC = () => {
+  const isLoggedIn = localStorage.getItem('isLoggedIn');
+
   return (
     <AppBar position="static">
       <Toolbar>
@@ -10,12 +14,16 @@ const NavigationBar: React.FC = () => {
           Beaconfire Employee
         </Typography>
         <Box sx={{ display: "flex", gap: 1 }}>
-          <Button color="inherit" component={Link} to="/registration">
-            Registration
-          </Button>
-          <Button color="inherit" component={Link} to="/login">
-            Login
-          </Button>
+          {!isLoggedIn && (
+            <>
+              <Button color="inherit" component={Link} to="/registration">
+                Registration
+              </Button>
+              <Button color="inherit" component={Link} to="/login">
+                Login
+              </Button>
+            </>
+          )}
           <Button color="inherit" component={Link} to="/onboarding">
             Onboarding
           </Button>

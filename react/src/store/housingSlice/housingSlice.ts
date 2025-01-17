@@ -1,6 +1,5 @@
-import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { RootState } from "../store";
 
 // Types
 interface Roommate {
@@ -36,14 +35,13 @@ interface HousingState {
 
 const API_BASE_URL = "http://localhost:3000/api";
 
-// Initial state
 const initialState: HousingState = {
   housingDetails: null,
   loading: false,
   error: null,
 };
 
-// Async thunk for fetching housing details
+// Async thunk
 export const fetchHousingDetails = createAsyncThunk(
   "housing/fetchHousingDetails",
   async (_, { rejectWithValue }) => {
@@ -56,15 +54,13 @@ export const fetchHousingDetails = createAsyncThunk(
       });
       return response.data.housingDetails;
     } catch (error) {
-      if (error instanceof Error) {
-        return rejectWithValue(error.message);
-      }
-      return rejectWithValue("Failed to fetch housing details");
+      return rejectWithValue(
+        error instanceof Error ? error.message : "Failed to fetch housing details"
+      );
     }
   }
 );
 
-// Housing slice
 const housingSlice = createSlice({
   name: "housing",
   initialState,
@@ -83,14 +79,11 @@ const housingSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(
-        fetchHousingDetails.fulfilled,
-        (state, action: PayloadAction<HousingDetails>) => {
-          state.loading = false;
-          state.housingDetails = action.payload;
-          state.error = null;
-        }
-      )
+      .addCase(fetchHousingDetails.fulfilled, (state, action) => {
+        state.loading = false;
+        state.housingDetails = action.payload;
+        state.error = null;
+      })
       .addCase(fetchHousingDetails.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
@@ -98,14 +91,6 @@ const housingSlice = createSlice({
   },
 });
 
-// Export actions
+// Export actions and reducer
 export const { clearHousingDetails, resetError } = housingSlice.actions;
-
-// Export selectors
-export const selectHousingDetails = (state: RootState) =>
-  state.housing.housingDetails;
-export const selectHousingLoading = (state: RootState) => state.housing.loading;
-export const selectHousingError = (state: RootState) => state.housing.error;
-
-// Export reducer
 export default housingSlice.reducer;

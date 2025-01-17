@@ -1,181 +1,331 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import {
   Box,
   Typography,
-  List,
-  ListItem,
-  ListItemText,
+  Card,
+  CardContent,
+  CardActions,
   Button,
   Dialog,
   DialogTitle,
   DialogContent,
   TextField,
   DialogActions,
-} from "@mui/material";
-import axios from "axios";
+  Divider,
+  Alert,
+  CircularProgress,
+  Stack,
+  IconButton,
+  Tooltip,
+} from '@mui/material';
+import { MessageSquare, X, Plus, AlertCircle } from 'lucide-react';
+import { RootState, AppDispatch } from '../store/store';
+import {
+  fetchIssuesForUser,
+  createFacilityIssue,
+  addCommentToIssue,
+  closeIssue,
+  FacilityIssue,
+} from '../store/facilityIssuesSlice/facilityIssuesSlice.ts';
 
-const API_BASE_URL = "http://localhost:3000/api";
+interface CommentForm {
+  [key: string]: string;
+}
 
-// Utility to retrieve the token from localStorage
-const getAuthToken = () => localStorage.getItem("token");
-
-// Axios instance
-const axiosInstance = axios.create({
-  baseURL: API_BASE_URL,
-  headers: {
-    Authorization: `Bearer ${getAuthToken()}`,
-  },
-});
-
-// API calls
-export const fetchIssuesForUser = async () => {
-  const response = await axiosInstance.get(`/facility/user`);
-  return response.data;
-};
-
-export const fetchIssueById = async (id: string) => {
-  const response = await axiosInstance.get(`/facility/issue/${id}`);
-  return response.data;
-};
-
-export const fetchIssuesForApartment = async (apartmentId: string) => {
-  const response = await axiosInstance.get(
-    `/facility/apartment/${apartmentId}`
-  );
-  return response.data;
-};
-
-export const createFacilityIssue = async (issueDetails: {
-  title: string;
-  description: string;
-}) => {
-  const response = await axiosInstance.post(`/facility/create`, issueDetails);
-  return response.data;
-};
-
-export const addCommentToIssue = async (
-  facilityIssueId: string,
-  comment: string
-) => {
-  const response = await axiosInstance.put(
-    `/facility/comment/${facilityIssueId}`,
-    { comment }
-  );
-  return response.data;
-};
-
-export const closeIssue = async (facilityIssueId: string) => {
-  const response = await axiosInstance.put(
-    `/facility/close/${facilityIssueId}`
-  );
-  return response.data;
-};
-
-// Component
 const FacilityIssuesPage = () => {
-  const [issues, setIssues] = useState([]);
-  const [openDialog, setOpenDialog] = useState(false);
-  const [newIssue, setNewIssue] = useState({ title: "", description: "" });
-  const [comment, setComment] = useState("");
+  const dispatch = useDispatch<AppDispatch>();
+  const { issues, status, error } = useSelector((state: RootState) => state.facilityIssues);
 
-  // Load issues for user on component mount
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [commentDialogOpen, setCommentDialogOpen] = useState(false);
+  const [selectedIssueId, setSelectedIssueId] = useState<string>('');
+  const [newIssue, setNewIssue] = useState({ title: '', description: '' });
+  const [newComment, setNewComment] = useState('');
+  const [formErrors, setFormErrors] = useState({
+    title: '',
+    description: '',
+    comment: '',
+  });
+
   useEffect(() => {
-    const loadIssues = async () => {
-      try {
-        const data = await fetchIssuesForUser();
-        setIssues(data);
-      } catch (error) {
-        console.error("Error fetching issues:", error);
-      }
+    dispatch(fetchIssuesForUser());
+  }, [dispatch]);
+
+  const validateNewIssue = () => {
+    const errors = {
+      title: '',
+      description: '',
     };
-    loadIssues();
-  }, []);
+    if (!newIssue.title.trim()) {
+      errors.title = 'Title is required';
+    }
+    if (!newIssue.description.trim()) {
+      errors.description = 'Description is required';
+    }
+    setFormErrors(prev => ({ ...prev, ...errors }));
+    return !errors.title && !errors.description;
+  };
 
   const handleCreateIssue = async () => {
+    if (!validateNewIssue()) return;
+
     try {
-      await createFacilityIssue(newIssue);
-      setOpenDialog(false);
-      setNewIssue({ title: "", description: "" });
-      const data = await fetchIssuesForUser();
-      setIssues(data);
-    } catch (error) {
-      console.error("Error creating issue:", error);
+      await dispatch(createFacilityIssue(newIssue)).unwrap();
+      setCreateDialogOpen(false);
+      setNewIssue({ title: '', description: '' });
+    } catch (err) {
+      console.error('Failed to create issue:', err);
     }
   };
 
-  const handleAddComment = async (facilityIssueId: string) => {
+  const handleAddComment = async () => {
+    if (!newComment.trim()) {
+      setFormErrors(prev => ({ ...prev, comment: 'Comment is required' }));
+      return;
+    }
+
     try {
-      await addCommentToIssue(facilityIssueId, comment);
-      setComment("");
-      const data = await fetchIssuesForUser();
-      setIssues(data);
-    } catch (error) {
-      console.error("Error adding comment:", error);
+      await dispatch(addCommentToIssue({
+        facilityIssueId: selectedIssueId,
+        comment: newComment
+      })).unwrap();
+      setCommentDialogOpen(false);
+      setNewComment('');
+      setSelectedIssueId('');
+    } catch (err) {
+      console.error('Failed to add comment:', err);
     }
   };
 
-  const handleCloseIssue = async (facilityIssueId: string) => {
+  const handleCloseIssue = async (issueId: string) => {
     try {
-      await closeIssue(facilityIssueId);
-      const data = await fetchIssuesForUser();
-      setIssues(data);
-    } catch (error) {
-      console.error("Error closing issue:", error);
+      await dispatch(closeIssue(issueId)).unwrap();
+    } catch (err) {
+      console.error('Failed to close issue:', err);
     }
   };
+
+  const openCommentDialog = (issueId: string) => {
+    setSelectedIssueId(issueId);
+    setCommentDialogOpen(true);
+  };
+
+  const renderIssueCard = (issue: FacilityIssue) => (
+    <Card key={issue._id} sx={{ mb: 2 }}>
+      <CardContent>
+        <Stack direction="row" justifyContent="space-between" alignItems="center">
+          <Typography variant="h6" gutterBottom>
+            {issue.title}
+          </Typography>
+          <Typography 
+            variant="caption" 
+            sx={{ 
+              px: 1, 
+              py: 0.5, 
+              borderRadius: 1,
+              bgcolor: issue.status === 'closed' ? 'error.main' : 'success.main',
+              color: 'white'
+            }}
+          >
+            {issue.status.toUpperCase()}
+          </Typography>
+        </Stack>
+
+        <Typography color="text.secondary" sx={{ mb: 2 }}>
+          {issue.description}
+        </Typography>
+
+        {issue.comments.length > 0 && (
+          <>
+            <Divider sx={{ my: 2 }} />
+            <Typography variant="subtitle2" gutterBottom>
+              Comments ({issue.comments.length})
+            </Typography>
+            <Stack spacing={1}>
+              {issue.comments.map(comment => (
+                <Box 
+                  key={comment._id} 
+                  sx={{ 
+                    p: 1, 
+                    bgcolor: 'grey.50', 
+                    borderRadius: 1,
+                    border: '1px solid',
+                    borderColor: 'grey.200'
+                  }}
+                >
+                  <Typography variant="body2">{comment.description}</Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    Posted on {new Date(comment.createdAt).toLocaleDateString()}
+                  </Typography>
+                </Box>
+              ))}
+            </Stack>
+          </>
+        )}
+      </CardContent>
+
+      {issue.status !== 'closed' && (
+        <CardActions>
+          <Button
+            startIcon={<MessageSquare size={16} />}
+            onClick={() => openCommentDialog(issue._id)}
+          >
+            Add Comment
+          </Button>
+          <Button
+            startIcon={<X size={16} />}
+            color="error"
+            onClick={() => handleCloseIssue(issue._id)}
+          >
+            Close Issue
+          </Button>
+        </CardActions>
+      )}
+    </Card>
+  );
+
+  if (status === 'loading') {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
-    <Box>
-      <Typography variant="h4" gutterBottom>
-        Facility Issues
-      </Typography>
-      <Button variant="contained" onClick={() => setOpenDialog(true)}>
-        Create New Issue
-      </Button>
-      <List>
-        {issues.map((issue: any) => (
-          <ListItem key={issue._id}>
-            <ListItemText
-              primary={issue.title}
-              secondary={`Status: ${issue.status} - ${issue.description}`}
-            />
-            <Button onClick={() => handleAddComment(issue._id)}>
-              Add Comment
-            </Button>
-            <Button
-              onClick={() => handleCloseIssue(issue._id)}
-              disabled={issue.status === "closed"}
+    <Box sx={{ maxWidth: 'lg', mx: 'auto', p: 3 }}>
+      {/* Header */}
+      <Stack 
+        direction="row" 
+        justifyContent="space-between" 
+        alignItems="center" 
+        sx={{ mb: 3 }}
+      >
+        <Typography variant="h4">Facility Issues</Typography>
+        <Button
+          variant="contained"
+          startIcon={<Plus size={16} />}
+          onClick={() => setCreateDialogOpen(true)}
+        >
+          Create New Issue
+        </Button>
+      </Stack>
+
+      {/* Error Alert */}
+      {error && (
+        <Alert 
+          severity="error" 
+          sx={{ mb: 2 }}
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={() => {
+                // dispatch clearError here if needed
+              }}
             >
-              Close Issue
-            </Button>
-          </ListItem>
-        ))}
-      </List>
-      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-        <DialogTitle>Create Facility Issue</DialogTitle>
+              <X size={16} />
+            </IconButton>
+          }
+        >
+          {error}
+        </Alert>
+      )}
+
+      {/* Issues List */}
+      <Stack spacing={2}>
+        {issues.length === 0 ? (
+          <Box 
+            sx={{ 
+              p: 3, 
+              textAlign: 'center', 
+              bgcolor: 'grey.50',
+              borderRadius: 1
+            }}
+          >
+            <AlertCircle size={48} color="gray" />
+            <Typography color="text.secondary" sx={{ mt: 2 }}>
+              No facility issues found. Create one to get started.
+            </Typography>
+          </Box>
+        ) : (
+          issues.map(renderIssueCard)
+        )}
+      </Stack>
+
+      {/* Create Issue Dialog */}
+      <Dialog 
+        open={createDialogOpen} 
+        onClose={() => setCreateDialogOpen(false)}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>Create New Facility Issue</DialogTitle>
         <DialogContent>
           <TextField
+            autoFocus
+            margin="dense"
             label="Title"
             fullWidth
-            margin="dense"
             value={newIssue.title}
-            onChange={(e) =>
-              setNewIssue({ ...newIssue, title: e.target.value })
-            }
+            onChange={(e) => {
+              setNewIssue(prev => ({ ...prev, title: e.target.value }));
+              setFormErrors(prev => ({ ...prev, title: '' }));
+            }}
+            error={!!formErrors.title}
+            helperText={formErrors.title}
           />
           <TextField
+            margin="dense"
             label="Description"
             fullWidth
-            margin="dense"
+            multiline
+            rows={4}
             value={newIssue.description}
-            onChange={(e) =>
-              setNewIssue({ ...newIssue, description: e.target.value })
-            }
+            onChange={(e) => {
+              setNewIssue(prev => ({ ...prev, description: e.target.value }));
+              setFormErrors(prev => ({ ...prev, description: '' }));
+            }}
+            error={!!formErrors.description}
+            helperText={formErrors.description}
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
-          <Button onClick={handleCreateIssue}>Create</Button>
+          <Button onClick={() => setCreateDialogOpen(false)}>Cancel</Button>
+          <Button onClick={handleCreateIssue} variant="contained">Create</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Add Comment Dialog */}
+      <Dialog
+        open={commentDialogOpen}
+        onClose={() => setCommentDialogOpen(false)}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>Add Comment</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Comment"
+            fullWidth
+            multiline
+            rows={3}
+            value={newComment}
+            onChange={(e) => {
+              setNewComment(e.target.value);
+              setFormErrors(prev => ({ ...prev, comment: '' }));
+            }}
+            error={!!formErrors.comment}
+            helperText={formErrors.comment}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setCommentDialogOpen(false)}>Cancel</Button>
+          <Button onClick={handleAddComment} variant="contained">Add Comment</Button>
         </DialogActions>
       </Dialog>
     </Box>

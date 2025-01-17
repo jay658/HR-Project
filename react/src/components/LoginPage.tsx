@@ -1,54 +1,25 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box, TextField, Button, Typography, Alert } from "@mui/material";
-import { useDispatch } from "react-redux";
-import { login } from "../store/authSlice/authSlice"; // Import the login action
-
-const API_BASE_URL = "http://localhost:3000/api";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../store"; // Replace with your actual store types
+import { loginUser } from "../store/authSlice/authSlice";
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [error, setError] = useState<string>("");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const dispatch = useDispatch(); // Initialize dispatch
+
+  const { loading, error, user } = useSelector((state: RootState) => state.auth);
 
   const handleLogin = async () => {
-    try {
-      setError("");
-      setIsLoading(true);
-
-      const response = await fetch(`${API_BASE_URL}/user/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, password }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Login failed");
-      }
-
-      // Store token in localStorage
-      localStorage.setItem("token", data.token);
-
-      // Dispatch login action to update Redux state
-      dispatch(login(data));
-
-      // Redirect based on onboarding status
-      if (data.user.onboardingId) {
-        navigate("/dashboard");
-      } else {
-        navigate("/onboarding");
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
-    } finally {
-      setIsLoading(false);
+    const result = await dispatch(loginUser({ username, password }));
+    if (loginUser.fulfilled.match(result)) {
+      const onboardingPath = result.payload.user.onboardingId
+        ? "/dashboard"
+        : "/onboarding";
+      navigate(onboardingPath);
     }
   };
 
@@ -69,7 +40,7 @@ const LoginPage: React.FC = () => {
         variant="outlined"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
-        disabled={isLoading}
+        disabled={loading}
       />
       <TextField
         fullWidth
@@ -79,16 +50,16 @@ const LoginPage: React.FC = () => {
         variant="outlined"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
-        disabled={isLoading}
+        disabled={loading}
       />
       <Button
         variant="contained"
         color="primary"
         fullWidth
         onClick={handleLogin}
-        disabled={isLoading}
+        disabled={loading}
       >
-        {isLoading ? "Logging in..." : "Login"}
+        {loading ? "Logging in..." : "Login"}
       </Button>
     </Box>
   );

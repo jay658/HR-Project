@@ -10,19 +10,20 @@ import { Home, Users, Mail } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "../store/hook";
 import {
   fetchHousingDetails,
-  selectHousingDetails,
-  selectHousingLoading,
-  selectHousingError,
+  clearHousingDetails,
 } from "../store/housingSlice/housingSlice";
 
 const HousingPage: React.FC = () => {
   const dispatch = useAppDispatch();
-  const housingDetails = useAppSelector(selectHousingDetails);
-  const loading = useAppSelector(selectHousingLoading);
-  const error = useAppSelector(selectHousingError);
+  const { housingDetails, loading, error } = useAppSelector((state) => state.housing);
 
   useEffect(() => {
     dispatch(fetchHousingDetails());
+
+    return () => {
+      // Clear housing details when the component unmounts
+      dispatch(clearHousingDetails());
+    };
   }, [dispatch]);
 
   if (loading) {
