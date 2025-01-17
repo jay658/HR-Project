@@ -17,11 +17,11 @@ import {
   Typography
 } from '@mui/material';
 import { AppDispatch, RootState } from '../store/store';
-import React, { useEffect, useState } from 'react';
 import {
-  ValidationErrors,
+  PersonalInfoValidationErrors,
   validatePersonalInfo
-} from '../utils/personalInfoValidation';
+} from './shared/infoValidation';
+import React, { useEffect, useState } from 'react';
 import {
   fetchPersonalInfo,
   updatePersonalInfo,
@@ -40,7 +40,7 @@ const PersonalInfoPage: React.FC = () => {
 
   const [localData, setLocalData] = useState<PersonalInfo>(personalInfo);
   const [isEditing, setIsEditing] = useState(false);
-  const [errors, setErrors] = useState<ValidationErrors>({});
+  const [errors, setErrors] = useState<PersonalInfoValidationErrors>({});
 
   useEffect(() => {
     dispatch(fetchPersonalInfo());
@@ -65,9 +65,9 @@ const PersonalInfoPage: React.FC = () => {
   };
 
   const handleSaveAll = async () => {
-    const validationErrors = validatePersonalInfo(localData);
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
+    const PersonalInfoValidationErrors = validatePersonalInfo(localData);
+    if (Object.keys(PersonalInfoValidationErrors).length > 0) {
+      setErrors(PersonalInfoValidationErrors);
       setNotification({
         open: true,
         message: 'Please fix the validation errors before saving.',

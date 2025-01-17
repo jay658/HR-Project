@@ -1,7 +1,7 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { fetchPersonalInfo, updatePersonalInfo } from './personalInfoThunks';
 
-import { PersonalInfo } from '../../types/PersonalInfo';
+import { PersonalInfo } from '../shared/types';
 
 export type Document = {
   type: string;
@@ -11,34 +11,36 @@ export type Document = {
 };
 
 const initialState: PersonalInfo = {
-  name: {
-    firstName: '',
-    lastName: '',
-    middleName: '',
-    preferredName: ''
-  },
-  email: '',
-  SSN: '',
+  userId: '',
+  firstName: '',
+  lastName: '',
+  middleName: '',
+  preferredName: '',
+  // gender: '',
   dob: '',
-  gender: 'male',
-  address: {
-    buildingNumber: '',
-    streetName: '',
-    city: '',
-    state: '',
-    zipCode: ''
-  },
-  phone: {
-    cell: '',
-    work: ''
-  },
-  employment: {
-    residencyStatus: 'citizen'
-  },
-  driversLicense: {
-    hasLicense: false
-  },
-  emergencyContact: []
+  buildingNumber: '',
+  streetName: '',
+  city: '',
+  state: '',
+  zipCode: '',
+  work: '',
+  cell: '',
+  SSN: null,
+  make: '',
+  model: '',
+  color: '',
+  hasLicense: null,
+  // number: '',
+  expirationDate: '',
+  // licenseDocument: '',
+  residencyStatus: '',
+  // visaType: '',
+  startDate: '',
+  endDate: '',
+  employementDocuments: [],
+  // reference: null,
+  emergencyContact: [],
+  profilePicture: ''
 };
 
 const personalInfoSlice = createSlice({

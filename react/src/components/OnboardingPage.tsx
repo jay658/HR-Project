@@ -24,12 +24,8 @@ const OnboardingPage: React.FC = () => {
   const onboarding = useSelector((state: RootState) => state.onboarding);
   const dispatch = useDispatch<AppDispatch>();
 
-<<<<<<< HEAD
-  
-=======
   const [localData, setLocalData] = useState<Onboarding>(onboarding);
-  // const [errors, setErrors] = useState<ValidationErrors>({});
->>>>>>> 274d30f (commit to rebase main)
+  const [errors, setErrors] = useState<OnboardingValidationErrors>({});
 
   useEffect(() => {
     setLocalData(onboarding);
