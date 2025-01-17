@@ -2,25 +2,13 @@ import cors, { CorsOptions } from 'cors'
 import express, { Express } from 'express'
 
 import apiRouter from './api/api'
+import config from './utility/configs'
 import connectToDB from './config/connection'
-import dotenv from 'dotenv'
 import fileUpload from 'express-fileupload'
 
-dotenv.config()
-
-let uri = process.env.URI || ''
-const password = process.env.PASSWORD || ''
-const username = process.env.USERNAME || ''
-uri = uri.replace('<PASSWORD>', password).replace('<USERNAME>', username)
-
 const app: Express = express()
-const PORT = process.env.PORT || 3000
+const PORT = config.PORT
 
-const corsOptions: CorsOptions = {
-  origin: ["http://localhost:5173"]
-}
-
-app.use(cors(corsOptions))
 app.use(express.json())
 app.use(fileUpload())
 

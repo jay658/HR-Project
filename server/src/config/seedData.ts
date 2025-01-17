@@ -474,6 +474,50 @@ const seedFacilityIssue = [
   }
 ];
 
+const notOnboardedUserOnboarding = {
+  name: {
+    firstName: 'Jamie - not onboarded',
+    lastName: 'Fox',
+    middleName: '',
+    preferredName: ''
+  },
+  gender: 'male',
+  dob: new Date('1980-12-05'),
+  address: {
+    buildingNumber: '789',
+    streetName: 'Maple Avenue',
+    city: 'Seattle',
+    state: 'WA',
+    zipCode: '98101'
+  },
+  phone: {
+    cell: '555-999-0000'
+  },
+  SSN: '456789123',
+  driversLicense: {
+    hasLicense: true,
+    number: 'WA456789123',
+    expirationDate: new Date('2025-06-30'),
+    document: null
+  },
+  employment: {
+    residencyStatus: 'nonresident',
+    visaType: 'H1-B',
+    startDate: new Date('2023-03-01'),
+    endDate: new Date('2024-03-01')
+  },
+  profilePicture: null,
+  emergencyContact: [
+    {
+      firstName: 'Sarah',
+      lastName: 'Brown',
+      phone: '555-999-0000',
+      email: 'sarah.brown@example.com',
+      relationship: 'spouse'
+    }
+  ]
+}
+
 export {
   seedEmployeeUsers,
   seedApartments,

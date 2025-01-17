@@ -3,5 +3,12 @@
   "references": [
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }
-  ]
+  ],
+
+  "compilerOptions": {
+    "jsx": "react-jsx", // Use "react" for React 17 or earlier
+    "strict": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node"
+  }
 }

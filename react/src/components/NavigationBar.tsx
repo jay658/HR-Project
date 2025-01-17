@@ -1,8 +1,15 @@
+// NavigationBar.tsx
 import React from "react";
 import { AppBar, Toolbar, Typography, Button, Box } from "@mui/material";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "../store/store"; // Adjust path
 
 const NavigationBar: React.FC = () => {
+  let { isLoggedIn } = useSelector((state: RootState) => state.auth);
+  isLoggedIn =
+    isLoggedIn || (localStorage.getItem("isLoggedIn") ? true : false);
+
   return (
     <AppBar position="static">
       <Toolbar>
@@ -10,12 +17,16 @@ const NavigationBar: React.FC = () => {
           Beaconfire Employee
         </Typography>
         <Box sx={{ display: "flex", gap: 1 }}>
-          <Button color="inherit" component={Link} to="/registration">
-            Registration
-          </Button>
-          <Button color="inherit" component={Link} to="/login">
-            Login
-          </Button>
+          {!isLoggedIn && (
+            <>
+              <Button color="inherit" component={Link} to="/registration">
+                Registration
+              </Button>
+              <Button color="inherit" component={Link} to="/login">
+                Login
+              </Button>
+            </>
+          )}
           <Button color="inherit" component={Link} to="/onboarding">
             Onboarding
           </Button>
@@ -27,6 +38,9 @@ const NavigationBar: React.FC = () => {
           </Button>
           <Button color="inherit" component={Link} to="/housing">
             Housing
+          </Button>
+          <Button color="inherit" component={Link} to="/facilityissue">
+            Facility Issue
           </Button>
         </Box>
       </Toolbar>

@@ -1,17 +1,15 @@
-import { GetObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
 
 import { UploadedFile } from 'express-fileupload'
-import dotenv from 'dotenv'
-
-dotenv.config()
+import config from '../configs'
 
 const connectToAWS = () => {
   try{
     const s3 = new S3Client({
-      region: process.env.AWS_REGION || '',
+      region: config.AWS_REGION,
       credentials:{
-        accessKeyId: process.env.AWS_ACCESS_KEY || '',
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || ''
+        accessKeyId: config.AWS_ACCESS_KEY,
+        secretAccessKey: config.AWS_SECRET_ACCESS_KEY
       }
     });
 
@@ -31,7 +29,7 @@ const uploadFileToAWS = async (file: UploadedFile) => {
     const key = file.name
 
     const params = {
-      Bucket: process.env.AWS_S3_BUCKET_NAME || '',
+      Bucket: config.AWS_S3_BUCKET_NAME,
       Key: key,
       Body: file.data,
       ContentType: file.mimetype,
