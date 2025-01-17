@@ -2,10 +2,12 @@
 import React from "react";
 import { AppBar, Toolbar, Typography, Button, Box } from "@mui/material";
 import { Link } from "react-router-dom";
-
+import { useSelector } from "react-redux";
+import { RootState } from "../store/store"; // Adjust path
 
 const NavigationBar: React.FC = () => {
-  const isLoggedIn = localStorage.getItem('isLoggedIn');
+  let { isLoggedIn } = useSelector((state: RootState) => state.auth);
+  isLoggedIn = isLoggedIn ||  (localStorage.getItem('isLoggedIn') ? true : false)
 
   return (
     <AppBar position="static">
