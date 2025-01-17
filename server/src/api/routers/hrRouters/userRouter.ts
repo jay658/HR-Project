@@ -1,8 +1,10 @@
+import { getEmployees, testUserRouter } from '../../../controllers/hrControllers/user'
+
 import express from "express";
-import { testUserRouter } from "../../../controllers/hrControllers/user";
 
 const userRouter = express.Router();
 
-userRouter.get("/test", testUserRouter);
+userRouter.get('/test', testUserRouter)
+userRouter.get('/employees', getEmployees)
 
 export default userRouter;
