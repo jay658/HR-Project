@@ -13,6 +13,11 @@ const seedEmployeeUsers = [
     username: 'michael.brown',
     password: 'hashed_password_789',
     email: 'michael.brown@example.com'
+  },
+  {
+    username: 'kobe.bryant',
+    password: 'hashed_password_824',
+    email: 'kobe.bryant@example.com'
   }
 ];
 
@@ -205,6 +210,73 @@ const seedOnboarding = [
         relationship: 'father'
       }
     ]
+  },
+  {
+    status: 'approved',
+    name: {
+      firstName: 'Kobe',
+      lastName: 'Bryant',
+      middleName: 'Bean',
+      preferredName: 'Black Mamba'
+    },
+    gender: 'male',
+    dob: new Date('1978-08-23'),
+    address: {
+      buildingNumber: '824',
+      streetName: 'Lakers Drive',
+      city: 'Los Angeles',
+      state: 'CA',
+      zipCode: '90015'
+    },
+    phone: {
+      work: '555-824-8224',
+      cell: '555-824-2424'
+    },
+    SSN: '824242424',
+    carInfo: {
+      make: 'Ferrari',
+      model: '458 Italia',
+      color: 'Black'
+    },
+    driversLicense: {
+      hasLicense: true,
+      number: 'CA824242424',
+      expirationDate: new Date('2026-08-23'),
+      document: null  // This will be set by the seed script
+    },
+    employment: {
+      residencyStatus: 'nonresident',
+      visaType: 'F1(CPT/OPT)',
+      startDate: new Date('2024-12-09'),
+      endDate: new Date('2025-02-16'),
+      documents: []
+    },
+    profilePicture: null,  // This will be set by the seed script
+    reference: {
+      firstName: 'Phil',
+      lastName: 'Jackson',
+      phone: '555-999-1111',
+      email: 'phil.jackson@example.com',
+      relationship: 'former coach'
+    },
+    emergencyContact: [
+      {
+        firstName: 'Vanessa',
+        lastName: 'Bryant',
+        middleName: null,
+        phone: '555-824-0824',
+        email: 'vanessa.bryant@example.com',
+        relationship: 'spouse'
+      },
+      {
+        firstName: 'Joe',
+        lastName: 'Bryant',
+        middleName: null,
+        phone: '555-824-1111',
+        email: 'joe.bryant@example.com',
+        relationship: 'father'
+      }
+    ]
   }
 ];
 
@@ -254,6 +326,20 @@ const seedDocuments = [
     status: 'approved',
     fileKey: 'dummy/michael_license.pdf',
     fileUrl: 'http://dummy-s3.com/michael_license.pdf'
+  },
+
+  // kobe bryant documents
+  {
+    type: 'profilePicture',
+    status: 'approved',
+    fileKey: 'dummy/kobe_profile.jpg',
+    fileUrl: 'http://dummy-s3.com/kobe_profile.jpg'
+  },
+  {
+    type: 'driverLicense',
+    status: 'approved',
+    fileKey: 'dummy/kobe_license.pdf',
+    fileUrl: 'http://dummy-s3.com/kobe_license.pdf'
   }
 ];
 
@@ -432,6 +518,73 @@ const seedPersonalInfo = [
         relationship: 'father'
       }
     ]
+  },
+  {
+    userId: null,  // This will be set by the seed script
+    name: {
+      firstName: 'Kobe',
+      lastName: 'Bryant',
+      middleName: 'Bean'
+    },
+    email: 'kobe.bryant@example.com',
+    gender: 'male',
+    dob: new Date('1978-08-23'),
+    address: {
+      buildingNumber: '824',
+      streetName: 'Lakers Drive',
+      city: 'Los Angeles',
+      state: 'CA',
+      zipCode: '90015'
+    },
+    phone: {
+      work: '555-824-8224',
+      cell: '555-824-2424'
+    },
+    SSN: '824242424',
+    carInfo: {
+      make: 'Ferrari',
+      model: '458 Italia',
+      color: 'Black'
+    },
+    driversLicense: {
+      hasLicense: true,
+      number: 'CA824242424',
+      expirationDate: new Date('2026-08-23'),
+      document: null  // This will be set by the seed script
+    },
+    employment: {
+      residencyStatus: 'nonresident',
+      visaType: 'F1(CPT/OPT)',
+      startDate: new Date('2024-12-09'),
+      endDate: new Date('2025-02-16'),
+      documents: []
+    },
+    profilePicture: null,  // This will be set by the seed script
+    reference: {
+      firstName: 'Phil',
+      lastName: 'Jackson',
+      phone: '555-999-1111',
+      email: 'phil.jackson@example.com',
+      relationship: 'former coach'
+    },
+    emergencyContact: [
+      {
+        firstName: 'Vanessa',
+        lastName: 'Bryant',
+        middleName: null,
+        phone: '555-824-0824',
+        email: 'vanessa.bryant@example.com',
+        relationship: 'spouse'
+      },
+      {
+        firstName: 'Joe',
+        lastName: 'Bryant',
+        middleName: null,
+        phone: '555-824-1111',
+        email: 'joe.bryant@example.com',
+        relationship: 'father'
+      }
+    ]
   }
 ];
 
@@ -473,6 +626,50 @@ const seedFacilityIssue = [
     ]
   }
 ];
+
+const notOnboardedUserOnboarding = {
+  name: {
+    firstName: 'Jamie - not onboarded',
+    lastName: 'Fox',
+    middleName: '',
+    preferredName: ''
+  },
+  gender: 'male',
+  dob: new Date('1980-12-05'),
+  address: {
+    buildingNumber: '789',
+    streetName: 'Maple Avenue',
+    city: 'Seattle',
+    state: 'WA',
+    zipCode: '98101'
+  },
+  phone: {
+    cell: '555-999-0000'
+  },
+  SSN: '456789123',
+  driversLicense: {
+    hasLicense: true,
+    number: 'WA456789123',
+    expirationDate: new Date('2025-06-30'),
+    document: null
+  },
+  employment: {
+    residencyStatus: 'nonresident',
+    visaType: 'H1-B',
+    startDate: new Date('2023-03-01'),
+    endDate: new Date('2024-03-01')
+  },
+  profilePicture: null,
+  emergencyContact: [
+    {
+      firstName: 'Sarah',
+      lastName: 'Brown',
+      phone: '555-999-0000',
+      email: 'sarah.brown@example.com',
+      relationship: 'spouse'
+    }
+  ]
+}
 
 export {
   seedEmployeeUsers,

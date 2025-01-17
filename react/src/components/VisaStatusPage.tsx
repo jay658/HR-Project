@@ -45,7 +45,7 @@ const VisaStatusPage: React.FC = () => {
       console.log("This is handle file: ",fileURLResult.fileURL)
       
       const uploadNewDocument = {
-        username: "user5",
+        username: "kobe.bryant",
         type: selectedDocType,
         fileKey: file.name,
         fileURL: fileURLResult.fileURL
@@ -63,7 +63,7 @@ const VisaStatusPage: React.FC = () => {
 
   const handleFileSubmit = async (docType: string) => {
     const uploadNewDocument = {
-      username: "user5",
+      username: "kobe.bryant",
       type: docType,
       fileKey: "Jan 15 - 1725 File",
       fileURL: "http://localhost:3000/url"
@@ -72,12 +72,12 @@ const VisaStatusPage: React.FC = () => {
   };
 
   useEffect(() => {
-    const userData = {"username": 'user5'}
+    const userData = {"username": 'kobe.bryant'}
     dispatch(createVisa(userData))
   },[])
 
   useEffect(() => {
-    const userData = {"username": 'user5'}
+    const userData = {"username": 'kobe.bryant'}
 
     dispatch(fetchVisaType(userData))
 
@@ -178,7 +178,7 @@ const VisaStatusPage: React.FC = () => {
                   )}
                   {doc.status === 'rejected' && (
                     <Button variant="contained" size="small" color="secondary"
-                    onClick={() => handleFileSubmit(visaState.documentType)}>
+                    onClick={() => handleButtonClick(visaState.documentType)}>
                       Resubmit
                     </Button>
                   )}
@@ -208,7 +208,7 @@ const VisaStatusPage: React.FC = () => {
                     variant="contained" 
                     size="small" 
                     color="primary" 
-                    onClick={() => handleFileSubmit(visaState.documentType)}
+                    onClick={() => handleButtonClick(visaState.documentType)}
                   >
                     Upload New
                   </Button>
