@@ -1,0 +1,13 @@
+<button (click)="increment()">Increment</button>
+
+<div>Current Count: {{ count$ | async }}</div>
+
+<button (click)="decrement()">Decrement</button>
+
+<button (click)="reset()">Reset Counter</button>
+
+<div *ngIf="loading$ | async">Loading...</div>
+<div *ngIf="error$ | async as error">Error: {{ error }}</div>
+<ul>
+  <li *ngFor="let user of users$ | async">{{ user.username }}</li>
+</ul>
