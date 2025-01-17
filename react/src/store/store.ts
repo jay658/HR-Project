@@ -4,6 +4,8 @@ import onboardingReducer from "./onboardingSlice/onboardingSlice";
 import housingReducer from "./housingSlice/housingSlice";
 import authReducer from "./authSlice/authSlice";
 import facilityIssuesReducer from './facilityIssuesSlice/facilityIssuesSlice.ts';
+import registrationReducer from './registrationSlice/registrationSlice'
+
 export const store = configureStore({
   reducer: {
     counter: counterReducer,
@@ -11,6 +13,7 @@ export const store = configureStore({
     housing: housingReducer,
     auth: authReducer,
     facilityIssues: facilityIssuesReducer,
+    registration: registrationReducer
   },
 });
 
