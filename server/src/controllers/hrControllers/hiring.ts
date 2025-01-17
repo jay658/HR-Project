@@ -29,7 +29,7 @@ const sendRegistrationEmail = async (req: Request, res: Response) : Promise<any>
             hr: user._id
         })
 
-        const response = await sendEmail(registerToken.personName,registerToken.email,`http://localhost:3000/api/hr/hiring/test/${registerToken._id}`)
+        const response = await sendEmail(registerToken.personName,registerToken.email,`http://localhost:3000/api/employee/user/register/${registerToken._id}`)
 
         res.status(200).json({mssg : response})
     }catch(err){
