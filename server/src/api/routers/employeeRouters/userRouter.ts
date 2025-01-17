@@ -1,9 +1,9 @@
 import express, { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import EmployeeUser from "../../models/EmployeeUser";
-import { authenticateToken } from "../auth/authMiddleware";
-import Apartment from "../../models/Apartment";
+import EmployeeUser from "../../../models/EmployeeUser";
+import { authenticateToken } from "../../auth/authMiddleware";
+import Apartment from "../../../models/Apartment";
 
 interface AuthRequest extends Request {
   user?: {

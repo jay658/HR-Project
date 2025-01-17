@@ -1,5 +1,7 @@
 import mongoose, { Schema } from 'mongoose';
 
+import config from '../utility/configs';
+
 export const DEFAULT_PROFILE_PICTURE_ID = 'default-profile-picture-id';
 
 export interface IDocument extends Document {
@@ -76,7 +78,7 @@ export async function initializeDefaultProfilePicture() {
       _id: DEFAULT_PROFILE_PICTURE_ID,
       type: 'PROFILE_PICTURE',
       fileKey: 'defaults/profile-placeholder.png',
-      fileUrl: `https://${process.env.S3_BUCKET_NAME}.s3.amazonaws.com/defaults/profile-placeholder.png`
+      fileUrl: `https://${config.AWS_S3_BUCKET_NAME}.s3.amazonaws.com/defaults/profile-placeholder.png`
     });
   }
 }

@@ -33,7 +33,7 @@ interface HousingState {
   error: string | null;
 }
 
-const API_BASE_URL = "http://localhost:3000/api";
+const API_BASE_URL = "http://localhost:3000/api/employee";
 
 const initialState: HousingState = {
   housingDetails: null,
@@ -55,7 +55,9 @@ export const fetchHousingDetails = createAsyncThunk(
       return response.data.housingDetails;
     } catch (error) {
       return rejectWithValue(
-        error instanceof Error ? error.message : "Failed to fetch housing details"
+        error instanceof Error
+          ? error.message
+          : "Failed to fetch housing details"
       );
     }
   }

@@ -7,7 +7,8 @@ import { RootState } from "../store/store"; // Adjust path
 
 const NavigationBar: React.FC = () => {
   let { isLoggedIn } = useSelector((state: RootState) => state.auth);
-  isLoggedIn = isLoggedIn ||  (localStorage.getItem('isLoggedIn') ? true : false)
+  isLoggedIn =
+    isLoggedIn || (localStorage.getItem("isLoggedIn") ? true : false);
 
   return (
     <AppBar position="static">

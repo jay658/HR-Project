@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 interface User {
   id: string;
@@ -26,7 +26,7 @@ const initialState: AuthState = {
   error: null,
 };
 
-const API_BASE_URL = "http://localhost:3000/api";
+const API_BASE_URL = "http://localhost:3000/api/employee";
 
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
@@ -54,7 +54,9 @@ export const loginUser = createAsyncThunk(
       localStorage.setItem("isLoggedIn", "true");
       return data;
     } catch (error) {
-      return rejectWithValue(error instanceof Error ? error.message : "An error occurred");
+      return rejectWithValue(
+        error instanceof Error ? error.message : "An error occurred"
+      );
     }
   }
 );

@@ -1,20 +1,21 @@
-import apartmentRouter from "./routers/apartmentRouter";
+import cors, { CorsOptions } from "cors";
+
+import config from "../utility/configs";
+import employeeRouter from "./routers/employeeRouter";
 import express from "express";
-import facilityIssueRouter from "./routers/facilityRouter";
-import onboardingRouter from "./routers/onboardingRouter";
-import personalInfoRouter from "./routers/personalInfoRouter";
-import userRouter from "./routers/userRouter";
-import visaRouter from "./routers/visaRouter";
-import { authenticateToken } from "./auth/authMiddleware";
+import hrRouter from "./routers/hrRouter";
 
 const apiRouter = express.Router();
 
-apiRouter.use("/user", userRouter);
-apiRouter.use(authenticateToken);
-apiRouter.use("/apartment", apartmentRouter);
-apiRouter.use("/onboarding", onboardingRouter);
-apiRouter.use("/visa", visaRouter);
-apiRouter.use("/facilityIssue", facilityIssueRouter);
-apiRouter.use("/personalInfo", personalInfoRouter);
+const hrCorsOptions: CorsOptions = {
+  origin: [config.HR_SERVER],
+};
+
+const employeeCorsOptions: CorsOptions = {
+  origin: [config.EMPLOYEE_SERVER],
+};
+
+apiRouter.use("/employee", cors(employeeCorsOptions), employeeRouter);
+apiRouter.use("/hr", cors(hrCorsOptions), hrRouter);
 
 export default apiRouter;

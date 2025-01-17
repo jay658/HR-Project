@@ -15,7 +15,9 @@ import {
 
 const HousingPage: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { housingDetails, loading, error } = useAppSelector((state) => state.housing);
+  const { housingDetails, loading, error } = useAppSelector(
+    (state) => state.housing
+  );
 
   useEffect(() => {
     dispatch(fetchHousingDetails());

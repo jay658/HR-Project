@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import {
   Box,
   Typography,
@@ -17,35 +17,32 @@ import {
   CircularProgress,
   Stack,
   IconButton,
-  Tooltip,
-} from '@mui/material';
-import { MessageSquare, X, Plus, AlertCircle } from 'lucide-react';
-import { RootState, AppDispatch } from '../store/store';
+} from "@mui/material";
+import { MessageSquare, X, Plus, AlertCircle } from "lucide-react";
+import { RootState, AppDispatch } from "../store/store";
 import {
   fetchIssuesForUser,
   createFacilityIssue,
   addCommentToIssue,
   closeIssue,
   FacilityIssue,
-} from '../store/facilityIssuesSlice/facilityIssuesSlice.ts';
-
-interface CommentForm {
-  [key: string]: string;
-}
+} from "../store/facilityIssuesSlice/facilityIssuesSlice.ts";
 
 const FacilityIssuesPage = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { issues, status, error } = useSelector((state: RootState) => state.facilityIssues);
+  const { issues, status, error } = useSelector(
+    (state: RootState) => state.facilityIssues
+  );
 
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [commentDialogOpen, setCommentDialogOpen] = useState(false);
-  const [selectedIssueId, setSelectedIssueId] = useState<string>('');
-  const [newIssue, setNewIssue] = useState({ title: '', description: '' });
-  const [newComment, setNewComment] = useState('');
+  const [selectedIssueId, setSelectedIssueId] = useState<string>("");
+  const [newIssue, setNewIssue] = useState({ title: "", description: "" });
+  const [newComment, setNewComment] = useState("");
   const [formErrors, setFormErrors] = useState({
-    title: '',
-    description: '',
-    comment: '',
+    title: "",
+    description: "",
+    comment: "",
   });
 
   useEffect(() => {
@@ -54,16 +51,16 @@ const FacilityIssuesPage = () => {
 
   const validateNewIssue = () => {
     const errors = {
-      title: '',
-      description: '',
+      title: "",
+      description: "",
     };
     if (!newIssue.title.trim()) {
-      errors.title = 'Title is required';
+      errors.title = "Title is required";
     }
     if (!newIssue.description.trim()) {
-      errors.description = 'Description is required';
+      errors.description = "Description is required";
     }
-    setFormErrors(prev => ({ ...prev, ...errors }));
+    setFormErrors((prev) => ({ ...prev, ...errors }));
     return !errors.title && !errors.description;
   };
 
@@ -73,28 +70,30 @@ const FacilityIssuesPage = () => {
     try {
       await dispatch(createFacilityIssue(newIssue)).unwrap();
       setCreateDialogOpen(false);
-      setNewIssue({ title: '', description: '' });
+      setNewIssue({ title: "", description: "" });
     } catch (err) {
-      console.error('Failed to create issue:', err);
+      console.error("Failed to create issue:", err);
     }
   };
 
   const handleAddComment = async () => {
     if (!newComment.trim()) {
-      setFormErrors(prev => ({ ...prev, comment: 'Comment is required' }));
+      setFormErrors((prev) => ({ ...prev, comment: "Comment is required" }));
       return;
     }
 
     try {
-      await dispatch(addCommentToIssue({
-        facilityIssueId: selectedIssueId,
-        comment: newComment
-      })).unwrap();
+      await dispatch(
+        addCommentToIssue({
+          facilityIssueId: selectedIssueId,
+          comment: newComment,
+        })
+      ).unwrap();
       setCommentDialogOpen(false);
-      setNewComment('');
-      setSelectedIssueId('');
+      setNewComment("");
+      setSelectedIssueId("");
     } catch (err) {
-      console.error('Failed to add comment:', err);
+      console.error("Failed to add comment:", err);
     }
   };
 
@@ -102,7 +101,7 @@ const FacilityIssuesPage = () => {
     try {
       await dispatch(closeIssue(issueId)).unwrap();
     } catch (err) {
-      console.error('Failed to close issue:', err);
+      console.error("Failed to close issue:", err);
     }
   };
 
@@ -114,18 +113,23 @@ const FacilityIssuesPage = () => {
   const renderIssueCard = (issue: FacilityIssue) => (
     <Card key={issue._id} sx={{ mb: 2 }}>
       <CardContent>
-        <Stack direction="row" justifyContent="space-between" alignItems="center">
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
+        >
           <Typography variant="h6" gutterBottom>
             {issue.title}
           </Typography>
-          <Typography 
-            variant="caption" 
-            sx={{ 
-              px: 1, 
-              py: 0.5, 
+          <Typography
+            variant="caption"
+            sx={{
+              px: 1,
+              py: 0.5,
               borderRadius: 1,
-              bgcolor: issue.status === 'closed' ? 'error.main' : 'success.main',
-              color: 'white'
+              bgcolor:
+                issue.status === "closed" ? "error.main" : "success.main",
+              color: "white",
             }}
           >
             {issue.status.toUpperCase()}
@@ -143,15 +147,15 @@ const FacilityIssuesPage = () => {
               Comments ({issue.comments.length})
             </Typography>
             <Stack spacing={1}>
-              {issue.comments.map(comment => (
-                <Box 
-                  key={comment._id} 
-                  sx={{ 
-                    p: 1, 
-                    bgcolor: 'grey.50', 
+              {issue.comments.map((comment) => (
+                <Box
+                  key={comment._id}
+                  sx={{
+                    p: 1,
+                    bgcolor: "grey.50",
                     borderRadius: 1,
-                    border: '1px solid',
-                    borderColor: 'grey.200'
+                    border: "1px solid",
+                    borderColor: "grey.200",
                   }}
                 >
                   <Typography variant="body2">{comment.description}</Typography>
@@ -165,7 +169,7 @@ const FacilityIssuesPage = () => {
         )}
       </CardContent>
 
-      {issue.status !== 'closed' && (
+      {issue.status !== "closed" && (
         <CardActions>
           <Button
             startIcon={<MessageSquare size={16} />}
@@ -185,21 +189,26 @@ const FacilityIssuesPage = () => {
     </Card>
   );
 
-  if (status === 'loading') {
+  if (status === "loading") {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="400px"
+      >
         <CircularProgress />
       </Box>
     );
   }
 
   return (
-    <Box sx={{ maxWidth: 'lg', mx: 'auto', p: 3 }}>
+    <Box sx={{ maxWidth: "lg", mx: "auto", p: 3 }}>
       {/* Header */}
-      <Stack 
-        direction="row" 
-        justifyContent="space-between" 
-        alignItems="center" 
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        alignItems="center"
         sx={{ mb: 3 }}
       >
         <Typography variant="h4">Facility Issues</Typography>
@@ -214,8 +223,8 @@ const FacilityIssuesPage = () => {
 
       {/* Error Alert */}
       {error && (
-        <Alert 
-          severity="error" 
+        <Alert
+          severity="error"
           sx={{ mb: 2 }}
           action={
             <IconButton
@@ -237,12 +246,12 @@ const FacilityIssuesPage = () => {
       {/* Issues List */}
       <Stack spacing={2}>
         {issues.length === 0 ? (
-          <Box 
-            sx={{ 
-              p: 3, 
-              textAlign: 'center', 
-              bgcolor: 'grey.50',
-              borderRadius: 1
+          <Box
+            sx={{
+              p: 3,
+              textAlign: "center",
+              bgcolor: "grey.50",
+              borderRadius: 1,
             }}
           >
             <AlertCircle size={48} color="gray" />
@@ -256,8 +265,8 @@ const FacilityIssuesPage = () => {
       </Stack>
 
       {/* Create Issue Dialog */}
-      <Dialog 
-        open={createDialogOpen} 
+      <Dialog
+        open={createDialogOpen}
         onClose={() => setCreateDialogOpen(false)}
         maxWidth="sm"
         fullWidth
@@ -271,8 +280,8 @@ const FacilityIssuesPage = () => {
             fullWidth
             value={newIssue.title}
             onChange={(e) => {
-              setNewIssue(prev => ({ ...prev, title: e.target.value }));
-              setFormErrors(prev => ({ ...prev, title: '' }));
+              setNewIssue((prev) => ({ ...prev, title: e.target.value }));
+              setFormErrors((prev) => ({ ...prev, title: "" }));
             }}
             error={!!formErrors.title}
             helperText={formErrors.title}
@@ -285,8 +294,8 @@ const FacilityIssuesPage = () => {
             rows={4}
             value={newIssue.description}
             onChange={(e) => {
-              setNewIssue(prev => ({ ...prev, description: e.target.value }));
-              setFormErrors(prev => ({ ...prev, description: '' }));
+              setNewIssue((prev) => ({ ...prev, description: e.target.value }));
+              setFormErrors((prev) => ({ ...prev, description: "" }));
             }}
             error={!!formErrors.description}
             helperText={formErrors.description}
@@ -294,7 +303,9 @@ const FacilityIssuesPage = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setCreateDialogOpen(false)}>Cancel</Button>
-          <Button onClick={handleCreateIssue} variant="contained">Create</Button>
+          <Button onClick={handleCreateIssue} variant="contained">
+            Create
+          </Button>
         </DialogActions>
       </Dialog>
 
@@ -317,7 +328,7 @@ const FacilityIssuesPage = () => {
             value={newComment}
             onChange={(e) => {
               setNewComment(e.target.value);
-              setFormErrors(prev => ({ ...prev, comment: '' }));
+              setFormErrors((prev) => ({ ...prev, comment: "" }));
             }}
             error={!!formErrors.comment}
             helperText={formErrors.comment}
@@ -325,7 +336,9 @@ const FacilityIssuesPage = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setCommentDialogOpen(false)}>Cancel</Button>
-          <Button onClick={handleAddComment} variant="contained">Add Comment</Button>
+          <Button onClick={handleAddComment} variant="contained">
+            Add Comment
+          </Button>
         </DialogActions>
       </Dialog>
     </Box>
