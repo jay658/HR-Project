@@ -1,0 +1,32 @@
+<style>
+  .spacer {
+    flex: 1 1 auto;
+  }
+
+  mat-toolbar {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  button {
+    color: white;
+  }
+
+  .navbar {
+    background-color: #1976d2;
+    color: white
+  }
+</style>
+
+<mat-toolbar class="navbar">
+  <!-- Logo -->
+  <span>MyApp</span>
+
+  <!-- Navigation Links -->
+  <span class="spacer"></span>
+  <button mat-button routerLink="/home">Home</button>
+  <button mat-button routerLink="/employees">Employees</button>
+  <button mat-button routerLink="/visa">Visa</button>
+  <button mat-button routerLink="/housing">Housing</button>
+</mat-toolbar>
+
