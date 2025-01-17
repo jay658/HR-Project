@@ -2,7 +2,6 @@ import {
   getOnboardingForUser,
   testOnboardingRouter,
   updateOnboardingForUser,
-  updateOnboardingStatus,
   uploadOnboardingFile
 } from '../../../controllers/employeeControllers/onboarding'
 
@@ -15,6 +14,5 @@ onboardingRouter
   .get('/', getOnboardingForUser)
   .post('/upload', uploadOnboardingFile)
   .put('/update', updateOnboardingForUser)
-  .put('/updateStatus', updateOnboardingStatus)
 
 export default onboardingRouter
