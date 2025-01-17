@@ -32,63 +32,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { DocumentsSection } from './DocumentSection';
 import type { PersonalInfo } from '../types/PersonalInfo';
-
-const US_STATES = [
-  { code: 'AL' },
-  { code: 'AK' },
-  { code: 'AZ' },
-  { code: 'AR' },
-  { code: 'CA' },
-  { code: 'CO' },
-  { code: 'CT' },
-  { code: 'DE' },
-  { code: 'FL' },
-  { code: 'GA' },
-  { code: 'HI' },
-  { code: 'ID' },
-  { code: 'IL' },
-  { code: 'IN' },
-  { code: 'IA' },
-  { code: 'KS' },
-  { code: 'KY' },
-  { code: 'LA' },
-  { code: 'ME' },
-  { code: 'MD' },
-  { code: 'MA' },
-  { code: 'MI' },
-  { code: 'MN' },
-  { code: 'MS' },
-  { code: 'MO' },
-  { code: 'MT' },
-  { code: 'NE' },
-  { code: 'NV' },
-  { code: 'NH' },
-  { code: 'NJ' },
-  { code: 'NM' },
-  { code: 'NY' },
-  { code: 'NC' },
-  { code: 'ND' },
-  { code: 'OH' },
-  { code: 'OK' },
-  { code: 'OR' },
-  { code: 'PA' },
-  { code: 'RI' },
-  { code: 'SC' },
-  { code: 'SD' },
-  { code: 'TN' },
-  { code: 'TX' },
-  { code: 'UT' },
-  { code: 'VT' },
-  { code: 'VA' },
-  { code: 'WA' },
-  { code: 'WV' },
-  { code: 'WI' },
-  { code: 'WY' }
-] as const;
+import { US_STATES } from './shared/constants';
 
 const PersonalInfoPage: React.FC = () => {
   const personalInfo = useSelector((state: RootState) => state.personalInfo);
-  console.log(`this is personalInfo: ${JSON.stringify(personalInfo)}`);
   const dispatch = useDispatch<AppDispatch>();
 
   const [localData, setLocalData] = useState<PersonalInfo>(personalInfo);
@@ -210,6 +157,8 @@ const PersonalInfoPage: React.FC = () => {
       }
     });
   };
+
+  console.log('localData: ', localData);
 
   return (
     <Box sx={{ p: 3, maxWidth: 600, mx: 'auto', mt: 5 }}>
