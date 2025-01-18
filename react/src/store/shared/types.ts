@@ -47,4 +47,52 @@ export interface Onboarding extends BasicInfo {
   status: 'approved' | 'rejected' | 'pending';
 }
 
+export interface OnboardingResponse {
+  _id: string;
+  userId: string;
+  status: 'approved' | 'rejected' | 'pending';
+  name: {
+    firstName: string;
+    lastName: string;
+    middleName: string | null;
+    preferredName: string | null;
+  };
+  address: {
+    buildingNumber: string;
+    streetName: string;
+    city: string;
+    state: string;
+    zipCode: string;
+  };
+  phone: {
+    cell: string;
+    work: string | null;
+  };
+  carInfo: {
+    make: string | null;
+    model: string | null;
+    color: string | null;
+  };
+  driversLicense: {
+    hasLicense: boolean;
+    number: string | null;
+    expirationDate: string | null;
+    document: string | null;
+  };
+  employment: {
+    residencyStatus: string;
+    visaType: string | null;
+    otherVisaTitle: string | null;
+    startDate: string | null;
+    endDate: string | null;
+    documents: string[] | null;
+  };
+  gender: string | null;
+  dob: string;
+  SSN: string | null;
+  profilePicture: string | null;
+  reference: ContactDetails | null;
+  emergencyContact: ContactDetails[];
+}
+
 export type PersonalInfo = BasicInfo;

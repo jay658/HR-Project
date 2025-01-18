@@ -5,8 +5,8 @@ import {
   seedFacilityIssue,
   seedOnboarding,
   seedPersonalInfo,
-  seedVisaApplications,
-} from "./seedData";
+  seedVisaApplications
+} from './seedData';
 
 import Apartment from '../models/Apartment';
 import Document from '../models/Document';
@@ -35,7 +35,7 @@ const seed = async () => {
     const hashedSeedEmployeeUsers = await Promise.all(
       seedEmployeeUsers.map(async (user) => ({
         ...user,
-        password: await bcrypt.hash(user.password, 10), // Hash password with bcrypt
+        password: await bcrypt.hash(user.password, 10) // Hash password with bcrypt
       }))
     );
 
@@ -44,9 +44,9 @@ const seed = async () => {
     const documents = await Document.insertMany(
       seedDocuments.map((doc) => {
         let userId;
-        if (doc.fileKey.includes("john")) {
+        if (doc.fileKey.includes('john')) {
           userId = users[0]._id;
-        } else if (doc.fileKey.includes("jane")) {
+        } else if (doc.fileKey.includes('jane')) {
           userId = users[1]._id;
         } else if (doc.fileKey.includes('michael')) {
           userId = users[2]._id;
@@ -84,12 +84,12 @@ const seed = async () => {
         return {
           ...info,
           userId: users[idx]._id,
-          profilePicture: userDocs.find((d) => d.type === "profilePicture")
+          profilePicture: userDocs.find((d) => d.type === 'profilePicture')
             ?._id,
           driversLicense: {
             ...info.driversLicense,
-            document: userDocs.find((d) => d.type === "driverLicense")?._id,
-          },
+            document: userDocs.find((d) => d.type === 'driverLicense')?._id
+          }
         };
       })
     );
@@ -126,25 +126,25 @@ const seed = async () => {
             ?.apartmentId,
           comments: issue.comments.map((comment) => ({
             ...comment,
-            createdBy: getRandomId(users),
-          })),
+            createdBy: getRandomId(users)
+          }))
         };
       })
     );
 
     //user without onboarding
     await EmployeeUser.create({
-      username: "not onboarded user",
-      password: "test",
-      email: "notonboarded@test.com",
+      username: 'not onboarded user',
+      password: 'test',
+      email: 'notonboarded@test.com'
     });
 
-    console.log("DB seeded");
+    console.log('DB seeded');
   } catch (err) {
     console.error(`There was an error seeding the data: ${err}`);
   } finally {
     await mongoose.connection.close();
-    console.log("DB connection closed");
+    console.log('DB connection closed');
   }
 };
 

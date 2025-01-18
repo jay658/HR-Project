@@ -2,17 +2,6 @@ import { PersonalInfo } from '../../types/PersonalInfo';
 import axios from 'axios';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
-export const updateSSN = createAsyncThunk(
-  'personalInfo/updateSSN',
-  async (ssn: string) => {
-    const response = await axios.put(
-      'http://localhost:3000/api/employee/personalInfo/updateSSN',
-      { SSN: ssn }
-    );
-    return response.data;
-  }
-);
-
 export const fetchPersonalInfo = createAsyncThunk(
   'personalInfo/fetchPersonalInfo',
   async () => {

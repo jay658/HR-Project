@@ -63,8 +63,7 @@ const updateOnboardingForUser = async (req: AuthRequest, res: Response) => {
         {
           ...updates,
           status: 'pending'
-        },
-        { new: true, select: '+SSN' }
+        }
       );
     }
 
