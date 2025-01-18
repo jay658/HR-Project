@@ -1,18 +1,25 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Box, TextField, Button, Typography } from "@mui/material";
+import { Box, TextField, Button, Typography, Alert } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../store/store"; // Replace with your actual store types
+import { loginUser } from "../store/authSlice/authSlice";
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
-  const handleLogin = () => {
-    if (username === "test" && password === "password") {
-      localStorage.setItem("isLoggedIn", "true");
-      navigate("/onboarding");
-    } else {
-      alert("Invalid credentials");
+  const { loading, error } = useSelector((state: RootState) => state.auth);
+
+  const handleLogin = async () => {
+    const result = await dispatch(loginUser({ username, password }));
+    if (loginUser.fulfilled.match(result)) {
+      const onboardingPath = result.payload.user.onboardingId
+        ? "/dashboard"
+        : "/onboarding";
+      navigate(onboardingPath);
     }
   };
 
@@ -21,6 +28,11 @@ const LoginPage: React.FC = () => {
       <Typography variant="h4" gutterBottom>
         Login
       </Typography>
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {error}
+        </Alert>
+      )}
       <TextField
         fullWidth
         margin="normal"
@@ -28,6 +40,7 @@ const LoginPage: React.FC = () => {
         variant="outlined"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
+        disabled={loading}
       />
       <TextField
         fullWidth
@@ -37,14 +50,16 @@ const LoginPage: React.FC = () => {
         variant="outlined"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
+        disabled={loading}
       />
       <Button
         variant="contained"
         color="primary"
         fullWidth
         onClick={handleLogin}
+        disabled={loading}
       >
-        Login
+        {loading ? "Logging in..." : "Login"}
       </Button>
     </Box>
   );
