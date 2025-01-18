@@ -1,8 +1,7 @@
 import { Request, Response } from "express";
-
 import EmployeeUser from "../../models/EmployeeUser";
-import bcrypt from 'bcryptjs'
 import config from "../../utility/configs";
+const bcrypt = require('bcryptjs')
 
 // Test Router
 const testUserRouter = (_req: Request, res: Response) => {

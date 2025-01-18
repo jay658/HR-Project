@@ -72,8 +72,10 @@ const seed = async () => {
           userId = users[0]._id;
         } else if (doc.fileKey.includes("jane")) {
           userId = users[1]._id;
-        } else {
+        } else if (doc.fileKey.includes('michael')) {
           userId = users[2]._id;
+        } else {
+          userId = users[3]._id;
         }
         return { ...doc, userId };
       })
