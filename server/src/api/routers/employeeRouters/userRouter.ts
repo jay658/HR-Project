@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import bcrypt from "bcrypt";
+import bcrypt from 'bcryptjs'
 import jwt from "jsonwebtoken";
 import EmployeeUser from "../../../models/EmployeeUser";
 import { authenticateToken } from "../../auth/authMiddleware";

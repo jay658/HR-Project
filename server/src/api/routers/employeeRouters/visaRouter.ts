@@ -1,6 +1,7 @@
 import express from 'express'
 import { testVisaRouter, getAllExistVisa, getVisaStatus,
-  createVisa, getNextRequiredDocument, uploadNewDocument, getVisaType, getFileURL
+  createVisa, getNextRequiredDocument, uploadNewDocument, getVisaType,
+  getFileURL,
 } from '../../../controllers/employeeControllers/visa'
 
 const visaRouter = express.Router()
