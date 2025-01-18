@@ -6,7 +6,7 @@ import Onboarding from '../../models/Onboarding';
 import PersonalInfo from '../../models/PersonalInfo';
 
 // temp test user, await auth
-const currentTestUser = 'john.doe';
+const currentTestUser = 'user5';
 
 const testPersonalInfoRouter = (_req: Request, res: Response) => {
   try {
