@@ -5,20 +5,21 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 
 const fetchOnboarding = createAsyncThunk(
   'onboarding/fetchOnboarding',
-  async (_, { getState, rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
-      const state = getState() as RootState;
-      const token = state.auth.token;
+      const response = await axiosInstance.get('/onboarding');
+      // const state = getState() as RootState;
+      // const token = state.auth.token;
 
-      if (!token) {
-        return rejectWithValue('No authentication token found');
-      }
+      // if (!token) {
+      //   return rejectWithValue('No authentication token found');
+      // }
 
-      const response = await axiosInstance.get('/onboarding', {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
+      // const response = await axiosInstance.get('/onboarding', {
+      //   headers: {
+      //     Authorization: `Bearer ${token}`
+      //   }
+      // });
 
       return {
         userId: response.data.userId,
@@ -66,29 +67,38 @@ const fetchOnboarding = createAsyncThunk(
 
 const updateOnboarding = createAsyncThunk(
   'onboarding/updateOnboarding',
-  async (data: Partial<Onboarding>) => {
-    // serialize dates before sending to API
-    const serializedData = {
-      ...data,
-      dob: data.dob instanceof Date ? data.dob.toISOString() : data.dob,
-      expirationDate:
-        data.expirationDate instanceof Date
-          ? data.expirationDate.toISOString()
-          : data.expirationDate,
-      startDate:
-        data.startDate instanceof Date
-          ? data.startDate.toISOString()
-          : data.startDate,
-      endDate:
-        data.endDate instanceof Date ? data.endDate.toISOString() : data.endDate
-    };
+  async (data: Partial<Onboarding>, { rejectWithValue }) => {
+    try {
+      // serialize dates before sending to API
+      const serializedData = {
+        ...data,
+        dob: data.dob instanceof Date ? data.dob.toISOString() : data.dob,
+        expirationDate:
+          data.expirationDate instanceof Date
+            ? data.expirationDate.toISOString()
+            : data.expirationDate,
+        startDate:
+          data.startDate instanceof Date
+            ? data.startDate.toISOString()
+            : data.startDate,
+        endDate:
+          data.endDate instanceof Date
+            ? data.endDate.toISOString()
+            : data.endDate
+      };
 
-    //validate the JWT token
-    const response = await axiosInstance.put('/onboarding/update', {
-      updates: serializedData
-    });
+      //validate the JWT token
+      const response = await axiosInstance.put('/onboarding/update', {
+        updates: serializedData
+      });
 
-    return response.data;
+      return response.data;
+    } catch (error: any) {
+      console.error('Update error:', error.response?.data);
+      return rejectWithValue(
+        error.response?.data || 'Failed to update onboarding'
+      );
+    }
   }
 );
 

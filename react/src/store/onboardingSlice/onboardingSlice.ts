@@ -5,7 +5,7 @@ import { Onboarding } from '../shared/types';
 
 const initialState: Onboarding = {
   userId: '',
-  status: 'pending',
+  status: null,
   firstName: '',
   lastName: '',
   middleName: '',
@@ -18,7 +18,7 @@ const initialState: Onboarding = {
   zipCode: '',
   work: '',
   cell: '',
-  SSN: null,
+  SSN: '',
   make: '',
   model: '',
   color: '',
@@ -41,14 +41,14 @@ const onboardingSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchOnboarding.fulfilled, (_state, action) => action.payload)
-      .addCase(
-        updateOnboarding.fulfilled,
-        (_state, action) => action.payload
-      );
+      .addCase(fetchOnboarding.fulfilled, (_state, action) => {
+        return { ...initialState, ...(action.payload || {}) } as Onboarding;
+      })
+      .addCase(updateOnboarding.fulfilled, (state, action) => {
+        return { ...state, ...(action.payload || {}) } as Onboarding;
+      });
   }
 });
-
 
 export const { update } = onboardingSlice.actions;
 

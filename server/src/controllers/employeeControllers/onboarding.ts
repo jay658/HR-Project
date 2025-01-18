@@ -42,10 +42,12 @@ const updateOnboardingForUser = async (req: AuthRequest, res: Response) => {
     if (!user) throw Error('User not found');
 
     const { updates }: { updates: Partial<OnboardingTypeT> } = req.body;
+    console.log('Received updates:', JSON.stringify(updates, null, 2));
 
     let updatedOnboarding;
 
     if (!user.onboardingId) {
+      console.log('Creating new onboarding record');
       // create new onboarding record with the initial data
       const newOnboarding = await Onboarding.create({
         userId: user._id,
@@ -59,20 +61,30 @@ const updateOnboardingForUser = async (req: AuthRequest, res: Response) => {
 
       updatedOnboarding = newOnboarding;
     } else {
+      console.log('Updating existing onboarding record');
       // update existing onboarding record
       updatedOnboarding = await Onboarding.findByIdAndUpdate(
         user.onboardingId,
         {
-          ...updates,
-          status: 'pending'
-        }
+          ...updates
+        },
+        { new: true }
       );
     }
 
-    res.send(updatedOnboarding);
+    if (!updatedOnboarding) {
+      throw new Error('Failed to update onboarding');
+    }
+
+    console.log('Updated onboarding:', updatedOnboarding);
+    res.json(updatedOnboarding);
   } catch (err: unknown) {
-    console.log(`There was an error updating the onboarding form: ${err}`);
-    res.status(500).json({ message: `${err}` });
+    console.error('Detailed error:', err);
+    res.status(500).json({
+      message: err instanceof Error ? err.message : 'Unknown error occurred',
+      error: err,
+      stack: err instanceof Error ? err.stack : undefined
+    });
   }
 };
 

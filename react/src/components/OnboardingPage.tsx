@@ -10,7 +10,8 @@ import {
   Select,
   SelectChangeEvent,
   TextField,
-  Typography
+  Typography,
+  FormHelperText
 } from '@mui/material';
 import { AppDispatch, RootState } from '../store/store';
 import { ContactDetails, Onboarding } from '../store/shared/types';
@@ -32,8 +33,9 @@ import { useNavigate } from 'react-router-dom';
 
 const OnboardingPage: React.FC = () => {
   const onboarding = useSelector((state: RootState) => state.onboarding);
-  console.log('this is onboarding: ', JSON.stringify(onboarding));
-  const { isLoggedIn, user } = useSelector((state: RootState) => state.auth);
+  const { isLoggedIn, loading, user } = useSelector(
+    (state: RootState) => state.auth
+  );
 
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
@@ -41,19 +43,30 @@ const OnboardingPage: React.FC = () => {
   const [localData, setLocalData] = useState<Onboarding>(onboarding);
   const [errors, setErrors] = useState<OnboardingValidationErrors>({});
 
+  console.log('this is loggedin: ', isLoggedIn);
+  console.log('this is user: ', JSON.stringify(user));
+
   useEffect(() => {
-    if (!isLoggedIn) {
+    if (loading) {
+      return;
+    }
+
+    if (!isLoggedIn || !user) {
       navigate('/login');
       return;
     }
 
-    if (localData.status === 'approved') {
+    if (user.onboardingId) {
+      dispatch(fetchOnboarding());
+    }
+
+    if (onboarding.status === 'approved') {
       navigate('/dashboard');
       return;
     }
 
     dispatch(fetchOnboarding());
-  }, [isLoggedIn, dispatch, navigate, localData.status]);
+  }, [isLoggedIn, loading, user, onboarding, navigate, dispatch]);
 
   const userEmail = user?.email;
 
@@ -64,11 +77,19 @@ const OnboardingPage: React.FC = () => {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement> | SelectChangeEvent
   ) => {
-    setLocalData({
+    const { [e.target.name]: _, ...restErrors } = errors;
+    setErrors(restErrors);
+    const newData = {
       ...localData,
       [e.target.name]: e.target.value
-    });
+    };
+    setLocalData(newData);
+    console.log('this is newData: ', JSON.stringify(newData));
   };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   const formatDateForInput = (date: string | Date | undefined): string => {
     if (!date) return '';
@@ -76,7 +97,7 @@ const OnboardingPage: React.FC = () => {
     return d.toISOString().split('T')[0];
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const validationErrors = validateOnboarding(localData);
     if (Object.keys(validationErrors).length === 0) {
       const unflattened = {
@@ -129,13 +150,19 @@ const OnboardingPage: React.FC = () => {
         status: 'pending' as const
       };
 
-      dispatch(updateOnboarding(unflattened));
+      try {
+        await dispatch(updateOnboarding(unflattened)).unwrap();
+        await dispatch(fetchOnboarding()).unwrap();
+      } catch (error) {
+        console.error('Error saving onboarding:', error);
+      }
     } else {
       setErrors(validationErrors);
     }
   };
 
   const isPending = localData.status === 'pending';
+  const isRejected = localData.status === 'rejected';
   return (
     <Box sx={{ p: 3, maxWidth: 600, mx: 'auto', mt: 5 }}>
       {/* HEADER */}
@@ -156,6 +183,13 @@ const OnboardingPage: React.FC = () => {
       {isPending && (
         <Alert severity='info' sx={{ mb: 4 }}>
           Please wait for HR to review your application.
+        </Alert>
+      )}
+
+      {isRejected && (
+        <Alert severity='error' sx={{ mb: 4 }}>
+          Your application has been rejected. Please make necessary changes and
+          submit again.
         </Alert>
       )}
 
@@ -248,6 +282,7 @@ const OnboardingPage: React.FC = () => {
               name='ssn'
               label='SSN'
               value={localData.SSN}
+              // slotProps={{ inputLabel: { shrink: true } }}
               onChange={handleChange as React.ChangeEventHandler}
               error={Boolean(errors.SSN)}
               helperText={errors.SSN}
@@ -268,7 +303,7 @@ const OnboardingPage: React.FC = () => {
               disabled={isPending}
             />
           </Grid2>
-          <FormControl>
+          <FormControl sx={{ minWidth: 200 }}>
             <InputLabel id='gender-select-label'>Gender</InputLabel>
             <Select
               labelId='gender-select-label'

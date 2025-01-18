@@ -137,7 +137,8 @@ export const validateOnboarding = (
 
   // emergency contact
   if (!data.emergencyContact?.length) {
-    errors.emergencyContactRequired = 'At least one emergency contact is required';
+    errors.emergencyContactRequired =
+      'At least one emergency contact is required';
   } else {
     const contactErrors = data.emergencyContact
       .map((contact) => {
@@ -163,6 +164,7 @@ export const validateOnboarding = (
       .filter((error): error is ContactErrors => error !== undefined);
 
     if (contactErrors.length) errors.emergencyContact = contactErrors;
+    if (contactErrors.length === 0) delete errors.emergencyContactRequired;
   }
 
   return errors;
@@ -295,6 +297,7 @@ export const validatePersonalInfo = (
       .filter((error): error is ContactErrors => error !== undefined);
 
     if (contactErrors.length) errors.emergencyContact = contactErrors;
+    if (contactErrors.length === 0) delete errors.emergencyContactRequired;
   }
 
   return errors;

@@ -44,13 +44,13 @@ interface BasicInfo {
 
 export interface Onboarding extends BasicInfo {
   userId: string;
-  status: 'approved' | 'rejected' | 'pending';
+  status: 'approved' | 'rejected' | 'pending' | null;
 }
 
 export interface OnboardingResponse {
   _id: string;
   userId: string;
-  status: 'approved' | 'rejected' | 'pending';
+  status: 'approved' | 'rejected' | 'pending' | null;
   name: {
     firstName: string;
     lastName: string;

@@ -10,8 +10,10 @@ import { logout } from "../store/authSlice/authSlice";
 const NavigationBar: React.FC = () => {
   const dispatch = useDispatch()
   let { isLoggedIn } = useSelector((state: RootState) => state.auth);
+  const onboarding = useSelector((state: RootState) => state.onboarding);
   isLoggedIn =
     isLoggedIn || (localStorage.getItem("isLoggedIn") ? true : false);
+    const showOnboardingButton = !onboarding || onboarding.status !== 'approved';
 
   const handleLogout = () => {
     dispatch(logout())
@@ -40,6 +42,7 @@ const NavigationBar: React.FC = () => {
           <Button color="inherit" component={Link} to="/onboarding">
             Onboarding
           </Button>
+          )}
           <Button color="inherit" component={Link} to="/personal-info">
             Personal Info
           </Button>
