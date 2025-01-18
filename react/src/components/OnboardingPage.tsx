@@ -47,13 +47,13 @@ const OnboardingPage: React.FC = () => {
       return;
     }
 
-    if (onboarding.status === 'approved') {
+    if (localData.status === 'approved') {
       navigate('/dashboard');
       return;
     }
 
     dispatch(fetchOnboarding());
-  }, [isLoggedIn, dispatch, navigate]);
+  }, [isLoggedIn, dispatch, navigate, localData.status]);
 
   const userEmail = user?.email;
 
@@ -135,7 +135,7 @@ const OnboardingPage: React.FC = () => {
     }
   };
 
-  const isPending = onboarding.status === 'pending';
+  const isPending = localData.status === 'pending';
   return (
     <Box sx={{ p: 3, maxWidth: 600, mx: 'auto', mt: 5 }}>
       {/* HEADER */}

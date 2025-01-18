@@ -15,9 +15,10 @@ const testOnboardingRouter = (_req: Request, res: Response) => {
 
 const getOnboardingForUser = async (req: AuthRequest, res: Response) => {
   try {
-    const id = req.user?.userId
-    const user = await EmployeeUser.findById(id)
+    const userId = req.user?.userId;
+    if (!userId) throw Error('Not authenticated');
 
+    const user = await EmployeeUser.findById(userId);
     if (!user) throw Error('User not found');
 
     let onboarding = await Onboarding.findById(user.onboardingId);
@@ -34,12 +35,13 @@ const getOnboardingForUser = async (req: AuthRequest, res: Response) => {
 
 const updateOnboardingForUser = async (req: AuthRequest, res: Response) => {
   try {
-    const { updates }: { updates: Partial<OnboardingTypeT> } = req.body;
-    const id = req.user?.userId;
+    const userId = req.user?.userId;
+    if (!userId) throw Error('Not authenticated');
 
-    //When auth is set up, we will get the user ID from the JWT and can replace this.
-    const user = await EmployeeUser.findById(id);
+    const user = await EmployeeUser.findById(userId);
     if (!user) throw Error('User not found');
+
+    const { updates }: { updates: Partial<OnboardingTypeT> } = req.body;
 
     let updatedOnboarding;
 
@@ -74,7 +76,7 @@ const updateOnboardingForUser = async (req: AuthRequest, res: Response) => {
   }
 };
 
-const uploadOnboardingFile = async (req: Request, res: Response) => {
+const uploadOnboardingFile = async (req: AuthRequest, res: Response) => {
   try {
     const file = req.files?.file;
 
