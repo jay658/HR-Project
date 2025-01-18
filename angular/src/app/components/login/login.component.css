@@ -1,0 +1,23 @@
+.login-container {
+    padding: 24px;
+    max-width: 500px;
+    margin: 48px auto;
+  
+    mat-card {
+      padding: 24px;
+    }
+  
+    mat-form-field {
+      width: 100%;
+      margin-bottom: 16px;
+    }
+  
+    button {
+      width: 100%;
+    }
+  
+    .error-message {
+      color: #f44336;
+      margin-bottom: 16px;
+    }
+  }
