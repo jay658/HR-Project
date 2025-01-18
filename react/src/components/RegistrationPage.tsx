@@ -1,7 +1,8 @@
-import React, { useState } from "react";
-import { Box, TextField, Button, Typography } from "@mui/material";
-import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from '../store/store';
+import { Box, Button, TextField, Typography } from "@mui/material";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from 'react-redux'
+
 import { registerUser } from "../store/registrationSlice/registrationThunks";
 import { useNavigate } from "react-router-dom";
 

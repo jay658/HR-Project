@@ -1,9 +1,9 @@
+import authReducer from "./authSlice/authSlice";
 import { configureStore } from "@reduxjs/toolkit";
 import counterReducer from "./counterSlice/counterSlice";
-import onboardingReducer from "./onboardingSlice/onboardingSlice";
-import housingReducer from "./housingSlice/housingSlice";
-import authReducer from "./authSlice/authSlice";
 import facilityIssuesReducer from './facilityIssuesSlice/facilityIssuesSlice.ts';
+import housingReducer from "./housingSlice/housingSlice";
+import onboardingReducer from "./onboardingSlice/onboardingSlice";
 import registrationReducer from './registrationSlice/registrationSlice'
 
 export const store = configureStore({

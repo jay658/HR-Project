@@ -1,4 +1,4 @@
-import axios from "axios";
+import { axiosInstance } from '../../interceptor/interceptor';
 import { createAsyncThunk } from '@reduxjs/toolkit'
 
 interface RegisterData {
@@ -11,12 +11,9 @@ const registerUser = createAsyncThunk(
     'registration/registerUser',
     async (registerData: RegisterData, { rejectWithValue }) => {
         try {
-            console.log(registerData)
-            const response = await axios.post('http://localhost:3000/api/user/register', registerData);
-            console.log(response.data)
+            const response = await axiosInstance.post('/user/register', registerData);
             return response.data;
         } catch (error: any) {
-            console.log(error.response.data)
             return rejectWithValue(
                 error.response?.data?.error || 'Registration failed'
             );

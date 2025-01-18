@@ -1,8 +1,9 @@
-import { Request, Response, NextFunction } from "express";
+import { NextFunction, Request, Response } from "express";
+
 import jwt from "jsonwebtoken";
 
 // Extend Request to include `user`
-interface AuthRequest extends Request {
+export interface AuthRequest extends Request {
   user?: {
     userId: string;
     username: string;
