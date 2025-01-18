@@ -1,19 +1,15 @@
 import {
   createVisa,
   getAllExistVisa,
+  getFileURL,
   getNextRequiredDocument,
   getVisaStatus,
+  getVisaType,
   testVisaRouter,
   uploadNewDocument
 } from '../../../controllers/employeeControllers/visa'
 
 import express from 'express'
-<<<<<<< HEAD:server/src/api/routers/visaRouter.ts
-import { testVisaRouter, getAllExistVisa, getVisaStatus,
-  createVisa, getNextRequiredDocument, uploadNewDocument, getVisaType, getFileURL
-} from '../../controllers/visa'
-=======
->>>>>>> main:server/src/api/routers/employeeRouters/visaRouter.ts
 
 const visaRouter = express.Router()
 

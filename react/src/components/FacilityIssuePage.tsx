@@ -33,6 +33,7 @@ const FacilityIssuesPage = () => {
   const { issues, status, error } = useSelector(
     (state: RootState) => state.facilityIssues
   );
+  const { user } = useSelector((state: RootState) => state.auth)
 
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [commentDialogOpen, setCommentDialogOpen] = useState(false);
@@ -162,6 +163,8 @@ const FacilityIssuesPage = () => {
                     borderColor: "grey.200",
                   }}
                 >
+                  {console.log(user)}
+                  <Typography variant="body1">{user?.username}</Typography>
                   <Typography variant="body2">{comment.description}</Typography>
                   <Typography variant="caption" color="text.secondary">
                     Posted on {new Date(comment.timestamp).toLocaleDateString('en-US')}

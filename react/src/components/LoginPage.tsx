@@ -1,9 +1,10 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Box, TextField, Button, Typography, Alert } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
+import { Alert, Box, Button, TextField, Typography } from "@mui/material";
 import { AppDispatch, RootState } from "../store/store"; // Replace with your actual store types
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
 import { loginUser } from "../store/authSlice/authSlice";
+import { useNavigate } from "react-router-dom";
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState<string>("");
@@ -19,6 +20,7 @@ const LoginPage: React.FC = () => {
       const onboardingPath = result.payload.user.onboardingId
         ? "/dashboard"
         : "/onboarding";
+      
       navigate(onboardingPath);
     }
   };
