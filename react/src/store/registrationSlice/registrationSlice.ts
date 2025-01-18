@@ -1,16 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit"
 import { registerUser } from "./registrationThunks";
-
 interface RegistrationState {
     error: string | null;
     isLoading: boolean;
 }
-
 const initialState: RegistrationState = {
     error: null,
     isLoading: false
 }
-
 const registrationSlice = createSlice({
     name: 'registration',
     initialState,
@@ -35,7 +32,5 @@ const registrationSlice = createSlice({
             });
     },
 });
-
 export const { clearError } = registrationSlice.actions;
 export default registrationSlice.reducer;
-

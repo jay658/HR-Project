@@ -12,7 +12,7 @@ const testOnboardingRouter = (_req: Request, res: Response) => {
   }
 };
 
-const getOnboardingForUser = async (_req: Request, res: Response) => {
+const getOnboardingForUser = async (req: Request, res: Response) => {
   try {
     const user = await EmployeeUser.findOne({ username: 'not onboarded user' });
 

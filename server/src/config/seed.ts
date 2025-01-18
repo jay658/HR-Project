@@ -8,20 +8,6 @@ import {
   seedVisaApplications,
 } from "./seedData";
 
-<<<<<<< HEAD
-import bcrypt from "bcrypt";
-
-import Apartment from "../models/Apartment";
-import Document from "../models/Document";
-import EmployeeUser from "../models/EmployeeUser";
-import FacilityIssue from "../models/FacilityIssue";
-import Onboarding from "../models/Onboarding";
-import PersonalInfo from "../models/PersonalInfo";
-import { Types } from "mongoose";
-import VisaApplication from "../models/VisaApplication";
-import connectToDB from "./connection";
-import mongoose from "mongoose";
-=======
 import Apartment from '../models/Apartment';
 import Document from '../models/Document';
 import EmployeeUser from '../models/EmployeeUser';
@@ -30,9 +16,9 @@ import Onboarding from '../models/Onboarding';
 import PersonalInfo from '../models/PersonalInfo';
 import { Types } from 'mongoose';
 import VisaApplication from '../models/VisaApplication';
+import bcrypt from "bcrypt";
 import connectToDB from './connection';
 import mongoose from 'mongoose';
->>>>>>> main
 
 const seed = async () => {
   try {
@@ -45,7 +31,6 @@ const seed = async () => {
     await PersonalInfo.deleteMany();
     await FacilityIssue.deleteMany();
     const apartments = await Apartment.insertMany(seedApartments);
-<<<<<<< HEAD
     // const users = await EmployeeUser.insertMany(seedEmployeeUsers);
     const hashedSeedEmployeeUsers = await Promise.all(
       seedEmployeeUsers.map(async (user) => ({
@@ -55,15 +40,6 @@ const seed = async () => {
     );
 
     const users = await EmployeeUser.insertMany(hashedSeedEmployeeUsers);
-    const onboardingItems = await Onboarding.insertMany(
-      seedOnboarding.map((onboarding, idx) => ({
-        ...onboarding,
-        userId: users[idx]._id,
-      }))
-    );
-=======
-    const users = await EmployeeUser.insertMany(seedEmployeeUsers);
->>>>>>> main
 
     const documents = await Document.insertMany(
       seedDocuments.map((doc) => {
@@ -148,13 +124,8 @@ const seed = async () => {
             ?.apartmentId,
           comments: issue.comments.map((comment) => ({
             ...comment,
-<<<<<<< HEAD
             createdBy: getRandomId(users),
           })),
-=======
-            createdBy: getRandomId(users)
-          }))
->>>>>>> main
         };
       })
     );

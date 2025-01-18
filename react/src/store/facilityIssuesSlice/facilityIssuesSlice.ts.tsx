@@ -1,12 +1,14 @@
-import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+
 import axios from "axios";
+import { axiosInstance } from "../../interceptor/interceptor";
 
 // Types
 export interface IssueComment {
   _id: string;
   description: string;
   createdBy: string;
-  createdAt: string;
+  timestamp: string;
 }
 
 export interface FacilityIssue {
@@ -35,25 +37,6 @@ interface FacilityIssuesState {
   error: string | null;
 }
 
-// API Configuration
-const API_BASE_URL = "http://localhost:3000/api/employee/facilityIssue";
-
-const axiosInstance = axios.create({
-  baseURL: API_BASE_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
-
-// Add request interceptor to include current token
-axiosInstance.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
-
 // Error handling helper
 const handleError = (error: unknown) => {
   if (axios.isAxiosError(error)) {
@@ -67,7 +50,7 @@ export const fetchIssuesForUser = createAsyncThunk(
   "facilityIssues/fetchIssuesForUser",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.get("/user");
+      const response = await axiosInstance.get("/facilityIssue/user");
       return response.data as FacilityIssue[];
     } catch (error) {
       return rejectWithValue(handleError(error));
@@ -79,7 +62,7 @@ export const createFacilityIssue = createAsyncThunk(
   "facilityIssues/createFacilityIssue",
   async (issueDetails: CreateIssuePayload, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.post("/create", {
+      const response = await axiosInstance.post("/facilityIssue/create", {
         issueDetails,
       });
       return response.data as FacilityIssue;
@@ -96,7 +79,7 @@ export const addCommentToIssue = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const response = await axiosInstance.put(`/comment/${facilityIssueId}`, {
+      const response = await axiosInstance.put(`/facilityIssue/comment/${facilityIssueId}`, {
         comment,
       });
       return response.data as FacilityIssue;
@@ -110,7 +93,7 @@ export const closeIssue = createAsyncThunk(
   "facilityIssues/closeIssue",
   async (facilityIssueId: string, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.put(`/close/${facilityIssueId}`);
+      const response = await axiosInstance.put(`/facilityIssue/close/${facilityIssueId}`);
       return response.data as FacilityIssue;
     } catch (error) {
       return rejectWithValue(handleError(error));
