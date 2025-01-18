@@ -1,9 +1,10 @@
+import { AppBar, Box, Button, Toolbar, Typography } from "@mui/material";
+
+import { Link } from "react-router-dom";
 // NavigationBar.tsx
 import React from "react";
-import { AppBar, Toolbar, Typography, Button, Box } from "@mui/material";
-import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
 import { RootState } from "../store/store"; // Adjust path
+import { useSelector } from "react-redux";
 
 const NavigationBar: React.FC = () => {
   let { isLoggedIn } = useSelector((state: RootState) => state.auth);
@@ -27,6 +28,9 @@ const NavigationBar: React.FC = () => {
               </Button>
             </>
           )}
+          <Button color="inherit" component={Link} to="/dashboard">
+            Dashboard
+          </Button>
           <Button color="inherit" component={Link} to="/onboarding">
             Onboarding
           </Button>
