@@ -1,5 +1,4 @@
 import type { Onboarding } from '../shared/types';
-import { RootState } from '../store';
 import { axiosInstance } from '../../interceptor/interceptor';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
@@ -7,19 +6,13 @@ const fetchOnboarding = createAsyncThunk(
   'onboarding/fetchOnboarding',
   async (_, { rejectWithValue }) => {
     try {
+      console.log('Fetching onboarding data...');
       const response = await axiosInstance.get('/onboarding');
-      // const state = getState() as RootState;
-      // const token = state.auth.token;
+      console.log('Onboarding response:', response.data);
 
-      // if (!token) {
-      //   return rejectWithValue('No authentication token found');
-      // }
-
-      // const response = await axiosInstance.get('/onboarding', {
-      //   headers: {
-      //     Authorization: `Bearer ${token}`
-      //   }
-      // });
+      if (!response.data) {
+        return null;
+      }
 
       return {
         userId: response.data.userId,
@@ -53,9 +46,12 @@ const fetchOnboarding = createAsyncThunk(
         gender: response.data.gender,
         profilePicture: response.data.profilePicture || '',
         reference: response.data.reference,
-        emergencyContact: response.data.emergencyContact
+        emergencyContact: response.data.emergencyContact,
+        loading: false,
+        error: null
       };
     } catch (error: any) {
+      console.error('Onboarding fetch error:', error);
       // If 404 (no onboarding record exists), return null instead of rejecting
       if (error.response?.status === 404) {
         return null;

@@ -36,6 +36,8 @@ const OnboardingPage: React.FC = () => {
   const { isLoggedIn, loading, user } = useSelector(
     (state: RootState) => state.auth
   );
+  console.log('isLoggedIn: ', isLoggedIn);
+  console.log('user: ', user);
 
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
@@ -43,30 +45,26 @@ const OnboardingPage: React.FC = () => {
   const [localData, setLocalData] = useState<Onboarding>(onboarding);
   const [errors, setErrors] = useState<OnboardingValidationErrors>({});
 
-  console.log('this is loggedin: ', isLoggedIn);
-  console.log('this is user: ', JSON.stringify(user));
+  // fetch onboarding data if user is logged in and loading is complete
+  useEffect(() => {
+    // if (isLoggedIn && user) {
+    dispatch(fetchOnboarding());
+    // }
+  }, [loading, isLoggedIn, user, dispatch]);
 
   useEffect(() => {
-    if (loading) {
-      return;
-    }
+    // if not logged in, redirect to login
+    // if (!isLoggedIn || !user) {
+    //   navigate('/login');
+    //   return;
+    // }
+  }, [isLoggedIn, user, navigate]);
 
-    if (!isLoggedIn || !user) {
-      navigate('/login');
-      return;
-    }
-
-    if (user.onboardingId) {
-      dispatch(fetchOnboarding());
-    }
-
+  useEffect(() => {
     if (onboarding.status === 'approved') {
       navigate('/dashboard');
-      return;
     }
-
-    dispatch(fetchOnboarding());
-  }, [isLoggedIn, loading, user, onboarding, navigate, dispatch]);
+  }, [onboarding.status, navigate]);
 
   const userEmail = user?.email;
 
@@ -86,10 +84,6 @@ const OnboardingPage: React.FC = () => {
     setLocalData(newData);
     console.log('this is newData: ', JSON.stringify(newData));
   };
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
   const formatDateForInput = (date: string | Date | undefined): string => {
     if (!date) return '';
