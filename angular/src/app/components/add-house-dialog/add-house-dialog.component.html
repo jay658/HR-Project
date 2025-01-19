@@ -1,0 +1,43 @@
+<!-- add-house-dialog.component.html -->
+<h2 mat-dialog-title>Add New House</h2>
+<mat-dialog-content>
+  <form [formGroup]="houseForm" class="flex flex-col gap-4">
+    <mat-form-field appearance="outline">
+      <mat-label>Unit</mat-label>
+      <input matInput formControlName="unit" required />
+      <mat-error *ngIf="houseForm.get('unit')?.hasError('required')">
+        Unit is required
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Capacity</mat-label>
+      <input matInput type="number" formControlName="capacity" required />
+      <mat-error *ngIf="houseForm.get('capacity')?.hasError('required')">
+        Capacity is required
+      </mat-error>
+      <mat-error *ngIf="houseForm.get('capacity')?.hasError('min')">
+        Capacity must be at least 1
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Address</mat-label>
+      <input matInput formControlName="address" required />
+      <mat-error *ngIf="houseForm.get('address')?.hasError('required')">
+        Address is required
+      </mat-error>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="onSubmit()"
+    [disabled]="!houseForm.valid"
+  >
+    Add House
+  </button>
+</mat-dialog-actions>
