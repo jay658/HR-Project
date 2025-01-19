@@ -76,7 +76,7 @@ import { userReducer } from './store/user/users.reducers';
     MatIconModule,
     MatProgressSpinnerModule,
     FormsModule,
-    StoreModule.forFeature('employees', employeeReducer),
+    StoreModule.forFeature('employee', employeeReducer),
     EffectsModule.forFeature([EmployeeEffects]),
   ],
   providers: [],

@@ -3,7 +3,7 @@ import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { EmployeeState } from './employees.reducers';
 
 export const selectEmployeeState =
-  createFeatureSelector<EmployeeState>('Employees');
+  createFeatureSelector<EmployeeState>('employee');
 
 export const selectEmployees = createSelector(
   selectEmployeeState,

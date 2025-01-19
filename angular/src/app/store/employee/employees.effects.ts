@@ -11,7 +11,7 @@ import { Injectable } from '@angular/core';
 
 @Injectable()
 export class EmployeeEffects {
-  loadEmployees = createEffect(() =>
+  loadEmployees$ = createEffect(() =>
     this.actions$.pipe(
       ofType(loadEmployees),
       mergeMap(({ searchParams }) =>
@@ -22,13 +22,20 @@ export class EmployeeEffects {
               totalCount: response.totalCount,
             })
           ),
-          catchError((error) =>
-            of(
+          catchError((error) => {
+            if (error.status === 403) {
+              return of(
+                loadEmployeesFailure({
+                  error: 'Please log in to view employee data',
+                })
+              );
+            }
+            return of(
               loadEmployeesFailure({
-                error: error.message || 'Failed to load employees',
+                error: 'Failed to load employees',
               })
-            )
-          )
+            );
+          })
         )
       )
     )

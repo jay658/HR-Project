@@ -13,7 +13,7 @@
         <mat-label>Search employees</mat-label>
         <input
           matInput
-          [ngModel]="searchTerm"
+          [(ngModel)]="searchTerm"
           (input)="onSearch($event)"
           placeholder="Search by name..."
         />
@@ -35,15 +35,15 @@
         mat-table
         [dataSource]="(employees$ | async) || []"
         class="employee-table"
-        *ngIf="(loading$ | async) === false"
+        *ngIf="!(loading$ | async)"
       >
         <!-- Name Column -->
         <ng-container matColumnDef="name">
           <th mat-header-cell *matHeaderCellDef>Name</th>
           <td mat-cell *matCellDef="let employee">
-            <a [routerLink]="['/hr/employee', employee._id]" target="_blank">
-              {{ employee.personalInfoId?.name?.firstName }}
-              {{ employee.personalInfoId?.name?.lastName }}
+            <a [routerLink]="['/employee', employee.id]" target="_blank">
+              {{ employee.name.fullName }}
+              <span *ngIf="employee.name.preferredName">({{ employee.name.preferredName }})</span>
             </a>
           </td>
         </ng-container>
@@ -52,7 +52,7 @@
         <ng-container matColumnDef="ssn">
           <th mat-header-cell *matHeaderCellDef>SSN</th>
           <td mat-cell *matCellDef="let employee">
-            {{ formatSSN(employee.personalInfoId?.SSN) }}
+            {{ formatSSN(employee.ssn) }}
           </td>
         </ng-container>
 
@@ -60,7 +60,7 @@
         <ng-container matColumnDef="workAuth">
           <th mat-header-cell *matHeaderCellDef>Work Authorization</th>
           <td mat-cell *matCellDef="let employee">
-            {{ employee.personalInfoId?.employment?.visaTitle || "N/A" }}
+            {{ formatWorkAuth(employee.workAuthorizationTitle, employee.visaType, employee.otherVisaTitle) }}
           </td>
         </ng-container>
 
@@ -68,7 +68,7 @@
         <ng-container matColumnDef="phone">
           <th mat-header-cell *matHeaderCellDef>Phone</th>
           <td mat-cell *matCellDef="let employee">
-            {{ employee.personalInfoId?.phone || "N/A" }}
+            {{ employee.phoneNumber || "N/A" }}
           </td>
         </ng-container>
 
@@ -85,11 +85,8 @@
       </table>
 
       <!-- No Results Message -->
-      <div
-        *ngIf="(employees$ | async)?.length === 0 && !(loading$ | async)"
-        class="no-results"
-      >
-        No employees found matching your search criteria.
+      <div *ngIf="(employees$ | async)?.length === 0 && !(loading$ | async)" class="no-results">
+        <p>No employees found matching your search criteria.</p>
       </div>
     </mat-card-content>
   </mat-card>

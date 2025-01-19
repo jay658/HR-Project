@@ -1,20 +1,26 @@
 import { createAction, props } from '@ngrx/store';
 
 export interface Employee {
-  _id: string;
-  email: string;
-  personInfoId: {
-    name: {
-      firstName: string;
-      lastName: string;
-      preferredName?: string;
-    };
-    SSN: string;
-    phone: string;
-    employement: {
-      visaTitle: string;
-    };
+  id: string;
+  name: {
+    firstName: string;
+    lastName: string;
+    preferredName?: string;
+    fullName: string;
   };
+  ssn: string;
+  workAuthorizationTitle: string;
+  visaType?: string | null;
+  otherVisaTitle?: string | null;
+  phoneNumber: string;
+  email: string;
+}
+
+export interface EmployeeResponse {
+  success: boolean;
+  totalCount: number;
+  filteredCount: number;
+  data: Employee[];
 }
 
 export const loadEmployees = createAction(

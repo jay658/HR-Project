@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import {
   Employee,
   loadEmployees,
@@ -18,7 +18,7 @@ import { Store } from '@ngrx/store';
   templateUrl: './employee-management.component.html',
   styleUrls: ['./employee-management.component.css'],
 })
-export class EmployeeManagementComponent implements OnInit {
+export class EmployeeManagementComponent implements OnInit, OnDestroy {
   employees$: Observable<Employee[]>;
   loading$: Observable<boolean>;
   error$: Observable<string | null>;
@@ -34,7 +34,10 @@ export class EmployeeManagementComponent implements OnInit {
     this.totalCount$ = this.store.select(selectTotalCount);
 
     this.searchSubject
-      .pipe(debounceTime(300), distinctUntilChanged())
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged()
+      )
       .subscribe((searchTerm) => {
         this.searchEmployees(searchTerm);
       });
@@ -42,6 +45,10 @@ export class EmployeeManagementComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadEmployees();
+  }
+
+  ngOnDestroy(): void {
+    this.searchSubject.complete();
   }
 
   loadEmployees(): void {
@@ -53,16 +60,36 @@ export class EmployeeManagementComponent implements OnInit {
     this.searchSubject.next(searchTerm);
   }
 
-  private searchEmployees(searchTerm: string): void {
-    this.store.dispatch(
-      loadEmployees({
-        searchParams: {
-          firstName: searchTerm,
-          lastName: searchTerm,
-          preferredName: searchTerm,
-        },
-      })
-    );
+  private searchEmployees(term: string): void {
+    const searchParams = term ? {
+      firstName: term,
+      lastName: term,
+      preferredName: term
+    } : {};
+    
+    this.store.dispatch(loadEmployees({ searchParams }));
+  }
+
+  formatWorkAuth(status: string, visaType?: string, otherVisaTitle?: string): string {
+    if (!status) return 'N/A';
+    
+    const formatMap: { [key: string]: string } = {
+      'citizen': 'Citizen',
+      'greenCard': 'Green Card',
+      'H1-B': 'H1-B',
+      'L2': 'L2',
+      'F1(CPT/OPT)': 'F1 (CPT/OPT)',
+      'H4': 'H4'
+    };
+
+    if (status === 'nonresident') {
+      if (visaType === 'Other' && otherVisaTitle) {
+        return otherVisaTitle;
+      }
+      return formatMap[visaType || ''] || 'N/A';
+    }
+
+    return formatMap[status] || status;
   }
 
   formatSSN(ssn: string): string {
