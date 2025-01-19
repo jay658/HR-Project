@@ -1,1 +1,9 @@
-<p>visa-status-management works!</p>
+<div class="container">
+    <div *ngIf="response">
+        <p>Server Response: {{ response }}</p>
+    </div>
+
+    <div *ngIf="error" class="error">
+        <p>{{ error }}</p>
+    </div>
+</div>

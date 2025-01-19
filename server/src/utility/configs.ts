@@ -3,7 +3,7 @@ dotenv.config()
 
 const config = {
   URI: process.env.URI || '',
-  USERNAME: process.env.USERNAME || '',
+  USERNAME: process.env.APP_USERNAME || '',
   PASSWORD: process.env.PASSWORD || '',
   AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY || '',
   AWS_ACCESS_KEY: process.env.AWS_ACCESS_KEY || '',
