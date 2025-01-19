@@ -17,6 +17,6 @@ const employeeCorsOptions: CorsOptions = {
 };
 
 apiRouter.use("/employee", cors(employeeCorsOptions), authenticateToken, employeeRouter);
-apiRouter.use("/hr", cors(hrCorsOptions), authenticateToken, hrRouter);
+apiRouter.use("/hr", cors(hrCorsOptions), hrRouter);
 
 export default apiRouter;

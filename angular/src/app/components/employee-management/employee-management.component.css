@@ -1,0 +1,67 @@
+.employee-management-container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.search-field {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.employee-table {
+  width: 100%;
+}
+
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+.error-message {
+  color: #f44336;
+  padding: 16px;
+  margin-bottom: 16px;
+  background-color: #ffebee;
+  border-radius: 4px;
+}
+
+.no-results {
+  text-align: center;
+  padding: 20px;
+  color: rgba(0, 0, 0, 0.54);
+}
+
+a {
+  color: #1976d2;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.mat-row:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+.mat-column-name {
+  min-width: 200px;
+}
+
+.mat-column-ssn {
+  min-width: 120px;
+}
+
+.mat-column-workAuth {
+  min-width: 150px;
+}
+
+.mat-column-phone {
+  min-width: 150px;
+}
+
+.mat-column-email {
+  min-width: 200px;
+}
