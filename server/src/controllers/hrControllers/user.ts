@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import config from "../../utility/configs";
 import jwt from "jsonwebtoken";
 import EmployeeUser from "../../models/EmployeeUser";
+import HumanResources from "../../models/HumanResources";
 
 // Test Router
 const testUserRouter = (_req: Request, res: Response) => {
@@ -27,7 +28,8 @@ const getEmployees = async (req: Request, res: Response) => {
 const login = async (req: Request, res: Response): Promise<void> => {
   try {
     const { username, password } = req.body;
-    const user = await EmployeeUser.findOne({ username });
+    console.log(username, password);
+    const user = await HumanResources.findOne({ username });
     if (!user) {
       res.status(401).json({ message: "Invalid credentials" });
       return;
@@ -48,10 +50,6 @@ const login = async (req: Request, res: Response): Promise<void> => {
         id: user._id,
         username: user.username,
         email: user.email,
-        onboardingId: user.onboardingId,
-        personalInfoId: user.personalInfoId,
-        visaApplicationId: user.visaApplicationId,
-        apartmentId: user.apartmentId,
       },
     });
   } catch (error) {

@@ -1,20 +1,18 @@
+<!-- navbar.component.html -->
 <style>
   .spacer {
     flex: 1 1 auto;
   }
-
   mat-toolbar {
     display: flex;
     justify-content: space-between;
   }
-
   button {
     color: white;
   }
-
   .navbar {
     background-color: #1976d2;
-    color: white
+    color: white;
   }
 </style>
 
@@ -24,11 +22,19 @@
 
   <!-- Navigation Links -->
   <span class="spacer"></span>
-  <button mat-button routerLink="/home">Home</button>
-  <button mat-button routerLink="/profiles">Employees</button>
-  <button mat-button routerLink="/visa">Visa</button>
-  <button mat-button routerLink="/hiring">Hiring</button>
-  <button mat-button routerLink="/housing">Housing</button>
-  <button mat-button routerLink="/login">Login</button>
-</mat-toolbar>
 
+  <!-- Show these buttons only when logged in -->
+  <ng-container *ngIf="isLoggedIn$ | async">
+    <button mat-button routerLink="/home">Home</button>
+    <button mat-button routerLink="/profiles">Employees</button>
+    <button mat-button routerLink="/visa">Visa</button>
+    <button mat-button routerLink="/hiring">Hiring</button>
+    <button mat-button routerLink="/housing">Housing</button>
+    <button mat-button (click)="logout()">Logout</button>
+  </ng-container>
+
+  <!-- Show login button only when not logged in -->
+  <ng-container *ngIf="!(isLoggedIn$ | async)">
+    <button mat-button routerLink="/login">Login</button>
+  </ng-container>
+</mat-toolbar>

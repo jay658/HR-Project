@@ -3,8 +3,8 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
 import { map, mergeMap, catchError, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
 import * as AuthActions from './auth.actions';
+import { AuthService } from '../../services/auth.service';
 
 @Injectable()
 export class AuthEffects {
@@ -17,11 +17,10 @@ export class AuthEffects {
             localStorage.setItem('user', JSON.stringify(response.user));
             localStorage.setItem('token', response.token);
             localStorage.setItem('isLoggedIn', 'true');
+            this.router.navigate(['/home']); // or whatever your home route is
 
-            const onboardingPath = response.user.onboardingId
-              ? '/dashboard'
-              : '/onboarding';
-            this.router.navigate([onboardingPath]);
+            // Remove the forced navigation to dashboard/onboarding
+            // Let the component handle navigation if needed
 
             return AuthActions.loginSuccess({
               user: response.user,
@@ -31,7 +30,7 @@ export class AuthEffects {
           catchError((error) =>
             of(
               AuthActions.loginFailure({
-                error: error.message || 'An error occurred',
+                error: error.message || 'An error occurred during login',
               })
             )
           )
@@ -39,7 +38,6 @@ export class AuthEffects {
       )
     )
   );
-
   logout$ = createEffect(
     () =>
       this.actions$.pipe(

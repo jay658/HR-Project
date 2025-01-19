@@ -9,6 +9,7 @@ export const authReducer = createReducer(
     loading: true,
     error: null,
   })),
+
   on(AuthActions.loginSuccess, (state, { user, token }) => ({
     ...state,
     isLoggedIn: true,
@@ -17,14 +18,17 @@ export const authReducer = createReducer(
     loading: false,
     error: null,
   })),
+
   on(AuthActions.loginFailure, (state, { error }) => ({
     ...state,
     error,
     loading: false,
   })),
-  on(AuthActions.logout, (state) => ({
+
+  on(AuthActions.logout, () => ({
     ...initialAuthState,
   })),
+
   on(AuthActions.loadUserFromStorage, (state) => {
     const storedUser = localStorage.getItem('user');
     const storedToken = localStorage.getItem('token');
@@ -38,8 +42,12 @@ export const authReducer = createReducer(
           user: JSON.parse(storedUser),
           token: storedToken,
           loading: false,
+          error: null,
         };
       } catch {
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+        localStorage.removeItem('isLoggedIn');
         return initialAuthState;
       }
     }

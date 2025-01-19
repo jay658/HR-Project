@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 
@@ -35,11 +35,12 @@ import { HouseManagementComponent } from './components/house-management/house-ma
 import { LoginComponent } from './components/login/login.component';
 
 // Reducers and Effects
+import { authReducer } from './store/auth/auth.reducer';
+import { AuthEffects } from './store/auth/auth.effects';
+import { AuthInterceptor } from '../interceptors/auth.interceptor';
 import { counterReducer } from './store/counter/counter.reducer';
 import { userReducer } from './store/user/users.reducers';
 import { UserEffects } from './store/user/users.effects';
-import { authReducer } from './store/auth/auth.reducer';
-import { AuthEffects } from './store/auth/auth.effects';
 
 @NgModule({
   declarations: [
@@ -70,12 +71,12 @@ import { AuthEffects } from './store/auth/auth.effects';
     MatCardModule,
     MatProgressSpinnerModule,
 
-    // NgRx Configuration
+    // NgRx
     StoreModule.forRoot(
       {
+        auth: authReducer,
         count: counterReducer,
         users: userReducer,
-        auth: authReducer,
       },
       {
         runtimeChecks: {
@@ -86,13 +87,19 @@ import { AuthEffects } from './store/auth/auth.effects';
         },
       }
     ),
-    EffectsModule.forRoot([UserEffects, AuthEffects]),
+    EffectsModule.forRoot([AuthEffects, UserEffects]),
     StoreDevtoolsModule.instrument({
       maxAge: 25,
       logOnly: environment.production,
     }),
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true,
+    },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
