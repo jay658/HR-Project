@@ -3,17 +3,17 @@ import {
   Avatar,
   Box,
   Button,
+  Divider,
   FormControl,
+  FormHelperText,
   Grid2,
+  IconButton,
   InputLabel,
   MenuItem,
   Select,
   SelectChangeEvent,
   TextField,
-  Typography,
-  FormHelperText,
-  IconButton,
-  Divider
+  Typography
 } from '@mui/material';
 import { AppDispatch, RootState } from '../store/store';
 import { ContactDetails, Onboarding } from '../store/shared/types';
@@ -46,28 +46,26 @@ const OnboardingPage: React.FC = () => {
   const [errors, setErrors] = useState<OnboardingValidationErrors>({});
 
   useEffect(() => {
-    // fetch onboarding data if user is logged in & loading is complete
-    if (!loading && isLoggedIn && user) {
-      dispatch(fetchOnboarding());
+    if (!loading) {
+      if (!isLoggedIn) {
+        navigate('/login');
+      } else {
+        dispatch(fetchOnboarding());
+      }
     }
+  }, [loading, isLoggedIn, dispatch, navigate]);
 
-    // if not logged in, redirect to login
-    if (!isLoggedIn || !user) {
-      navigate('/login');
-      return;
-    }
-
-    // if onboarding is approved, redirect to dashboard
+  useEffect(() => {
     if (onboarding.status === 'approved') {
       navigate('/dashboard');
     }
-  }, [loading, isLoggedIn, user, onboarding.status, dispatch, navigate]);
-
-  const userEmail = user?.email;
+  }, [onboarding.status, navigate]);
 
   useEffect(() => {
     setLocalData(onboarding);
   }, [onboarding]);
+
+  const userEmail = user?.email;
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement> | SelectChangeEvent
@@ -88,6 +86,7 @@ const OnboardingPage: React.FC = () => {
   };
 
   const handleSave = async () => {
+    console.log(JSON.stringify(localData));
     const validationErrors = validateOnboarding(localData);
     if (Object.keys(validationErrors).length === 0) {
       const unflattened = {
@@ -272,10 +271,9 @@ const OnboardingPage: React.FC = () => {
           <Grid2 size={6}>
             <TextField
               fullWidth
-              name='ssn'
+              name='SSN'
               label='SSN'
               value={localData.SSN}
-              // slotProps={{ inputLabel: { shrink: true } }}
               onChange={handleChange as React.ChangeEventHandler}
               error={Boolean(errors.SSN)}
               helperText={errors.SSN}

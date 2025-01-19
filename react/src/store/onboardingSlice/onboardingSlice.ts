@@ -19,6 +19,7 @@ const initialState: Onboarding = {
   work: '',
   cell: '',
   SSN: '',
+  gender: '',
   make: '',
   model: '',
   color: '',
@@ -41,24 +42,9 @@ const onboardingSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-    .addCase(fetchOnboarding.pending, (state) => {
-      state.loading = true;
-      state.error = null;
-    })
-    .addCase(fetchOnboarding.fulfilled, (state, action) => {
-      state.loading = false;
-        state.error = null;
-        if (action.payload) {
-          Object.assign(state, action.payload);
-        }
-    })
-    .addCase(fetchOnboarding.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.payload as string;
-    })
-      // .addCase(fetchOnboarding.fulfilled, (_state, action) => {
-      //   return { ...initialState, ...(action.payload || {}) } as Onboarding;
-      // })
+      .addCase(fetchOnboarding.fulfilled, (_state, action) => {
+        return { ...initialState, ...(action.payload || {}) } as Onboarding;
+      })
       .addCase(updateOnboarding.fulfilled, (state, action) => {
         return { ...state, ...(action.payload || {}) } as Onboarding;
       });
