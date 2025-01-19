@@ -1,14 +1,21 @@
+import { AppBar, Box, Button, Toolbar, Typography } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+
+import { Link } from "react-router-dom";
 // NavigationBar.tsx
 import React from "react";
-import { AppBar, Toolbar, Typography, Button, Box } from "@mui/material";
-import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
 import { RootState } from "../store/store"; // Adjust path
+import { logout } from "../store/authSlice/authSlice";
 
 const NavigationBar: React.FC = () => {
+  const dispatch = useDispatch()
   let { isLoggedIn } = useSelector((state: RootState) => state.auth);
   isLoggedIn =
     isLoggedIn || (localStorage.getItem("isLoggedIn") ? true : false);
+
+  const handleLogout = () => {
+    dispatch(logout())
+  }
 
   return (
     <AppBar position="static">
@@ -27,6 +34,9 @@ const NavigationBar: React.FC = () => {
               </Button>
             </>
           )}
+          <Button color="inherit" component={Link} to="/dashboard">
+            Dashboard
+          </Button>
           <Button color="inherit" component={Link} to="/onboarding">
             Onboarding
           </Button>
@@ -42,6 +52,9 @@ const NavigationBar: React.FC = () => {
           <Button color="inherit" component={Link} to="/facilityissue">
             Facility Issue
           </Button>
+          {isLoggedIn && <Button color="inherit" component={Link} to='/login' onClick={() => handleLogout()}>
+            Logout
+          </Button>}
         </Box>
       </Toolbar>
     </AppBar>

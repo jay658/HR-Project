@@ -1,15 +1,19 @@
 import {
   createVisa,
   getAllExistVisa,
+  getFileURL,
   getNextRequiredDocument,
   getVisaStatus,
+  getVisaType,
   testVisaRouter,
   uploadNewDocument,
   getVisaType,
   getFileURL,
 } from "../../../controllers/employeeControllers/visa";
 
+
 import express from "express";
+
 
 const visaRouter = express.Router();
 

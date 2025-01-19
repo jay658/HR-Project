@@ -95,7 +95,11 @@ const seedOnboarding = [
       document: null,
     },
     employment: {
-      residencyStatus: "citizen",
+      residencyStatus: 'nonresident',
+      visaType: 'F1(CPT/OPT)',
+      startDate: new Date('2023-03-01'),
+      endDate: new Date('2024-03-01'),
+      documents: []
     },
     profilePicture: null,
     reference: {
@@ -401,7 +405,11 @@ const seedPersonalInfo = [
       document: null,
     },
     employment: {
-      residencyStatus: "citizen",
+      residencyStatus: 'nonresident',
+      visaType: 'F1(CPT/OPT)',
+      startDate: new Date('2023-03-01'),
+      endDate: new Date('2024-03-01'),
+      documents: []
     },
     profilePicture: "john_profile.jpg",
     reference: {
@@ -643,11 +651,155 @@ const seedFacilityIssue = [
     status: "closed",
     comments: [
       {
-        description: "Window cannot be properly secured",
-        createdBy: null, // will be set in seed.ts
-      },
-    ],
+        description: 'Window cannot be properly secured',
+        createdBy: null // will be set in seed.ts
+      }
+    ]
   },
+  {
+    title: 'Malfunctioning Elevator',
+    description: 'Elevator in Building D is stuck on the third floor',
+    createdBy: null,
+    status: 'open',
+    comments: [
+      {
+        description: 'Residents are unable to use the elevator',
+        createdBy: null
+      }
+    ]
+  },
+  {
+    title: 'Faulty Smoke Detector',
+    description: 'Smoke detector in E404 keeps beeping despite no smoke',
+    createdBy: null,
+    status: 'inProgress',
+    comments: [
+      {
+        description: 'Battery replacement did not resolve the issue',
+        createdBy: null
+      }
+    ]
+  },
+  {
+    title: 'Water Heater Failure',
+    description: 'No hot water in apartment F505',
+    createdBy: null,
+    status: 'closed',
+    comments: [
+      {
+        description: 'Technician replaced the heater',
+        createdBy: null
+      }
+    ]
+  },
+  {
+    title: 'Cracked Tile in Lobby',
+    description: 'A large crack is visible in the lobby floor tiles',
+    createdBy: null,
+    status: 'open',
+    comments: [
+      {
+        description: 'Crack seems to be expanding over time',
+        createdBy: null
+      }
+    ]
+  },
+  {
+    title: 'Parking Lot Light Out',
+    description: 'The light in the northeast corner of the parking lot is out',
+    createdBy: null,
+    status: 'inProgress',
+    comments: [
+      {
+        description: 'Awaiting replacement bulb delivery',
+        createdBy: null
+      }
+    ]
+  },
+  {
+    title: 'Broken Door Handle',
+    description: 'The main entrance door handle in Building G is broken',
+    createdBy: null,
+    status: 'closed',
+    comments: [
+      {
+        description: 'Handle replaced and door functioning normally',
+        createdBy: null
+      }
+    ]
+  },
+  {
+    title: 'Clogged Drain in Bathroom',
+    description: 'Shower drain in H606 is clogged and water is backing up',
+    createdBy: null,
+    status: 'open',
+    comments: [
+      {
+        description: 'Attempted to clear drain, but issue persists',
+        createdBy: null
+      }
+    ]
+  },
+  {
+    title: 'Pest Infestation',
+    description: 'Reports of cockroaches in apartments I707 and I708',
+    createdBy: null,
+    status: 'inProgress',
+    comments: [
+      {
+        description: 'Pest control scheduled for next week',
+        createdBy: null
+      }
+    ]
+  },
+  {
+    title: 'Broken Mailbox',
+    description: 'Mailbox for apartment J809 is broken and won’t lock',
+    createdBy: null,
+    status: 'closed',
+    comments: [
+      {
+        description: 'Replaced lock and key provided to resident',
+        createdBy: null
+      }
+    ]
+  },
+  {
+    title: 'Noisy HVAC System',
+    description: 'HVAC in K910 is making loud noises',
+    createdBy: null,
+    status: 'open',
+    comments: [
+      {
+        description: 'Noise worsens when HVAC runs at full power',
+        createdBy: null
+      }
+    ]
+  },
+  {
+    title: 'Flickering Lights',
+    description: 'Hallway lights in Building L are flickering',
+    createdBy: null,
+    status: 'inProgress',
+    comments: [
+      {
+        description: 'Electrician identified wiring issue, repairs ongoing',
+        createdBy: null
+      }
+    ]
+  },
+  {
+    title: 'Leaking Roof',
+    description: 'Water leaking from ceiling in Building M after rain',
+    createdBy: null,
+    status: 'open',
+    comments: [
+      {
+        description: 'Buckets placed to contain leak, awaiting roofer',
+        createdBy: null
+      }
+    ]
+  }
 ];
 
 const notOnboardedUserOnboarding = {

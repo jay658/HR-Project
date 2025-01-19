@@ -22,6 +22,7 @@ import bcrypt from "bcrypt";
 import connectToDB from "./connection";
 import mongoose from "mongoose";
 
+
 const seed = async () => {
   try {
     await connectToDB();

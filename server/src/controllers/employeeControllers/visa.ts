@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 
+import { AuthRequest } from "../../middleware/authMiddleware";
 import Document from "../../models/Document";
 import EmployeeUser from "../../models/EmployeeUser";
 import PersonalInfo from "../../models/PersonalInfo";
@@ -22,11 +23,11 @@ const getAllExistVisa = async (req : Request, res : Response) : Promise<any> => 
 }
 
 // Create New Visa Application
-const createVisa = async (req: Request, res: Response): Promise<any> => {
+const createVisa = async (req: AuthRequest, res: Response): Promise<any> => {
   try{
-    const {username} = req.body
+    const id = req.user?.userId
 
-    const user = await EmployeeUser.findOne({username: username});
+    const user = await EmployeeUser.findById(id);
 
     if (!user) {
       return res.status(404).json({error : "User not found"})
@@ -59,12 +60,12 @@ const createVisa = async (req: Request, res: Response): Promise<any> => {
 };
 
 // Get next documnet
-const getNextRequiredDocument = async (req: Request, res: Response) : Promise<any> => {
+const getNextRequiredDocument = async (req: AuthRequest, res: Response) : Promise<any> => {
   try{
-    const { username } = req.query;
+    const id = req.user?.userId
 
     // Find user
-    const user = await EmployeeUser.findOne({username : username});
+    const user = await EmployeeUser.findById(id);
     if (!user) {
       return res.status(404).json({error : "User not found"})
     }
@@ -94,12 +95,12 @@ const getNextRequiredDocument = async (req: Request, res: Response) : Promise<an
 }
 
 // Upload new document
-const uploadNewDocument = async (req : Request, res : Response) : Promise<any> => {
+const uploadNewDocument = async (req : AuthRequest, res : Response) : Promise<any> => {
   try{
-    const { username, type, fileKey, fileURL } = req.body;
-
+    const { type, fileKey, fileURL } = req.body;
+    const id = req.user?.userId
     // Find user
-    const user = await EmployeeUser.findOne({username : username});
+    const user = await EmployeeUser.findById(id);
     if (!user) {
       return res.status(404).json({error : "User not found"})
     }
@@ -155,11 +156,11 @@ const uploadNewDocument = async (req : Request, res : Response) : Promise<any> =
 }
 
 // Get Visa Status
-const getVisaStatus = async (req : Request, res : Response) : Promise<any> => {
-  const { username } = req.query;
+const getVisaStatus = async (req : AuthRequest, res : Response) : Promise<any> => {
+  const id = req.user?.userId
 
   // Find user
-  const user = await EmployeeUser.findOne({username : username});
+  const user = await EmployeeUser.findById(id);
   if (!user) {
     return res.status(404).json({error : "User not found"})
   }
@@ -184,12 +185,11 @@ const getVisaStatus = async (req : Request, res : Response) : Promise<any> => {
 
 
 // Check Visa Type from Personal Info
-const getVisaType = async (req : Request, res : Response) : Promise<any> => {
+const getVisaType = async (req : AuthRequest, res : Response) : Promise<any> => {
   try{
-    const { username } = req.query;
-
+    const id = req.user?.userId
     // Find user
-    const user = await EmployeeUser.findOne({username : username});
+    const user = await EmployeeUser.findById(id);
     if (!user) {
       return res.status(404).json({error : "User not found"})
     }
@@ -203,7 +203,7 @@ const getVisaType = async (req : Request, res : Response) : Promise<any> => {
     if(!personalInfo.employment?.visaType){
       return res.status(404).json({error: "No Visa Type, please finish onboarding first"})
     }
-
+    
     return res.status(200).json(personalInfo.employment.visaType)
 
   } catch (error){
