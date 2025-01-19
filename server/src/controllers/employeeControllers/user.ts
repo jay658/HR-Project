@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 
 import Apartment from "../../models/Apartment";
-import { AuthRequest } from "../../api/auth/authMiddleware";
+import { AuthRequest } from "../../middleware/authMiddleware";
 import EmployeeUser from "../../models/EmployeeUser";
 import bcrypt from 'bcryptjs'
 import config from "../../utility/configs";
@@ -154,10 +154,19 @@ const getHousingForUser = async (req: AuthRequest, res: Response): Promise<void>
   }
 }
 
+const validateSession = async (req: AuthRequest, res: Response) => {
+  try{
+    res.json(req.user)
+  }catch(err){
+    console.log('There was an error validating the session.')
+  }
+}
+
 export {
   testUserRouter,
   getAllUsers,
   registerUser,
   login,
-  getHousingForUser
+  getHousingForUser, 
+  validateSession
 }

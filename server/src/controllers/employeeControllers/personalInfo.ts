@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 
+import { AuthRequest } from '../../middleware/authMiddleware';
 import EmployeeUser from '../../models/EmployeeUser';
 import { IPersonalInfoData } from '../../models/shared/types';
 import Onboarding from '../../models/Onboarding';
@@ -16,9 +17,10 @@ const testPersonalInfoRouter = (_req: Request, res: Response) => {
   }
 };
 
-const getPersonalInfo = async (_req: Request, res: Response) => {
+const getPersonalInfo = async (req: AuthRequest, res: Response) => {
   try {
-    const user = await EmployeeUser.findOne({ username: currentTestUser });
+    const id = req.user?.userId
+    const user = await EmployeeUser.findById(id)
     if (!user) throw Error('User not found');
 
     const onboarding = await Onboarding.findById(user.onboardingId);
@@ -35,10 +37,11 @@ const getPersonalInfo = async (_req: Request, res: Response) => {
   }
 };
 
-const updatePersonalInfo = async (req: Request, res: Response) => {
+const updatePersonalInfo = async (req: AuthRequest, res: Response) => {
   try {
     const { updates }: { updates: Partial<IPersonalInfoData> } = req.body;
-    const user = await EmployeeUser.findOne({ username: currentTestUser });
+    const id = req.user?.userId
+    const user = await EmployeeUser.findById(id)
     if (!user) throw Error('User not found');
 
     const onboarding = await Onboarding.findById(user.onboardingId);

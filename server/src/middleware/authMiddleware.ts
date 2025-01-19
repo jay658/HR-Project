@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
+import EmployeeUser from "../models/EmployeeUser";
 import jwt from "jsonwebtoken";
 
 // Extend Request to include `user`
@@ -10,11 +11,16 @@ export interface AuthRequest extends Request {
   };
 }
 
-export const authenticateToken = (
+const ignoreRoutes = ['/login', '/registration', '/test']
+
+export const authenticateToken = async(
   req: Request,
   res: Response,
   next: NextFunction
-): void => {
+): Promise<void> => {
+
+  if(ignoreRoutes.some((route) => req.path.includes(route))) return next()
+
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
 
@@ -28,6 +34,14 @@ export const authenticateToken = (
       token,
       process.env.JWT_SECRET || "your-secret-key"
     ) as { userId: string; username: string };
+
+    const id = decoded.userId
+    const user = await EmployeeUser.findById(id);
+
+    if(!user) {
+      res.status(401).json({ message: "User not found" })
+      return
+    }
 
     (req as AuthRequest).user = decoded; // Type assertion to add `user`
     next(); // Proceed to the next middleware/handler

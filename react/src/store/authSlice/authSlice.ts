@@ -1,5 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
+import { axiosInstance } from "../../interceptor/interceptor";
+
 interface User {
   id: string;
   username: string;
@@ -63,6 +65,12 @@ export const loginUser = createAsyncThunk(
   }
 );
 
+const clearSession = () => {
+  localStorage.removeItem('user');
+  localStorage.removeItem('token');
+  localStorage.removeItem('isLoggedIn');
+};
+
 export const loadUserFromStorage = createAsyncThunk(
   'auth/loadUserFromStorage',
   async (_, { rejectWithValue }) => {
@@ -70,13 +78,17 @@ export const loadUserFromStorage = createAsyncThunk(
       const user = JSON.parse(localStorage.getItem('user') || 'null');
       const token = localStorage.getItem('token');
       const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-      console.log('here')
+      
       if (!user || !token || !isLoggedIn) {
+        clearSession()
         throw new Error('Invalid or missing session data');
       }
 
+      await axiosInstance.get('/user/validateSession')
+
       return { user, token, isLoggedIn };
     } catch (error) {
+      clearSession()
       return rejectWithValue('Session cannot be found');
     }
   }

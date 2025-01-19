@@ -26,6 +26,12 @@ const DashboardPage: React.FC = () => {
 
   const buttonDetails = getButtonDetails();
 
+  const getStatusColor = (status: 'approved' | 'rejected' | 'pending') => {
+    if(status === 'pending') return '#007bff'
+    if(status === 'rejected') return '#d32f2f'
+    return '#388e3c'
+  }
+
   return (
     <Box
       sx={{
@@ -57,7 +63,7 @@ const DashboardPage: React.FC = () => {
             variant="body1"
             sx={{ mb: 2, textAlign: "center", color: "text.secondary" }}
           >
-            Your onboarding status is: <strong>{onboarding.status}</strong>
+            Your onboarding status is: <strong style={{color: getStatusColor(onboarding.status)}}>{onboarding.status}</strong>
           </Typography>
 
           {buttonDetails && (

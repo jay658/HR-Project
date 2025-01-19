@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 
+import { AuthRequest } from "../../middleware/authMiddleware";
 import EmployeeUser from "../../models/EmployeeUser";
 import FacilityIssue from "../../models/FacilityIssue";
 
@@ -16,14 +17,10 @@ const testFacilityRouter = (_req: Request, res: Response) => {
   }
 };
 
-const getIssuesForUser = async (_req: Request, res: Response) => {
+const getIssuesForUser = async (req: AuthRequest, res: Response) => {
   try {
-    // When auth is added, we should get the user info from the JWT token. For now, this is to simulate receiving a user id
-    const testUser = await EmployeeUser.findOne({ username: "john.doe" });
-    const id = testUser?._id;
-
     const facilityIssues = await FacilityIssue.find({
-      createdBy: id,
+      createdBy: req.user?.userId,
     });
 
     res.json(facilityIssues);
@@ -34,7 +31,7 @@ const getIssuesForUser = async (_req: Request, res: Response) => {
   }
 };
 
-const getFacilityIssue = async (req: Request, res: Response) => {
+const getFacilityIssue = async (req: AuthRequest, res: Response) => {
   try {
     const facilityIssueId = req.params.id;
     const facilityIssue = await FacilityIssue.findById(facilityIssueId);
@@ -47,7 +44,7 @@ const getFacilityIssue = async (req: Request, res: Response) => {
   }
 };
 
-const getFacilityIssuesForApartment = async (req: Request, res: Response) => {
+const getFacilityIssuesForApartment = async (req: AuthRequest, res: Response) => {
   try {
     const apartmentId = req.params.id;
     const facilityIssues = await FacilityIssue.find({ apartmentId });
@@ -60,17 +57,16 @@ const getFacilityIssuesForApartment = async (req: Request, res: Response) => {
   }
 };
 
-const createFacilityIssue = async (req: Request, res: Response) => {
+const createFacilityIssue = async (req: AuthRequest, res: Response) => {
   try {
     // When auth is added, we should get the user info from the JWT token. For now, this is to simulate receiving a user id
-    const testUser = await EmployeeUser.findOne({ username: "john.doe" });
-    const id = testUser?._id;
+    const user = await EmployeeUser.findById(req.user?.userId);
     const { issueDetails }: { issueDetails: IssueDetails } = req.body;
 
     const facilityIssue = await FacilityIssue.create({
       ...issueDetails,
-      createdBy: id,
-      apartmentId: testUser?.apartmentId,
+      createdBy: req.user?.userId,
+      apartmentId: user?.apartmentId,
     });
 
     res.status(201).send(facilityIssue);
@@ -79,16 +75,14 @@ const createFacilityIssue = async (req: Request, res: Response) => {
   }
 };
 
-const commentOnFacilityIssue = async (req: Request, res: Response) => {
+const commentOnFacilityIssue = async (req:AuthRequest, res: Response) => {
   try {
     const { facilityIssueId } = req.params;
     const { comment }: { comment: string } = req.body;
-    // When auth is added, we should get the user info from the JWT token. For now, this is to simulate receiving a user id
 
-    const testUser = await EmployeeUser.findOne({ username: "john.doe" });
-    const id = testUser?._id;
+    const user = await EmployeeUser.findById(req.user?.userId);
+    const id = req.user?.userId
 
-    // Note: Because the issues are randomized in the seed, you should make sure to use facility issues (in the params) owned by the user when testing.
     const facilityIssue = await FacilityIssue.findById(facilityIssueId);
 
     if (!comment) res.status(400).json("Comment cannot be empty");
@@ -114,14 +108,13 @@ const commentOnFacilityIssue = async (req: Request, res: Response) => {
   }
 };
 
-const closeFacilityIssue = async (req: Request, res: Response) => {
+const closeFacilityIssue = async (req: AuthRequest, res: Response) => {
   try {
     const { facilityIssueId } = req.params;
     // When auth is added, we should get the user info from the JWT token. For now, this is to simulate receiving a user id
-    const testUser = await EmployeeUser.findOne({ username: "john.doe" });
-    const id = testUser?._id;
+    const user = await EmployeeUser.findById(req.user?.userId);
+    const id = user?._id
 
-    // Note: Because the issues are randomized in the seed, you should make sure to use facility issues (in the params) owned by the user when testing.
     const facilityIssue = await FacilityIssue.findById(facilityIssueId);
 
     if (!facilityIssue)
