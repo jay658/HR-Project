@@ -4,6 +4,9 @@ import {
   loadEmployees,
   loadEmployeesFailure,
   loadEmployeesSuccess,
+  loadEmployeeDetails,
+  loadEmployeeDetailsSuccess,
+  loadEmployeeDetailsFailure,
 } from './employees.actions';
 
 import { EmployeesService } from './employees.service';
@@ -36,6 +39,18 @@ export class EmployeeEffects {
               })
             );
           })
+        )
+      )
+    )
+  );
+
+  loadEmployeeDetails$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(loadEmployeeDetails),
+      mergeMap(({ id }) =>
+        this.employeesService.getEmployeeDetails(id).pipe(
+          map(response => loadEmployeeDetailsSuccess({ employee: response.data })),
+          catchError(error => of(loadEmployeeDetailsFailure({ error: 'Failed to load employee details' })))
         )
       )
     )

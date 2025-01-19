@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { EmployeeManagementComponent } from './employee-management.component';
+import { RouterLink } from '@angular/router';
 
 describe('EmployeeManagementComponent', () => {
   let component: EmployeeManagementComponent;
@@ -8,7 +9,7 @@ describe('EmployeeManagementComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ EmployeeManagementComponent ]
+      declarations: [ EmployeeManagementComponent, RouterLink ],
     })
     .compileComponents();
 

@@ -31,6 +31,7 @@ import { counterReducer } from './store/counter/counter.reducer';
 import { employeeReducer } from './store/employee/employees.reducers';
 import { environment } from '../environments/environment';
 import { userReducer } from './store/user/users.reducers';
+import { EmployeeProfileComponent } from './components/employee-profile/employee-profile.component';
 
 @NgModule({
   declarations: [
@@ -43,6 +44,7 @@ import { userReducer } from './store/user/users.reducers';
     HiringManagementComponent,
     HouseManagementComponent,
     LoginComponent,
+    EmployeeProfileComponent,
   ],
   imports: [
     BrowserModule,

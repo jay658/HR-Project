@@ -16,15 +16,12 @@ const getEmployees = async (req: Request, res: Response) => {
   try {
     const { firstName, lastName, preferredName } = req.query;
 
-    // First get all EmployeeUsers
-    const employees = await EmployeeUser.find();
+    const employees = await EmployeeUser.find({
+      personalInfoId: { $ne: null } 
+    });
     
-    // Get all personalInfoIds that aren't null
-    const personalInfoIds = employees
-      .filter(emp => emp.personalInfoId)
-      .map(emp => emp.personalInfoId);
+    const personalInfoIds = employees.map(emp => emp.personalInfoId);
 
-    // Build search query for PersonalInfo
     let searchQuery: any = {
       _id: { $in: personalInfoIds }
     };
@@ -46,17 +43,15 @@ const getEmployees = async (req: Request, res: Response) => {
       };
     }
 
-    // Query PersonalInfo collection with search params
     const personalInfos = await PersonalInfo.find(searchQuery).select('name SSN employment phone email');
 
-    // Create a map for quick lookup
     const personalInfoMap = new Map(
       personalInfos.map(info => [info._id.toString(), info])
     );
 
-    // Filter and format employees based on search results
+    // format employees based on search results
     const formattedEmployees = employees
-      .filter(employee => employee.personalInfoId && personalInfoMap.has(employee.personalInfoId.toString()))
+      .filter(employee => personalInfoMap.has(employee.personalInfoId.toString()))
       .map(employee => {
         const personalInfo = personalInfoMap.get(employee.personalInfoId.toString())!;
         
@@ -96,41 +91,50 @@ const getEmployeeDetails = async (req: Request, res: Response): Promise<void> =>
   try {
     const { id } = req.params;
 
-    const employee = await EmployeeUser.findById(id).populate([
-      {
-        path: 'personalInfoId',
-        select: '-__v' // Select all fields except version
-      },
-      {
-        path: 'onboardingId',
-        select: 'status startDate completedForms'
-      },
-      {
-        path: 'visaApplicationId',
-        select: 'status visaType expirationDate'
-      },
-      {
-        path: 'apartmentId',
-        select: 'address unit moveInDate'
-      }
-    ]);
+    const employee = await EmployeeUser.findById(id);
 
-    if (!employee) {
+    if (!employee || !employee.personalInfoId) {
       res.status(404).json({
         success: false,
-        error: 'Employee not found'
+        error: 'Employee not found or no personal info available'
       });
       return;
     }
 
-    // Format the response to include all profile information
+    const personalInfo = await PersonalInfo.findById(employee.personalInfoId)
+      .select('-__v -userId -_id -documents -profilePicture +SSN');
+
+    if (!personalInfo) {
+      res.status(404).json({
+        success: false,
+        error: 'Personal information not found'
+      });
+      return;
+    }
+
     const formattedEmployee = {
-      id: employee._id,
-      personalInfo: employee.personalInfoId,
-      onboarding: employee.onboardingId,
-      visaStatus: employee.visaApplicationId,
-      housing: employee.apartmentId,
-      email: employee.email
+      name: personalInfo.name,
+      email: personalInfo.email,
+      gender: personalInfo.gender,
+      dateOfBirth: personalInfo.dob,
+      address: personalInfo.address,
+      phone: personalInfo.phone,
+      SSN: personalInfo.SSN,
+      employment: {
+        residencyStatus: personalInfo.employment.residencyStatus,
+        visaType: personalInfo.employment.visaType || null,
+        otherVisaTitle: personalInfo.employment.otherVisaTitle || null,
+        startDate: personalInfo.employment.startDate || null,
+        endDate: personalInfo.employment.endDate || null
+      },
+      carInfo: personalInfo.carInfo || null,
+      driversLicense: personalInfo.driversLicense ? {
+        hasLicense: personalInfo.driversLicense.hasLicense || false,
+        number: personalInfo.driversLicense.number || null,
+        expirationDate: personalInfo.driversLicense.expirationDate || null
+      } : null,
+      reference: personalInfo.reference || null,
+      emergencyContacts: personalInfo.emergencyContact || []
     };
 
     res.status(200).json({

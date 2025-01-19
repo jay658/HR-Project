@@ -46,4 +46,8 @@ export class EmployeesService {
       map(response => response.data)
     );
   }
+
+  getEmployeeDetails(id: string) {
+    return this.http.get<any>(`${this.apiUrl}/employees/${id}`);
+  }
 }

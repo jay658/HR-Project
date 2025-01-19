@@ -43,3 +43,18 @@ export const loadEmployeesFailure = createAction(
   '[Employees] Load Employees Failure',
   props<{ error: string }>()
 );
+
+export const loadEmployeeDetails = createAction(
+  '[Employees] Load Employee Details',
+  props<{ id: string }>()
+);
+
+export const loadEmployeeDetailsSuccess = createAction(
+  '[Employees] Load Employee Details Success',
+  props<{ employee: any }>()
+);
+
+export const loadEmployeeDetailsFailure = createAction(
+  '[Employees] Load Employee Details Failure',
+  props<{ error: string }>()
+);
