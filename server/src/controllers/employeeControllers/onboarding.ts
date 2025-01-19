@@ -1,6 +1,7 @@
 import Onboarding, { OnboardingTypeT } from '../../models/Onboarding';
 import { Request, Response } from 'express';
 
+import { AuthRequest } from '../../middleware/authMiddleware';
 import EmployeeUser from '../../models/EmployeeUser';
 import { uploadFileToAWS } from '../../utility/AWS/aws';
 
@@ -12,9 +13,10 @@ const testOnboardingRouter = (_req: Request, res: Response) => {
   }
 };
 
-const getOnboardingForUser = async (req: Request, res: Response) => {
+const getOnboardingForUser = async (req: AuthRequest, res: Response) => {
   try {
-    const user = await EmployeeUser.findOne({ username: 'not onboarded user' });
+    const id = req.user?.userId
+    const user = await EmployeeUser.findById(id)
 
     if (!user) throw Error('User not found');
 
@@ -30,12 +32,13 @@ const getOnboardingForUser = async (req: Request, res: Response) => {
   }
 };
 
-const updateOnboardingForUser = async (req: Request, res: Response) => {
+const updateOnboardingForUser = async (req: AuthRequest, res: Response) => {
   try {
     const { updates }: { updates: Partial<OnboardingTypeT> } = req.body;
+    const id = req.user?.userId;
 
     //When auth is set up, we will get the user ID from the JWT and can replace this.
-    const user = await EmployeeUser.findOne({ username: 'not onboarded user' });
+    const user = await EmployeeUser.findById(id);
     if (!user) throw Error('User not found');
 
     let updatedOnboarding;

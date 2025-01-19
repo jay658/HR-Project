@@ -16,7 +16,7 @@ import Onboarding from '../models/Onboarding';
 import PersonalInfo from '../models/PersonalInfo';
 import { Types } from 'mongoose';
 import VisaApplication from '../models/VisaApplication';
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import connectToDB from './connection';
 import mongoose from 'mongoose';
 
