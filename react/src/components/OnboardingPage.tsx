@@ -11,7 +11,9 @@ import {
   SelectChangeEvent,
   TextField,
   Typography,
-  FormHelperText
+  FormHelperText,
+  IconButton,
+  Divider
 } from '@mui/material';
 import { AppDispatch, RootState } from '../store/store';
 import { ContactDetails, Onboarding } from '../store/shared/types';
@@ -36,8 +38,6 @@ const OnboardingPage: React.FC = () => {
   const { isLoggedIn, loading, user } = useSelector(
     (state: RootState) => state.auth
   );
-  console.log('isLoggedIn: ', isLoggedIn);
-  console.log('user: ', user);
 
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
@@ -45,26 +45,23 @@ const OnboardingPage: React.FC = () => {
   const [localData, setLocalData] = useState<Onboarding>(onboarding);
   const [errors, setErrors] = useState<OnboardingValidationErrors>({});
 
-  // fetch onboarding data if user is logged in and loading is complete
   useEffect(() => {
-    // if (isLoggedIn && user) {
-    dispatch(fetchOnboarding());
-    // }
-  }, [loading, isLoggedIn, user, dispatch]);
+    // fetch onboarding data if user is logged in & loading is complete
+    if (!loading && isLoggedIn && user) {
+      dispatch(fetchOnboarding());
+    }
 
-  useEffect(() => {
     // if not logged in, redirect to login
-    // if (!isLoggedIn || !user) {
-    //   navigate('/login');
-    //   return;
-    // }
-  }, [isLoggedIn, user, navigate]);
+    if (!isLoggedIn || !user) {
+      navigate('/login');
+      return;
+    }
 
-  useEffect(() => {
+    // if onboarding is approved, redirect to dashboard
     if (onboarding.status === 'approved') {
       navigate('/dashboard');
     }
-  }, [onboarding.status, navigate]);
+  }, [loading, isLoggedIn, user, onboarding.status, dispatch, navigate]);
 
   const userEmail = user?.email;
 
@@ -82,7 +79,6 @@ const OnboardingPage: React.FC = () => {
       [e.target.name]: e.target.value
     };
     setLocalData(newData);
-    console.log('this is newData: ', JSON.stringify(newData));
   };
 
   const formatDateForInput = (date: string | Date | undefined): string => {
@@ -137,7 +133,7 @@ const OnboardingPage: React.FC = () => {
         },
         dob: localData.dob,
         SSN: localData.SSN,
-        gender: localData.gender || null,
+        gender: localData.gender,
         profilePicture: localData.profilePicture || undefined,
         reference: localData.reference || null,
         emergencyContact: localData.emergencyContact,
@@ -186,6 +182,9 @@ const OnboardingPage: React.FC = () => {
           submit again.
         </Alert>
       )}
+
+      {/* DOCUMENTS PREVIEWS */}
+      {isPending && <DocumentsSection isEditing={false} />}
 
       {/* NAME */}
       <Box sx={{ mb: 4 }}>
@@ -288,7 +287,7 @@ const OnboardingPage: React.FC = () => {
               fullWidth
               name='dob'
               type='date'
-              value={localData.dob}
+              value={formatDateForInput(localData.dob)}
               label='Birthday'
               slotProps={{ inputLabel: { shrink: true } }}
               onChange={handleChange as React.ChangeEventHandler}
@@ -303,7 +302,7 @@ const OnboardingPage: React.FC = () => {
               labelId='gender-select-label'
               id='gender-select'
               name='gender'
-              // value={localData.gender}
+              value={localData.gender}
               label='Gender'
               onChange={handleChange as (event: SelectChangeEvent) => void}
               disabled={isPending}
@@ -956,9 +955,6 @@ const OnboardingPage: React.FC = () => {
           Add Emergency Contact
         </Button>
       </Box>
-
-      {/* DOCUMENTS PREVIEWS */}
-      {isPending && <DocumentsSection isEditing={false} />}
     </Box>
   );
 };

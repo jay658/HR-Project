@@ -5,7 +5,7 @@ import {
   uploadOnboardingFile
 } from '../../../controllers/employeeControllers/onboarding';
 
-import { authenticateToken } from '../../auth/authMiddleware';
+import { authenticateToken } from '../../../middleware/authMiddleware';
 import express from 'express';
 
 const onboardingRouter = express.Router();

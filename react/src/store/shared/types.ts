@@ -14,7 +14,7 @@ interface BasicInfo {
   middleName?: string;
   preferredName?: string;
   email?: string;
-  gender?: 'male' | 'female' | 'noAnswer' | null;
+  gender?: 'male' | 'female' | 'noAnswer';
   dob: Date | string;
   buildingNumber: string;
   streetName: string;
@@ -87,7 +87,7 @@ export interface OnboardingResponse {
     endDate: string | null;
     documents: string[] | null;
   };
-  gender: string | null;
+  gender: 'male' | 'female' | 'noAnswer';
   dob: string;
   SSN: string | null;
   profilePicture: string | null;

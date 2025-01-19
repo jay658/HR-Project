@@ -6,9 +6,7 @@ const fetchOnboarding = createAsyncThunk(
   'onboarding/fetchOnboarding',
   async (_, { rejectWithValue }) => {
     try {
-      console.log('Fetching onboarding data...');
       const response = await axiosInstance.get('/onboarding');
-      console.log('Onboarding response:', response.data);
 
       if (!response.data) {
         return null;
