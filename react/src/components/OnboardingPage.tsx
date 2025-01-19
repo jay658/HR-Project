@@ -361,7 +361,7 @@ const OnboardingPage: React.FC = () => {
               <Select
                 labelId='state-select-label'
                 id='state-select'
-                value={localData.state || ''}
+                value={localData.state}
                 name='state'
                 label='State'
                 onChange={handleChange as (event: SelectChangeEvent) => void}
