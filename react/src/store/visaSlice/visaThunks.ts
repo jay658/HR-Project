@@ -1,4 +1,4 @@
-import axios from 'axios'
+import { axiosInstance } from '../../interceptor/interceptor'
 import { createAsyncThunk } from '@reduxjs/toolkit'
 
 interface userData{
@@ -16,11 +16,7 @@ const fetchVisaType = createAsyncThunk(
     'visa/fetchVisaType',
     async(userData: userData, { rejectWithValue }) => {
         try {
-            const response = await axios.get('http://localhost:3000/api/visa/visatype', {
-                params: {
-                    username: userData.username
-                }
-            })
+            const response = await axiosInstance.get('/visa/visatype')
             // console.log(response.data)
             return response.data
 
@@ -35,11 +31,7 @@ const fetchNextDocument = createAsyncThunk(
     'visa/fetchNextDocument',
     async (userData: userData, { rejectWithValue }) => {
         try{
-            const response = await axios.get('http://localhost:3000/api/visa/next-document', {
-                params: {
-                    username: userData.username
-                }
-            })
+            const response = await axiosInstance.get('/visa/next-document')
             // console.log(response.data)
             return response.data.nextRequiredDocument
 
@@ -54,11 +46,7 @@ const fetchAllDocument = createAsyncThunk(
     'visa/fetchAllDocument',
     async (userData: userData, {rejectWithValue}) => {
         try{
-            const response = await axios.get('http://localhost:3000/api/visa/status', {
-                params: {
-                    username: userData.username
-                }
-            })
+            const response = await axiosInstance.get('/visa/status')
             // console.log(response.data)
             return response.data
         } catch (error : any){
@@ -73,7 +61,7 @@ const uploadFile = createAsyncThunk(
     async (uploadFile : uploadFileType, {rejectWithValue} ) => {
         try {
             console.log(uploadFile)
-            const response = await axios.post('http://localhost:3000/api/visa/upload', uploadFile);
+            const response = await axiosInstance.post('/visa/upload', uploadFile);
             // console.log(response.data)
             return response.data;
         }catch (error : any){
@@ -87,7 +75,7 @@ const createVisa = createAsyncThunk(
     'visa/fetchVisa',
     async (userData: userData, {rejectWithValue}) => {
         try{
-            const response = await axios.post('http://localhost:3000/api/visa/create', userData)
+            const response = await axiosInstance.post('/visa/create', userData)
             // console.log("Visa",response.data)
             return response.data
         } catch (error : any){
@@ -103,7 +91,7 @@ const fetchFileURL = createAsyncThunk(
         try{
             const formData = new FormData();
             formData.append('file', fileData);
-            const response = await axios.post('http://localhost:3000/api/visa/getfileurl', formData)
+            const response = await axiosInstance.post('/visa/getfileurl', formData)
             console.log("File", response.data)
             return response.data
         }catch (error : any){

@@ -163,7 +163,6 @@ const FacilityIssuesPage = () => {
                     borderColor: "grey.200",
                   }}
                 >
-                  {console.log(user)}
                   <Typography variant="body1">{user?.username}</Typography>
                   <Typography variant="body2">{comment.description}</Typography>
                   <Typography variant="caption" color="text.secondary">

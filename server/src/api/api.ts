@@ -1,5 +1,6 @@
 import cors, { CorsOptions } from "cors";
 
+import { authenticateToken } from "../middleware/authMiddleware";
 import config from "../utility/configs";
 import employeeRouter from "./routers/employeeRouter";
 import express from "express";
@@ -15,7 +16,7 @@ const employeeCorsOptions: CorsOptions = {
   origin: [config.EMPLOYEE_SERVER],
 };
 
-apiRouter.use("/employee", cors(employeeCorsOptions), employeeRouter);
-apiRouter.use("/hr", cors(hrCorsOptions), hrRouter);
+apiRouter.use("/employee", cors(employeeCorsOptions), authenticateToken, employeeRouter);
+apiRouter.use("/hr", cors(hrCorsOptions), authenticateToken, hrRouter);
 
 export default apiRouter;
