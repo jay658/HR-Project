@@ -7,6 +7,14 @@ export interface ContactDetails {
   relationship: string;
 }
 
+// interface DocumentReference {
+//   type: 'profilePicture' | 'driverLicense' | 'optReceipt' | 'optEAD' | 'i983' | 'i20' | 'other';
+//   status: 'pending' | 'approved' | 'rejected';
+//   fileKey: string;
+//   fileUrl: string;
+//   documentId: string;
+// }
+
 interface BasicInfo {
   userId: string;
   firstName: string;
@@ -36,7 +44,7 @@ interface BasicInfo {
   otherVisaTitle?: string;
   startDate?: Date | string;
   endDate?: Date | string;
-  employementDocuments?: Array<string>;
+  employementDocuments?: string[];
   reference?: ContactDetails | null;
   emergencyContact: Array<ContactDetails>;
   profilePicture?: string;

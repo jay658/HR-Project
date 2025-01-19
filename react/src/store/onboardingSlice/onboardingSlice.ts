@@ -27,7 +27,8 @@ const initialState: Onboarding = {
   residencyStatus: '',
   employementDocuments: [],
   emergencyContact: [],
-  profilePicture: ''
+  profilePicture: undefined,
+  licenseDocument: undefined
 };
 
 const onboardingSlice = createSlice({

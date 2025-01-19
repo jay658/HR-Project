@@ -20,6 +20,11 @@ import PreviewIcon from '@mui/icons-material/Preview';
 
 interface DocumentsSectionProps {
   isEditing: boolean;
+  uploadedFiles: {
+    [key: string]: { name: string; url: string } | null;
+  };
+  onboarding: any;
+  localData: any;
 }
 
 const getStatusColor = (status: DocumentStatus) => {
@@ -33,25 +38,114 @@ const getStatusColor = (status: DocumentStatus) => {
   }
 };
 
+const getDocumentTitle = (type: string): string => {
+  const titles: { [key: string]: string } = {
+    profilePicture: 'Profile Picture',
+    driverLicense: "Driver's License",
+    optReceipt: 'OPT Receipt',
+    i983: 'I-983 Form',
+    i20: 'I-20',
+    optEAD: 'OPT EAD'
+  };
+  return titles[type] || type;
+};
+
 export const DocumentsSection: React.FC<DocumentsSectionProps> = ({
-  isEditing
+  isEditing,
+  uploadedFiles,
+  onboarding,
+  localData
 }) => {
-  const [selectedDoc, setSelectedDoc] = useState<DocumentPreview | null>(null);
-  // test data until S3 is set up
-  const dummyDocs: DocumentPreview[] = [
-    {
-      _id: '1',
-      type: 'optReceipt',
-      status: 'pending',
-      fileName: 'opt-receipt.pdf'
-    },
-    {
-      _id: '2',
-      type: 'i983',
-      status: 'approved',
-      fileName: 'i983-form.pdf'
-    }
-  ];
+  const [selectedDoc, setSelectedDoc] = useState<{
+    url: string;
+    fileName: string;
+    type: string;
+  } | null>(null);
+
+  // Combine existing and newly uploaded documents
+  const getDocuments = () => {
+    const documents: Array<{
+      type: string;
+      fileName: string;
+      url: string;
+      status: DocumentStatus;
+    }> = [];
+
+    // Helper function to add document if it exists
+    const addDocument = (type: string, condition: boolean = true) => {
+      if (uploadedFiles[type]) {
+        documents.push({
+          type,
+          fileName: uploadedFiles[type]!.name,
+          url: uploadedFiles[type]!.url,
+          status: 'pending'
+        });
+      } else if (
+        onboarding[type] ||
+        (type === 'driverLicense' && onboarding.licenseDocument) ||
+        (type === 'optReceipt' && onboarding.employementDocuments?.length)
+      ) {
+        let url;
+        let fileKey;
+        let doc;
+
+        switch (type) {
+          case 'profilePicture':
+            url = onboarding.profilePicture?.fileUrl;
+            fileKey = onboarding.profilePicture?.fileKey;
+            break;
+          case 'driverLicense':
+            url = onboarding.licenseDocument?.fileUrl;
+            fileKey = onboarding.licenseDocument?.fileKey;
+            break;
+          case 'optReceipt':
+          case 'i983':
+          case 'i20':
+          case 'optEAD':
+            doc = onboarding.employementDocuments?.find(
+              (doc: any) => doc.type === type
+            );
+            url = doc?.fileUrl;
+            fileKey = doc?.fileKey;
+            break;
+        }
+
+        if (url) {
+          documents.push({
+            type,
+            fileName: fileKey || getDocumentTitle(type),
+            url,
+            status: onboarding.status || 'pending'
+          });
+        }
+      }
+    };
+
+    // Add documents based on conditions
+    addDocument('profilePicture');
+    addDocument('driverLicense', localData.hasLicense === 'yes');
+    addDocument('optReceipt', localData.visaType === 'F1(CPT/OPT)');
+    addDocument('i983', localData.visaType === 'F1(CPT/OPT)');
+    addDocument('i20', localData.visaType === 'F1(CPT/OPT)');
+    addDocument('optEAD', localData.visaType === 'F1(CPT/OPT)');
+
+    return documents;
+  };
+
+  const handlePreview = (doc: any) => {
+    setSelectedDoc(doc);
+  };
+
+  const handleDownload = (doc: any) => {
+    const link = document.createElement('a');
+    link.href = doc.url;
+    link.download = doc.fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const documents = getDocuments();
 
   return (
     <Box sx={{ mb: 4 }}>
@@ -60,8 +154,8 @@ export const DocumentsSection: React.FC<DocumentsSectionProps> = ({
       </Typography>
 
       <Grid2 container spacing={2}>
-        {dummyDocs.map((doc) => (
-          <Grid2 key={doc._id} size={{ xs: 12, sm: 6, md: 4 }}>
+        {documents.map((doc) => (
+          <Grid2 key={doc.type} size={{ xs: 12, sm: 6, md: 4 }}>
             <Card variant='outlined'>
               <CardContent>
                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
@@ -76,57 +170,34 @@ export const DocumentsSection: React.FC<DocumentsSectionProps> = ({
                   color={getStatusColor(doc.status)}
                   sx={{ mb: 1 }}
                 />
-                <Typography variant='body2' color='text.secondary'>
-                  Type: {doc.type}
+                <Typography
+                  variant='caption'
+                  display='block'
+                  sx={{ mb: 1 }}
+                  noWrap
+                >
+                  Type: {getDocumentTitle(doc.type)}
                 </Typography>
               </CardContent>
               <CardActions>
                 <IconButton
                   size='small'
                   title='Preview'
-                  onClick={() => setSelectedDoc(doc)}
+                  onClick={() => handlePreview(doc)}
                 >
                   <PreviewIcon />
                 </IconButton>
-                <IconButton size='small' title='Download'>
+                <IconButton
+                  size='small'
+                  title='Download'
+                  onClick={() => handleDownload(doc)}
+                >
                   <DownloadIcon />
                 </IconButton>
-                {/* NOTE: i dont think users should be able to delete 
-                          documents here */}
-                {/* {isEditing && (
-                  <IconButton size='small' color='error' title='Delete'>
-                    <DeleteIcon />
-                  </IconButton>
-                )} */}
               </CardActions>
             </Card>
           </Grid2>
         ))}
-
-        {/* NOTE: i dont think users should be able to upload 
-                  documents here */}
-        {/* {isEditing && (
-          <Grid2 size={{ xs: 12 }}>
-            <Button
-              variant='contained'
-              component='label'
-              startIcon={<DescriptionIcon />}
-            >
-              Upload Document
-              <input
-                type='file'
-                hidden
-                accept='.pdf,.doc,.docx,.png,.jpg,.jpeg'
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) {
-                    console.log('Upload document:', file);
-                  }
-                }}
-              />
-            </Button>
-          </Grid2>
-        )} */}
       </Grid2>
 
       <Modal
@@ -156,25 +227,32 @@ export const DocumentsSection: React.FC<DocumentsSectionProps> = ({
               alignItems: 'center'
             }}
           >
-            <Typography variant='h6'>{selectedDoc?.fileName}</Typography>
+            <Typography variant='h6'>
+              {selectedDoc && getDocumentTitle(selectedDoc.type)}
+            </Typography>
             <IconButton onClick={() => setSelectedDoc(null)}>
               <CloseIcon />
             </IconButton>
           </Box>
 
-          {/* placeholder for document preview */}
-          <Box
-            sx={{
-              height: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-          >
-            <Typography color='text.secondary'>
-              document preview will be available when connected to s3
-            </Typography>
-          </Box>
+          {selectedDoc?.url && (
+            <Box
+              sx={{
+                height: 'calc(100% - 60px)',
+                '& iframe': {
+                  width: '100%',
+                  height: '100%',
+                  border: 'none'
+                }
+              }}
+            >
+              <iframe
+                src={selectedDoc.url}
+                title={selectedDoc.fileName}
+                allowFullScreen
+              />
+            </Box>
+          )}
         </Paper>
       </Modal>
     </Box>

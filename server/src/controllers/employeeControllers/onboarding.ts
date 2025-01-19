@@ -4,6 +4,7 @@ import { Request, Response } from 'express';
 import { AuthRequest } from '../../middleware/authMiddleware';
 import EmployeeUser from '../../models/EmployeeUser';
 import { uploadFileToAWS } from '../../utility/AWS/aws';
+import Document from '../../models/Document';
 
 const testOnboardingRouter = (_req: Request, res: Response) => {
   try {
@@ -21,7 +22,10 @@ const getOnboardingForUser = async (req: AuthRequest, res: Response) => {
     const user = await EmployeeUser.findById(userId);
     if (!user) throw Error('User not found');
 
-    let onboarding = await Onboarding.findById(user.onboardingId);
+    let onboarding = await Onboarding.findById(user.onboardingId)
+      .populate('profilePicture', 'fileUrl fileKey type')
+      .populate('driversLicense.document', 'fileUrl fileKey type')
+      .populate('employment.documents', 'fileUrl fileKey type');
     if (!onboarding) throw Error('User has not onboarded yet');
 
     res.json(onboarding);
@@ -76,7 +80,6 @@ const updateOnboardingForUser = async (req: AuthRequest, res: Response) => {
       throw new Error('Failed to update onboarding');
     }
 
-    console.log('Updated onboarding:', updatedOnboarding);
     res.json(updatedOnboarding);
   } catch (err: unknown) {
     console.error('Detailed error:', err);
@@ -91,19 +94,32 @@ const updateOnboardingForUser = async (req: AuthRequest, res: Response) => {
 const uploadOnboardingFile = async (req: AuthRequest, res: Response) => {
   try {
     const file = req.files?.file;
-
-    // When onboarding model is updated, we can check if the document type is okay and then save the url on the user's onboarding.
-    // const { type } = req.body
-    // const user = EmployeeUser.findOne({ username: 'john.doe'})
+    const { type } = req.body;
+    const userId = req.user?.userId;
 
     if (!file) throw Error('No file uploaded');
     if (Array.isArray(file)) throw new Error('Only one file at a time');
+    if (!type) throw Error('Document type is required');
 
-    const url = await uploadFileToAWS(file);
+    const fileUrl = await uploadFileToAWS(file);
+    if (!fileUrl) throw Error('Failed to upload file to AWS');
 
-    res.json(url);
+    const document = await Document.create({
+      userId,
+      type,
+      status: 'pending',
+      fileKey: file.name,
+      fileUrl
+    });
+
+    res.json({
+      fileUrl,
+      documentId: document._id,
+      fileKey: file.name
+    });
   } catch (err: unknown) {
     console.log(`There was an error uploading the file: ${err}`);
+    res.status(500).json({ message: `${err}` });
   }
 };
 

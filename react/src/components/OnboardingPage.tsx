@@ -44,6 +44,20 @@ const OnboardingPage: React.FC = () => {
 
   const [localData, setLocalData] = useState<Onboarding>(onboarding);
   const [errors, setErrors] = useState<OnboardingValidationErrors>({});
+  const [uploadedFiles, setUploadedFiles] = useState<{
+    [key: string]: { name: string; url: string } | null;
+  }>({
+    profilePicture: null,
+    optReceipt: null,
+    driverLicense: null
+  });
+  const [pendingFiles, setPendingFiles] = useState<{
+    [key: string]: File | null;
+  }>({
+    profilePicture: null,
+    driverLicense: null,
+    optReceipt: null
+  });
 
   useEffect(() => {
     if (!loading) {
@@ -64,6 +78,23 @@ const OnboardingPage: React.FC = () => {
   useEffect(() => {
     setLocalData(onboarding);
   }, [onboarding]);
+
+  // prevent unsaved changes when user refreshes
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      const hasChanges = JSON.stringify(localData) !== JSON.stringify(onboarding);
+      
+      if (hasChanges) {
+        e.preventDefault();
+      }
+    };
+  
+    window.addEventListener('beforeunload', handleBeforeUnload);
+  
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [localData, onboarding]);
 
   const userEmail = user?.email;
 
@@ -86,9 +117,14 @@ const OnboardingPage: React.FC = () => {
   };
 
   const handleSave = async () => {
-    console.log(JSON.stringify(localData));
-    const validationErrors = validateOnboarding(localData);
+    const validationErrors = validateOnboarding(localData, pendingFiles);
     if (Object.keys(validationErrors).length === 0) {
+      const filesToUpload = Object.fromEntries(
+        Object.entries(pendingFiles)
+          .filter(([_, file]) => file !== null)
+          .map(([key, file]) => [key, file as File])
+      );
+
       const unflattened = {
         name: {
           firstName: localData.firstName,
@@ -116,7 +152,6 @@ const OnboardingPage: React.FC = () => {
           hasLicense: localData.hasLicense === 'yes',
           number: localData.hasLicense === 'yes' ? localData.number : null,
           expirationDate: localData.expirationDate || null,
-          document: localData.licenseDocument || null
         },
         employment: {
           residencyStatus: localData.residencyStatus,
@@ -128,20 +163,27 @@ const OnboardingPage: React.FC = () => {
             localData.visaType === 'Other' ? localData.otherVisaTitle : null,
           startDate: localData.startDate || null,
           endDate: localData.endDate || null,
-          documents: localData.employementDocuments || null
         },
         dob: localData.dob,
         SSN: localData.SSN,
         gender: localData.gender,
-        profilePicture: localData.profilePicture || undefined,
         reference: localData.reference || null,
         emergencyContact: localData.emergencyContact,
         status: 'pending' as const
       };
 
       try {
-        await dispatch(updateOnboarding(unflattened)).unwrap();
+        await dispatch(updateOnboarding({
+          data: unflattened,
+          files: filesToUpload
+        })).unwrap();
         await dispatch(fetchOnboarding()).unwrap();
+        
+        setPendingFiles({
+          profilePicture: null,
+          driverLicense: null,
+          optReceipt: null
+        });
       } catch (error) {
         console.error('Error saving onboarding:', error);
       }
@@ -150,8 +192,32 @@ const OnboardingPage: React.FC = () => {
     }
   };
 
+  const handleFileSelect = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    type: 'profilePicture' | 'driverLicense' | 'optReceipt' | 'optEAD' | 'i983' | 'i20' | 'other'
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+  
+    // store file in temporary state
+    setPendingFiles(prev => ({
+      ...prev,
+      [type]: file
+    }));
+  
+    // show preview
+    setUploadedFiles(prev => ({
+      ...prev,
+      [type]: { name: file.name, url: URL.createObjectURL(file) }
+    }));
+  
+    // clear relevant error
+    const { [type === 'driverLicense' ? 'licenseDocument' : 'employementDocuments']: _, ...restErrors } = errors;
+    setErrors(restErrors);
+  };
   const isPending = localData.status === 'pending';
   const isRejected = localData.status === 'rejected';
+
   return (
     <Box sx={{ p: 3, maxWidth: 600, mx: 'auto', mt: 5 }}>
       {/* HEADER */}
@@ -183,7 +249,12 @@ const OnboardingPage: React.FC = () => {
       )}
 
       {/* DOCUMENTS PREVIEWS */}
-      {isPending && <DocumentsSection isEditing={false} />}
+      <DocumentsSection 
+        isEditing={!isPending} 
+        uploadedFiles={uploadedFiles}
+        onboarding={onboarding}
+        localData={localData}
+      />
 
       {/* NAME */}
       <Box sx={{ mb: 4 }}>
@@ -193,6 +264,7 @@ const OnboardingPage: React.FC = () => {
         <Grid2 container spacing={2}>
           <Grid2 size={12} display='flex' alignItems='center' gap={2}>
             <Avatar
+              src={uploadedFiles.profilePicture?.url || onboarding.profilePicture?.fileUrl}
               sx={{
                 width: 100,
                 height: 100,
@@ -210,7 +282,8 @@ const OnboardingPage: React.FC = () => {
                 type='file'
                 hidden
                 accept='image/*'
-                onChange={handleChange}
+                onChange={(e) => handleFileSelect(e, 'profilePicture')}
+                disabled={isPending}
               />
             </Button>
           </Grid2>
@@ -534,20 +607,36 @@ const OnboardingPage: React.FC = () => {
                     localData.visaType === 'F1(CPT/OPT)' ? 'block' : 'none'
                 }}
               >
-                <Button
-                  variant='contained'
-                  component='label'
-                  size='medium'
-                  disabled={isPending}
-                >
-                  Upload OPT Receipt
-                  <input
-                    type='file'
-                    hidden
-                    accept='image/*'
-                    onChange={handleChange}
-                  />
-                </Button>
+                <Box>
+                  <Button
+                    variant='contained'
+                    component='label'
+                    size='medium'
+                    disabled={isPending}
+                  >
+                    Upload OPT Receipt
+                    <input
+                      type='file'
+                      hidden
+                      accept='.pdf,.jpg,.jpeg,.png,.doc,.docx'
+                      onChange={(e) => handleFileSelect(e, 'optReceipt')}
+                      disabled={isPending}
+                    />
+                  </Button>
+                  {uploadedFiles.optReceipt && (
+                    <Typography
+                      variant='body2'
+                      sx={{ mt: 1, color: 'success.main' }}
+                    >
+                      ✓ {uploadedFiles.optReceipt.name}
+                    </Typography>
+                  )}
+                  {errors.employementDocuments && (
+                    <FormHelperText error>
+                      {errors.employementDocuments}
+                    </FormHelperText>
+                  )}
+                </Box>
               </Grid2>
             </>
           )}
@@ -594,6 +683,8 @@ const OnboardingPage: React.FC = () => {
               label='Number'
               value={localData.number}
               onChange={handleChange as React.ChangeEventHandler}
+              error={Boolean(errors.number)}
+              helperText={errors.number}
               disabled={isPending}
             />
           </Grid2>
@@ -609,6 +700,8 @@ const OnboardingPage: React.FC = () => {
               slotProps={{ inputLabel: { shrink: true } }}
               label='Expiration Date'
               onChange={handleChange as React.ChangeEventHandler}
+              error={Boolean(errors.expirationDate)}
+              helperText={errors.expirationDate}
               disabled={isPending}
             />
           </Grid2>
@@ -616,22 +709,38 @@ const OnboardingPage: React.FC = () => {
             size={6}
             sx={{ display: localData.hasLicense === 'yes' ? 'block' : 'none' }}
           >
-            <Button
-              variant='contained'
-              component='label'
-              size='medium'
-              disabled={isPending}
-            >
-              Upload License
-              <input
-                type='file'
-                hidden
-                accept='image/*'
-                // value={localData.licenseDocument}
-                onChange={handleChange}
-                disabled={isPending}
-              />
-            </Button>
+            <FormControl error={Boolean(errors.licenseDocument)} fullWidth>
+              <Box>
+                <Button
+                  variant='contained'
+                  component='label'
+                  size='medium'
+                  disabled={isPending}
+                >
+                  Upload License
+                  <input
+                    type='file'
+                    hidden
+                    accept='.pdf,.jpg,.jpeg,.png'
+                    onChange={(e) => handleFileSelect(e, 'driverLicense')}
+                    disabled={isPending}
+                  />
+                </Button>
+                {uploadedFiles.driverLicense && (
+                  <Typography
+                    variant='body2'
+                    sx={{ mt: 1, color: 'success.main' }}
+                  >
+                    ✓ {uploadedFiles.driverLicense.name}
+                  </Typography>
+                )}
+                {errors.licenseDocument && (
+                  <FormHelperText error>
+                    {errors.licenseDocument}
+                  </FormHelperText>
+                )}
+              </Box>
+            </FormControl>
           </Grid2>
           <Grid2 size={6}>
             <TextField

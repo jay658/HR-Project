@@ -39,10 +39,13 @@ export interface OnboardingValidationErrors {
   reference?: ContactErrors;
   emergencyContact?: ContactErrors[];
   emergencyContactRequired?: string;
+  licenseDocument?: string;
+  employementDocuments?: string;
 }
 
 export const validateOnboarding = (
-  data: Onboarding
+  data: Onboarding,
+  pendingFiles?: { [key: string]: File | null }
 ): OnboardingValidationErrors => {
   const errors: OnboardingValidationErrors = {};
 
@@ -124,6 +127,9 @@ export const validateOnboarding = (
       errors.startDate = 'Start date must be earlier than end date';
       errors.endDate = 'End date must be later than start date';
     }
+    if (data.visaType === 'F1(CPT/OPT)' && !pendingFiles?.optReceipt) {
+      errors.employementDocuments = 'OPT Receipt is required';
+    }
   }
 
   // license
@@ -131,8 +137,10 @@ export const validateOnboarding = (
     errors.hasLicense = 'License status is required';
   } else if (data.hasLicense === 'yes') {
     if (!data.number?.trim()) errors.number = 'License number is required';
-    if (!data.expirationDate)
-      errors.expirationDate = 'Expiration date is required';
+    if (!data.expirationDate) errors.expirationDate = 'Expiration date is required';
+    if (!pendingFiles?.driverLicense) {
+      errors.licenseDocument = 'License document is required';
+    }
   }
 
   // emergency contact
