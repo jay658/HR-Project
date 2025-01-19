@@ -19,7 +19,7 @@ const initialState: Onboarding = {
   work: '',
   cell: '',
   SSN: '',
-  gender: '',
+  gender: null,
   make: '',
   model: '',
   color: '',

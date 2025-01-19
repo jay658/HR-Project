@@ -41,7 +41,7 @@ const fetchOnboarding = createAsyncThunk(
         employementDocuments: response.data.employment.documents || [],
         dob: response.data.dob,
         SSN: response.data.SSN,
-        gender: response.data.gender || '',
+        gender: response.data.gender || null,
         profilePicture: response.data.profilePicture || '',
         reference: response.data.reference,
         emergencyContact: response.data.emergencyContact,

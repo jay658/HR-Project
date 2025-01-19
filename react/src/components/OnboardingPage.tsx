@@ -300,7 +300,7 @@ const OnboardingPage: React.FC = () => {
               labelId='gender-select-label'
               id='gender-select'
               name='gender'
-              value={localData.gender}
+              value={localData.gender || ''}
               label='Gender'
               onChange={handleChange as (event: SelectChangeEvent) => void}
               disabled={isPending}
@@ -361,9 +361,11 @@ const OnboardingPage: React.FC = () => {
               <Select
                 labelId='state-select-label'
                 id='state-select'
-                value={localData.state}
+                value={localData.state || ''}
+                name='state'
                 label='State'
                 onChange={handleChange as (event: SelectChangeEvent) => void}
+                error={Boolean(errors.state)}
                 disabled={isPending}
               >
                 {US_STATES.map((state) => (
@@ -372,6 +374,9 @@ const OnboardingPage: React.FC = () => {
                   </MenuItem>
                 ))}
               </Select>
+              {errors.state && (
+                <FormHelperText error>{errors.state}</FormHelperText>
+              )}
             </FormControl>
           </Grid2>
           <Grid2 size={4}>
