@@ -1,0 +1,101 @@
+.house-detail-card {
+  margin: 24px;
+  border-radius: 8px;
+}
+
+mat-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+mat-card-title {
+  font-size: 24px;
+  margin: 0;
+  color: #1a1a1a;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  padding: 16px;
+}
+
+.info-section {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.info-section h3 {
+  font-size: 18px;
+  color: #2c3e50;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+mat-list-item {
+  height: auto !important;
+  margin-bottom: 16px;
+}
+
+.info-label {
+  color: #666;
+  min-width: 120px;
+  display: inline-block;
+}
+
+.info-value {
+  color: #333;
+  margin-left: 16px;
+}
+
+.tenant-info {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 0;
+}
+
+.tenant-name {
+  font-weight: 500;
+  color: #333;
+}
+
+.tenant-email {
+  font-size: 14px;
+  color: #666;
+  margin-top: 4px;
+}
+
+mat-chip-list {
+  display: inline-block;
+  margin-left: 16px;
+}
+
+mat-chip {
+  font-size: 13px;
+  min-height: 28px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .info-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .house-detail-card {
+    margin: 16px;
+  }
+
+  mat-card-title {
+    font-size: 20px;
+  }
+
+  .info-section {
+    padding: 12px;
+  }
+}

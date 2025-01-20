@@ -61,15 +61,19 @@
           <button
             mat-icon-button
             color="warn"
-            (click)="onDeleteHouse(house._id)"
+            (click)="onDeleteHouse(house._id, $event)"
           >
             <mat-icon>delete</mat-icon>
           </button>
         </td>
       </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      <tr
+        mat-row
+        *matRowDef="let row; columns: displayedColumns"
+        (click)="onRowClick(row._id)"
+        class="cursor-pointer hover:bg-gray-100"
+      ></tr>
     </table>
   </mat-card-content>
 </mat-card>

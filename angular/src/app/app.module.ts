@@ -35,6 +35,9 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {MatSelectModule} from '@angular/material/select';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+
+
+
 import { MatTableModule } from '@angular/material/table';
 // Material Imports
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -49,6 +52,14 @@ import { StoreModule } from '@ngrx/store';
 import {TextFieldModule} from '@angular/cdk/text-field';
 import { UserEffects } from './store/user/users.effects';
 import { VisaStatusManagementComponent } from './components/visa-status-management/visa-status-management.component';
+import { HiringManagementComponent } from './components/hiring-management/hiring-management.component';
+import { HouseManagementComponent } from './components/house-management/house-management.component';
+import { LoginComponent } from './components/login/login.component';
+import { AddHouseDialogComponent } from './components/add-house-dialog/add-house-dialog.component';
+import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
+import { EmployeeProfileComponent } from './components/employee-profile/employee-profile.component';
+import { HouseDetailComponent } from './components/house-component/house-detail.component';
+
 // Reducers and Effects
 import { authReducer } from './store/auth/auth.reducer';
 import { counterReducer } from './store/counter/counter.reducer';
@@ -74,6 +85,7 @@ import { userReducer } from './store/user/users.reducers';
     AddHouseDialogComponent,
     ConfirmDialogComponent,
     EmployeeProfileComponent,
+    HouseDetailComponent,
     OnboardingFormComponent
   ],
   imports: [

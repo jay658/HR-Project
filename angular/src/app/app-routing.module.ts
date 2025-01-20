@@ -10,9 +10,12 @@ import { HomeComponent } from './components/home/home.component';
 import { HouseManagementComponent } from './components/house-management/house-management.component';
 import { LoginComponent } from './components/login/login.component';
 import { MyCounterComponent } from './components/my-counter/my-counter.component';
+import { AuthGuard } from './guards/auth.guard';
+import { HouseDetailComponent } from './components/house-component/house-detail.component';
 import { NgModule } from '@angular/core';
 import { OnboardingFormComponent } from './components/hiring-management/onboarding-form/onboarding-form.component';
 import { VisaStatusManagementComponent } from './components/visa-status-management/visa-status-management.component';
+
 
 const routes: Routes = [
   // Public routes
@@ -56,6 +59,11 @@ const routes: Routes = [
     path: 'profiles', 
     component: EmployeeManagementComponent,
     canActivate: [AuthGuard]
+  },
+  {
+    path: 'housing/:id',
+    component: HouseDetailComponent,
+    canActivate: [AuthGuard],
   },
   {
     path: 'counter',

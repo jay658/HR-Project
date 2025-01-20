@@ -9,6 +9,7 @@ import * as HousingActions from '../../store/housing/housing.actions';
 import { House } from '../../models/housing.model';
 import { AddHouseDialogComponent } from '../add-house-dialog/add-house-dialog.component';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-house-management',
@@ -30,7 +31,8 @@ export class HouseManagementComponent implements OnInit {
   constructor(
     private store: Store<{ housing: { houses: House[] } }>,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private router: Router
   ) {
     this.houses$ = this.store.select((state) => state.housing.houses);
   }
@@ -57,8 +59,11 @@ export class HouseManagementComponent implements OnInit {
   deleteHouse(houseId: string) {
     this.store.dispatch(HousingActions.deleteHouse({ houseId }));
   }
+  onDeleteHouse(id: string, event: MouseEvent) {
+    // Added event parameter
+    // Stop the event from bubbling up to the row
+    event.stopPropagation();
 
-  onDeleteHouse(id: string) {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '300px',
       data: { message: 'Are you sure? Tenants will be randomly reassigned.' },
@@ -74,5 +79,9 @@ export class HouseManagementComponent implements OnInit {
         this.store.dispatch(HousingActions.loadHouses());
       }
     });
+  }
+
+  onRowClick(houseId: string) {
+    this.router.navigate(['/housing', houseId]);
   }
 }

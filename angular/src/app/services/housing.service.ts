@@ -23,4 +23,8 @@ export class HousingService {
   deleteHouse(houseId: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${houseId}`);
   }
+
+  getHouseById(id: string): Observable<House> {
+    return this.http.get<House>(`${this.apiUrl}/${id}`);
+  }
 }

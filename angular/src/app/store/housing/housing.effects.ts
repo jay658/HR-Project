@@ -56,6 +56,20 @@ export class HousingEffects {
     )
   );
 
+  loadHouseById$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(HousingActions.loadHouseById),
+      mergeMap(({ houseId }) =>
+        this.housingService.getHouseById(houseId).pipe(
+          map((house) => HousingActions.loadHouseByIdSuccess({ house })),
+          catchError((error) =>
+            of(HousingActions.loadHouseByIdFailure({ error }))
+          )
+        )
+      )
+    )
+  );
+
   constructor(
     private actions$: Actions,
     private housingService: HousingService,

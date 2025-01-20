@@ -1,7 +1,7 @@
-// housingRouter.ts
 import { Request, Response, Router } from "express";
 import Apartment from "../../../models/Apartment";
 import EmployeeUser from "../../../models/EmployeeUser";
+import mongoose from "mongoose";
 
 const housingRouter = Router();
 
@@ -9,7 +9,6 @@ const housingRouter = Router();
 housingRouter.get("/", async (req: Request, res: Response) => {
   try {
     const houses = await Apartment.find().populate("tenants");
-    console.log(houses);
     res.json(houses);
   } catch (error) {
     res.status(500).json({ message: "Error fetching houses" });
@@ -69,6 +68,39 @@ housingRouter.delete("/:id", async (req: Request, res: Response) => {
     res.json({ message: "House deleted and tenants reassigned" });
   } catch (error) {
     res.status(500).json({ message: "Error deleting house" });
+  }
+});
+
+// Get specific house by ID with tenant information
+housingRouter.get("/:id", async (req: Request, res: Response) => {
+  try {
+    const houseId = req.params.id;
+
+    // Find the house by ID and populate tenant information
+    const house = await Apartment.findById(houseId).populate({
+      path: "tenants",
+      model: "EmployeeUser",
+      select: "username email personalInfoId", // Add or remove fields as needed
+      populate: {
+        // Optionally populate nested personal info
+        path: "personalInfoId",
+        model: "PersonalInfo",
+      },
+    });
+
+    if (!house) {
+      res.status(404).json({ message: "House not found" });
+      return;
+    }
+
+    res.json(house);
+  } catch (error) {
+    // Check if error is due to invalid ObjectId format
+    if (error instanceof mongoose.Error.CastError) {
+      res.status(400).json({ message: "Invalid house ID format" });
+      return;
+    }
+    res.status(500).json({ message: "Error fetching house details" });
   }
 });
 

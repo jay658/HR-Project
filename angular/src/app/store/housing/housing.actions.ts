@@ -39,3 +39,18 @@ export const deleteHouseFailure = createAction(
   '[Housing] Delete House Failure',
   props<{ error: any }>()
 );
+
+export const loadHouseById = createAction(
+  '[Housing] Load House By ID',
+  props<{ houseId: string }>()
+);
+
+export const loadHouseByIdSuccess = createAction(
+  '[Housing] Load House By ID Success',
+  props<{ house: House }>()
+);
+
+export const loadHouseByIdFailure = createAction(
+  '[Housing] Load House By ID Failure',
+  props<{ error: any }>()
+);
