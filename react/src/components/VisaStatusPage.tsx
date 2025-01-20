@@ -298,6 +298,7 @@ const VisaStatusPage: React.FC = () => {
             </>
           ) : (
             <Alert severity="info">
+              
               Your visa type {visaState.visaType} does not require additional documentation.
             </Alert>
           )}
