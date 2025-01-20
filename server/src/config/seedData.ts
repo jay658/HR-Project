@@ -269,7 +269,7 @@ const seedOnboarding = [
       hasLicense: true,
       number: "CA824242424",
       expirationDate: new Date("2026-08-23"),
-      document: null, // This will be set by the seed script
+      document: null,
     },
     employment: {
       residencyStatus: "nonresident",
@@ -278,7 +278,7 @@ const seedOnboarding = [
       endDate: new Date("2025-02-16"),
       documents: [],
     },
-    profilePicture: null, // This will be set by the seed script
+    profilePicture: null,
     reference: {
       firstName: "Phil",
       lastName: "Jackson",
