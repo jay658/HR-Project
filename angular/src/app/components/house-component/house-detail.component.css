@@ -136,3 +136,36 @@ mat-chip {
 .issue-reporter {
   font-style: italic;
 }
+
+.info-section:last-child mat-list {
+  max-height: 400px; /* You can adjust this value based on your needs */
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+/* Optional: Customize scrollbar appearance */
+.info-section:last-child mat-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.info-section:last-child mat-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.info-section:last-child mat-list::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+.info-section:last-child mat-list::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+.clickable-issue {
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.clickable-issue:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}

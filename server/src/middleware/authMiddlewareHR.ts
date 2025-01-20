@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
-import EmployeeUser from "../models/EmployeeUser";
+import HumanResources from "../models/HumanResources";
 import jwt from "jsonwebtoken";
 
 // Extend Request to include `user`
@@ -36,7 +36,7 @@ export const authenticateToken = async (
       process.env.JWT_SECRET || "your-secret-key"
     ) as { userId: string; username: string };
     const id = decoded.userId;
-    const user = await EmployeeUser.findById(id);
+    const user = await HumanResources.findById(id);
 
     if (!user) {
       res.status(401).json({ message: "User not found" });
