@@ -12,4 +12,7 @@ hrRouter.use("/facilityIssue", facilityIssueRouter);
 hrRouter.use("/hiring", hiringRouter);
 hrRouter.use("/housing", housingRouter);
 
-export default hrRouter;
+
+
+export default hrRouter
+

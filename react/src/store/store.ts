@@ -1,4 +1,3 @@
-
 import authReducer from './authSlice/authSlice';
 import { configureStore } from '@reduxjs/toolkit';
 import counterReducer from './counterSlice/counterSlice';
