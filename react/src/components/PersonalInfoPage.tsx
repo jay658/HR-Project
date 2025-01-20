@@ -24,23 +24,34 @@ import {
 import React, { useEffect, useState } from 'react';
 import {
   fetchPersonalInfo,
-  updatePersonalInfo,
-  updateSSN
+  updatePersonalInfo
 } from '../store/personalInfoSlice/personalInfoThunks';
 import { useDispatch, useSelector } from 'react-redux';
 
 import DeleteIcon from '@mui/icons-material/Delete';
-import { DocumentsSection } from './DocumentSection';
-import type { PersonalInfo } from '../types/PersonalInfo';
 import { US_STATES } from './shared/constants';
+import type { BasicInfo } from '../store/shared/types';
+import { DocumentsSection } from './DocumentSection';
 
 const PersonalInfoPage: React.FC = () => {
   const personalInfo = useSelector((state: RootState) => state.personalInfo);
   const dispatch = useDispatch<AppDispatch>();
 
-  const [localData, setLocalData] = useState<PersonalInfo>(personalInfo);
+  const [localData, setLocalData] = useState<BasicInfo>(personalInfo);
   const [isEditing, setIsEditing] = useState(false);
   const [errors, setErrors] = useState<PersonalInfoValidationErrors>({});
+  const [uploadedFiles, setUploadedFiles] = useState<{
+    [key: string]: { name: string; url: string } | null;
+  }>({
+    profilePicture: null,
+    driverLicense: null
+  });
+  const [pendingFiles, setPendingFiles] = useState<{
+    [key: string]: File | null;
+  }>({
+    profilePicture: null,
+    driverLicense: null
+  });
 
   useEffect(() => {
     dispatch(fetchPersonalInfo());
@@ -64,43 +75,125 @@ const PersonalInfoPage: React.FC = () => {
     setNotification((prev) => ({ ...prev, open: false }));
   };
 
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement> | SelectChangeEvent
+  ) => {
+    if (!isEditing) return;
+    
+    const { [e.target.name]: _, ...restErrors } = errors;
+    setErrors(restErrors);
+    setLocalData({
+      ...localData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleFileSelect = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    type: 'profilePicture' | 'driverLicense'
+  ) => {
+    if (!isEditing) return;
+    
+    const file = event.target.files?.[0];
+    if (!file) return;
+  
+    setPendingFiles(prev => ({
+      ...prev,
+      [type]: file
+    }));
+  
+    setUploadedFiles(prev => ({
+      ...prev,
+      [type]: { name: file.name, url: URL.createObjectURL(file) }
+    }));
+  };
+
   const handleSaveAll = async () => {
-    const PersonalInfoValidationErrors = validatePersonalInfo(localData);
-    if (Object.keys(PersonalInfoValidationErrors).length > 0) {
-      setErrors(PersonalInfoValidationErrors);
-      setNotification({
-        open: true,
-        message: 'Please fix the validation errors before saving.',
-        severity: 'error'
-      });
+    const validationErrors = validatePersonalInfo(localData);
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
       return;
     }
 
+    const filesToUpload = Object.fromEntries(
+      Object.entries(pendingFiles)
+        .filter(([_, file]) => file !== null)
+        .map(([key, file]) => [key, file as File])
+    );
+
+    const unflattened = {
+      name: {
+        firstName: localData.firstName,
+        lastName: localData.lastName,
+        middleName: localData.middleName || null,
+        preferredName: localData.preferredName || null
+      },
+      address: {
+        buildingNumber: localData.buildingNumber,
+        streetName: localData.streetName,
+        city: localData.city,
+        state: localData.state,
+        zipCode: localData.zipCode
+      },
+      phone: {
+        cell: localData.cell,
+        work: localData.work || null
+      },
+      carInfo: {
+        make: localData.make || null,
+        model: localData.model || null,
+        color: localData.color || null
+      },
+      driversLicense: {
+        hasLicense: localData.hasLicense === 'yes',
+        number: localData.hasLicense === 'yes' ? localData.number : null,
+        expirationDate: localData.expirationDate || null,
+      },
+      employment: {
+        residencyStatus: localData.residencyStatus,
+        visaType: localData.residencyStatus === 'nonresident' ? localData.visaType : null,
+        otherVisaTitle: localData.visaType === 'Other' ? localData.otherVisaTitle : null,
+        startDate: localData.startDate || null,
+        endDate: localData.endDate || null,
+      },
+      dob: localData.dob,
+      SSN: localData.SSN,
+      gender: localData.gender,
+      reference: localData.reference || null,
+      emergencyContact: localData.emergencyContact
+    };
+
     try {
-      await dispatch(updatePersonalInfo(localData));
-      if (localData.SSN !== personalInfo.SSN) {
-        await dispatch(updateSSN(localData.SSN));
-      }
+      await dispatch(updatePersonalInfo({ 
+        data: unflattened,
+        files: filesToUpload
+      })).unwrap();
+      await dispatch(fetchPersonalInfo()).unwrap();
+
       setIsEditing(false);
-      setNotification({
-        open: true,
-        message: 'Changes saved successfully!',
-        severity: 'success'
+      setPendingFiles({
+        profilePicture: null,
+        driverLicense: null
       });
     } catch (error) {
-      console.log(`Failed to save changes in personal info page: ${error}`);
-      setNotification({
-        open: true,
-        message: 'Failed to save changes. Please try again.',
-        severity: 'error'
-      });
+      console.error('Failed to save changes:', error);
     }
+    
   };
 
   const handleCancelAll = () => {
     if (window.confirm('Are you sure you want to discard all changes?')) {
       setLocalData(personalInfo);
       setIsEditing(false);
+      setPendingFiles({
+        profilePicture: null,
+        driverLicense: null
+      });
+      setUploadedFiles({
+        profilePicture: null,
+        driverLicense: null
+      });
+      setErrors({});
     }
   };
 
@@ -110,55 +203,7 @@ const PersonalInfoPage: React.FC = () => {
     return d.toISOString().split('T')[0];
   };
 
-  const handleGenderChange = (event: SelectChangeEvent) => {
-    setLocalData({
-      ...localData,
-      gender: event.target.value as 'male' | 'female' | 'noAnswer'
-    });
-  };
-
-  const handleStateChange = (event: SelectChangeEvent) => {
-    console.log('State changed:', event.target.value);
-    setLocalData({
-      ...localData,
-      address: {
-        ...localData.address,
-        state: event.target.value
-      }
-    });
-  };
-
-  const handleResidencyStatusChange = (event: SelectChangeEvent) => {
-    console.log('Residency status changed:', event.target.value);
-    setLocalData({
-      ...localData,
-      employment: {
-        ...localData.employment,
-        residencyStatus: event.target.value as
-          | 'citizen'
-          | 'greenCard'
-          | 'nonresident'
-      }
-    });
-  };
-
-  const handleVisaTypeChange = (event: SelectChangeEvent) => {
-    console.log('Visa type changed:', event.target.value);
-    setLocalData({
-      ...localData,
-      employment: {
-        ...localData.employment,
-        visaType: event.target.value as
-          | 'H1-B'
-          | 'L2'
-          | 'F1-CPT'
-          | 'F1-OPT'
-          | 'H4'
-      }
-    });
-  };
-
-  console.log('localData: ', localData);
+  console.log('personalInfo: ', personalInfo);
 
   return (
     <Box sx={{ p: 3, maxWidth: 600, mx: 'auto', mt: 5 }}>
@@ -187,6 +232,16 @@ const PersonalInfoPage: React.FC = () => {
         )}
       </Box>
 
+      {/* DOCUMENTS */}
+      <Box sx={{ mb: 4 }}>
+        <DocumentsSection 
+          isEditing={isEditing}
+          uploadedFiles={uploadedFiles}
+          onboarding={personalInfo}
+          localData={localData}
+        />
+      </Box>
+
       {/* NAME */}
       <Box sx={{ mb: 4 }}>
         <Typography variant='h6' sx={{ mb: 2 }}>
@@ -195,8 +250,7 @@ const PersonalInfoPage: React.FC = () => {
         <Grid2 container spacing={2}>
           <Grid2 size={12} display='flex' alignItems='center' gap={2}>
             <Avatar
-              // await s3 setup
-              // src={personalInfo.profilePicture?.url}
+              src={uploadedFiles.profilePicture?.url || personalInfo.profilePicture?.fileUrl}
               sx={{
                 width: 100,
                 height: 100,
@@ -210,13 +264,7 @@ const PersonalInfoPage: React.FC = () => {
                   type='file'
                   hidden
                   accept='image/*'
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      // await s3 setup
-                      console.log(`Upload file: ${file}`);
-                    }
-                  }}
+                  onChange={(e) => handleFileSelect(e, 'profilePicture')}
                 />
               </Button>
             )}
@@ -224,76 +272,55 @@ const PersonalInfoPage: React.FC = () => {
           <Grid2 size={6}>
             <TextField
               fullWidth
-              label='First Name'
-              value={localData.name.firstName}
-              // enable when we are in editing state
+              name="firstName"
+              label="First Name"
+              value={localData.firstName}
               disabled={!isEditing}
-              onChange={(e) =>
-                setLocalData({
-                  ...localData,
-                  name: { ...localData.name, firstName: e.target.value }
-                })
-              }
-              error={Boolean(errors.name?.firstName)}
-              helperText={errors.name?.firstName}
+              onChange={handleChange as React.ChangeEventHandler}
+              error={Boolean(errors.firstName)}
+              helperText={errors.firstName}
             />
           </Grid2>
           <Grid2 size={6}>
             <TextField
               fullWidth
-              label='Last Name'
-              value={localData.name.lastName}
+              name="lastName"
+              label="Last Name"
+              value={localData.lastName}
               disabled={!isEditing}
-              onChange={(e) =>
-                setLocalData({
-                  ...localData,
-                  name: { ...localData.name, lastName: e.target.value }
-                })
-              }
-              error={Boolean(errors.name?.lastName)}
-              helperText={errors.name?.lastName}
+              onChange={handleChange as React.ChangeEventHandler}
+              error={Boolean(errors.lastName)}
+              helperText={errors.lastName}
             />
           </Grid2>
           <Grid2 size={6}>
             <TextField
               fullWidth
-              label='Middle Name'
-              value={localData.name.middleName}
+              name="middleName"
+              label="Middle Name"
+              value={localData.middleName}
               disabled={!isEditing}
-              onChange={(e) =>
-                setLocalData({
-                  ...localData,
-                  name: { ...localData.name, middleName: e.target.value }
-                })
-              }
+              onChange={handleChange as React.ChangeEventHandler}
             />
           </Grid2>
           <Grid2 size={6}>
             <TextField
               fullWidth
-              label='Preferred Name'
-              value={localData.name.preferredName}
+              name="preferredName"
+              label="Preferred Name"
+              value={localData.preferredName}
               disabled={!isEditing}
-              onChange={(e) =>
-                setLocalData({
-                  ...localData,
-                  name: { ...localData.name, preferredName: e.target.value }
-                })
-              }
+              onChange={handleChange as React.ChangeEventHandler}
             />
           </Grid2>
           <Grid2 size={6}>
             <TextField
               fullWidth
-              label='Email'
+              name="email"
+              label="Email"
               value={localData.email}
               disabled={!isEditing}
-              onChange={(e) =>
-                setLocalData({
-                  ...localData,
-                  email: e.target.value
-                })
-              }
+              onChange={handleChange as React.ChangeEventHandler}
               error={Boolean(errors.email)}
               helperText={errors.email}
             />
@@ -301,15 +328,11 @@ const PersonalInfoPage: React.FC = () => {
           <Grid2 size={6}>
             <TextField
               fullWidth
-              label='SSN'
+              name="SSN"
+              label="SSN"
               value={localData.SSN}
               disabled={!isEditing}
-              onChange={(e) =>
-                setLocalData({
-                  ...localData,
-                  SSN: e.target.value
-                })
-              }
+              onChange={handleChange as React.ChangeEventHandler}
               error={Boolean(errors.SSN)}
               helperText={errors.SSN}
             />
@@ -318,15 +341,11 @@ const PersonalInfoPage: React.FC = () => {
             <TextField
               fullWidth
               type='date'
+              name="dob"
               label='Birthday'
               value={formatDateForInput(localData.dob)}
               disabled={!isEditing}
-              onChange={(e) =>
-                setLocalData({
-                  ...localData,
-                  dob: e.target.value
-                })
-              }
+              onChange={handleChange as React.ChangeEventHandler}
               error={Boolean(errors.dob)}
               helperText={errors.dob}
             />
@@ -335,11 +354,11 @@ const PersonalInfoPage: React.FC = () => {
             <InputLabel id='gender-select-label'>Gender</InputLabel>
             <Select
               labelId='gender-select-label'
-              id='gender-select'
-              value={localData.gender}
+              name="gender"
+              value={localData.gender || ''}
               disabled={!isEditing}
               label='Gender'
-              onChange={handleGenderChange}
+              onChange={handleChange as (event: SelectChangeEvent) => void}
             >
               <MenuItem value='male'>Male</MenuItem>
               <MenuItem value='female'>Female</MenuItem>
@@ -358,52 +377,31 @@ const PersonalInfoPage: React.FC = () => {
           <Grid2 size={8}>
             <TextField
               fullWidth
-              label='Street'
-              value={localData.address.streetName}
+              name="streetName"
+              label="Street"
+              value={localData.streetName}
               disabled={!isEditing}
-              onChange={(e) =>
-                setLocalData({
-                  ...localData,
-                  address: {
-                    ...localData.address,
-                    streetName: e.target.value
-                  }
-                })
-              }
+              onChange={handleChange as React.ChangeEventHandler}
             />
           </Grid2>
           <Grid2 size={4}>
             <TextField
               fullWidth
-              label='Building/Apartment #'
-              value={localData.address.buildingNumber}
+              name="buildingNumber"
+              label="Building/Apartment #"
+              value={localData.buildingNumber}
               disabled={!isEditing}
-              onChange={(e) =>
-                setLocalData({
-                  ...localData,
-                  address: {
-                    ...localData.address,
-                    buildingNumber: e.target.value
-                  }
-                })
-              }
+              onChange={handleChange as React.ChangeEventHandler}
             />
           </Grid2>
           <Grid2 size={4}>
             <TextField
               fullWidth
-              label='City'
-              value={localData.address.city}
+              name="city"
+              label="City"
+              value={localData.city}
               disabled={!isEditing}
-              onChange={(e) =>
-                setLocalData({
-                  ...localData,
-                  address: {
-                    ...localData.address,
-                    city: e.target.value
-                  }
-                })
-              }
+              onChange={handleChange as React.ChangeEventHandler}
             />
           </Grid2>
           <Grid2 size={2}>
@@ -411,11 +409,11 @@ const PersonalInfoPage: React.FC = () => {
               <InputLabel id='state-select-label'>State</InputLabel>
               <Select
                 labelId='state-select-label'
-                id='state-select'
-                value={localData.address.state}
+                name="state"
+                value={localData.state}
                 disabled={!isEditing}
                 label='State'
-                onChange={handleStateChange}
+                onChange={handleChange as (event: SelectChangeEvent) => void}
               >
                 {US_STATES.map((state) => (
                   <MenuItem key={state.code} value={state.code}>
@@ -428,18 +426,11 @@ const PersonalInfoPage: React.FC = () => {
           <Grid2 size={4}>
             <TextField
               fullWidth
-              label='Zip Code'
-              value={localData.address.zipCode}
+              name="zipCode"
+              label="Zip Code"
+              value={localData.zipCode}
               disabled={!isEditing}
-              onChange={(e) =>
-                setLocalData({
-                  ...localData,
-                  address: {
-                    ...localData.address,
-                    zipCode: e.target.value
-                  }
-                })
-              }
+              onChange={handleChange as React.ChangeEventHandler}
             />
           </Grid2>
         </Grid2>
@@ -454,39 +445,25 @@ const PersonalInfoPage: React.FC = () => {
           <Grid2 size={6}>
             <TextField
               fullWidth
-              label='Cell Phone #'
-              value={localData.phone.cell}
+              name="cell"
+              label="Cell Phone #"
+              value={localData.cell}
               disabled={!isEditing}
-              onChange={(e) =>
-                setLocalData({
-                  ...localData,
-                  phone: {
-                    ...localData.phone,
-                    cell: e.target.value
-                  }
-                })
-              }
-              error={Boolean(errors.phone?.cell)}
-              helperText={errors.phone?.cell}
+              onChange={handleChange as React.ChangeEventHandler}
+              error={Boolean(errors.cell)}
+              helperText={errors.cell}
             />
           </Grid2>
           <Grid2 size={6}>
             <TextField
               fullWidth
-              label='Work Phone #'
-              value={localData.phone.work}
+              name="work"
+              label="Work Phone #"
+              value={localData.work}
               disabled={!isEditing}
-              onChange={(e) =>
-                setLocalData({
-                  ...localData,
-                  phone: {
-                    ...localData.phone,
-                    work: e.target.value
-                  }
-                })
-              }
-              error={Boolean(errors.phone?.work)}
-              helperText={errors.phone?.work}
+              onChange={handleChange as React.ChangeEventHandler}
+              error={Boolean(errors.work)}
+              helperText={errors.work}
             />
           </Grid2>
         </Grid2>
@@ -506,23 +483,23 @@ const PersonalInfoPage: React.FC = () => {
               <Select
                 labelId='residency-select-label'
                 id='residency-select'
-                value={localData.employment.residencyStatus || ''}
+                value={localData.residencyStatus}
                 disabled={!isEditing}
                 label='Residency Status'
-                onChange={handleResidencyStatusChange}
+                onChange={handleChange}
               >
                 <MenuItem value='citizen'>Citizen</MenuItem>
                 <MenuItem value='greenCard'>Permanent Resident</MenuItem>
                 <MenuItem value='nonresident'>Non-Resident</MenuItem>
               </Select>
-              {errors.employment?.residencyStatus && (
+              {errors.residencyStatus && (
                 <FormHelperText>
-                  {errors.employment.residencyStatus}
+                  {errors.residencyStatus}
                 </FormHelperText>
               )}
             </FormControl>
           </Grid2>
-          {localData.employment.residencyStatus === 'nonresident' && (
+          {localData.residencyStatus === 'nonresident' && (
             <>
               <Grid2 size={6}>
                 <FormControl fullWidth>
@@ -530,62 +507,64 @@ const PersonalInfoPage: React.FC = () => {
                   <Select
                     labelId='visa-select-label'
                     id='visa-select'
-                    value={localData.employment.visaType || ''}
+                    name='visaType'
+                    value={localData.visaType}
                     disabled={!isEditing}
                     label='Visa Type'
-                    onChange={handleVisaTypeChange}
+                    onChange={handleChange}
                   >
                     <MenuItem value='H1-B'>H1-B</MenuItem>
                     <MenuItem value='L2'>L2</MenuItem>
-                    <MenuItem value='F1-CPT'>F1-CPT</MenuItem>
-                    <MenuItem value='F1-OPT'>F1-OPT</MenuItem>
+                    <MenuItem value='F1(CPT/OPT)'>F1(CPT/OPT)</MenuItem>
                     <MenuItem value='H4'>H4</MenuItem>
+                    <MenuItem value='Other'>Ohter</MenuItem>
                   </Select>
-                  {errors.employment?.visaType && (
+                  {errors.visaType && (
                     <FormHelperText>
-                      {errors.employment.visaType}
+                      {errors.visaType}
                     </FormHelperText>
                   )}
                 </FormControl>
               </Grid2>
+              <Grid2
+                size={5}
+                sx={{
+                  display: localData.visaType === 'Other' ? 'block' : 'none'
+                }}
+              >
+                <TextField
+                  fullWidth
+                  name='otherVisaTitle'
+                  label='Other Visa Title'
+                  value={localData.otherVisaTitle}
+                  onChange={handleChange as React.ChangeEventHandler}
+                  disabled={!isEditing}
+                />
+              </Grid2>
               <Grid2 size={6}>
                 <TextField
                   fullWidth
+                  name="startDate"
                   type='date'
                   label='Start Date'
-                  value={formatDateForInput(localData.employment.startDate)}
+                  value={formatDateForInput(localData.startDate)}
                   disabled={!isEditing}
-                  onChange={(e) =>
-                    setLocalData({
-                      ...localData,
-                      employment: {
-                        ...localData.employment,
-                        startDate: e.target.value
-                      }
-                    })
-                  }
-                  error={Boolean(errors.employment?.startDate)}
-                  helperText={errors.employment?.startDate}
+                  onChange={handleChange as React.ChangeEventHandler}
+                  error={Boolean(errors.startDate)}
+                  helperText={errors.startDate}
                 />
               </Grid2>
               <Grid2 size={6}>
                 <TextField
                   fullWidth
                   type='date'
+                  name="endDate"
                   label='End Date'
-                  value={formatDateForInput(localData.employment.endDate)}
+                  value={formatDateForInput(localData.endDate)}
                   disabled={!isEditing}
-                  onChange={(e) =>
-                    setLocalData({
-                      ...localData,
-                      employment: {
-                        ...localData.employment,
-                        endDate: e.target.value
-                      }
-                    })
-                  }
-                  error={Boolean(errors.employment?.endDate)}
-                  helperText={errors.employment?.endDate}
+                  onChange={handleChange as React.ChangeEventHandler}
+                  error={Boolean(errors.endDate)}
+                  helperText={errors.endDate}
                 />
               </Grid2>
             </>
@@ -628,8 +607,6 @@ const PersonalInfoPage: React.FC = () => {
                   color='error'
                   disabled={!isEditing}
                   onClick={() => {
-                    // NOTE: do we want custom stylings (i.e. using mui) for these
-                    // pop up windows?
                     if (
                       window.confirm(
                         'Are you sure you want to delete this emergency contact?'
@@ -806,11 +783,6 @@ const PersonalInfoPage: React.FC = () => {
             Add Emergency Contact
           </Button>
         )}
-      </Box>
-
-      {/* DOCUMENTS */}
-      <Box sx={{ mb: 4 }}>
-        <DocumentsSection isEditing={isEditing} />
       </Box>
 
       <Snackbar

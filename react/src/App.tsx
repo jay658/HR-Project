@@ -86,14 +86,14 @@ const App: React.FC = () => {
                 </ProtectedRoute>
               }
             />
-            {/* <Route
+            <Route
               path='/personal-info'
               element={
                 <ProtectedRoute requireOnboarding={true}>
                   <PersonalInfoPage />
                 </ProtectedRoute>
               }
-            /> */}
+            />
             <Route
               path='/visa-status'
               element={

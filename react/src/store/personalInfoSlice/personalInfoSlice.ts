@@ -16,7 +16,8 @@ const initialState: PersonalInfo = {
   lastName: '',
   middleName: '',
   preferredName: '',
-  // gender: '',
+  email: '',
+  gender: null,
   dob: '',
   buildingNumber: '',
   streetName: '',
@@ -25,20 +26,20 @@ const initialState: PersonalInfo = {
   zipCode: '',
   work: '',
   cell: '',
-  SSN: null,
+  SSN: '',
   make: '',
   model: '',
   color: '',
   hasLicense: null,
-  // number: '',
+  number: '',
   expirationDate: '',
-  // licenseDocument: '',
   residencyStatus: '',
-  // visaType: '',
+  visaType: '',
+  otherVisaTitle: '',
   startDate: '',
   endDate: '',
   employementDocuments: [],
-  // reference: null,
+  reference: null,
   emergencyContact: [],
   profilePicture: ''
 };
@@ -55,8 +56,9 @@ const personalInfoSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchPersonalInfo.fulfilled, (_state, action) => action.payload)
-      .addCase(
+    .addCase(fetchPersonalInfo.fulfilled, (_state, action) => {
+      return { ...initialState, ...(action.payload || {}) } as PersonalInfo;
+    })      .addCase(
         updatePersonalInfo.fulfilled,
         (_state, action) => action.payload
       );
