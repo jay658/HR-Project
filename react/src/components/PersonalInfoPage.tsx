@@ -203,8 +203,6 @@ const PersonalInfoPage: React.FC = () => {
     return d.toISOString().split('T')[0];
   };
 
-  console.log('personalInfo: ', personalInfo);
-
   return (
     <Box sx={{ p: 3, maxWidth: 600, mx: 'auto', mt: 5 }}>
       <Box
@@ -382,6 +380,8 @@ const PersonalInfoPage: React.FC = () => {
               value={localData.streetName}
               disabled={!isEditing}
               onChange={handleChange as React.ChangeEventHandler}
+              error={Boolean(errors.streetName)}
+              helperText={errors.streetName}
             />
           </Grid2>
           <Grid2 size={4}>
@@ -392,6 +392,8 @@ const PersonalInfoPage: React.FC = () => {
               value={localData.buildingNumber}
               disabled={!isEditing}
               onChange={handleChange as React.ChangeEventHandler}
+              error={Boolean(errors.buildingNumber)}
+              helperText={errors.buildingNumber}
             />
           </Grid2>
           <Grid2 size={4}>
@@ -402,6 +404,8 @@ const PersonalInfoPage: React.FC = () => {
               value={localData.city}
               disabled={!isEditing}
               onChange={handleChange as React.ChangeEventHandler}
+              error={Boolean(errors.city)}
+              helperText={errors.city}
             />
           </Grid2>
           <Grid2 size={2}>
@@ -431,6 +435,8 @@ const PersonalInfoPage: React.FC = () => {
               value={localData.zipCode}
               disabled={!isEditing}
               onChange={handleChange as React.ChangeEventHandler}
+              error={Boolean(errors.zipCode)}
+              helperText={errors.zipCode}
             />
           </Grid2>
         </Grid2>
