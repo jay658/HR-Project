@@ -7,6 +7,7 @@ import { HouseManagementComponent } from './components/house-management/house-ma
 import { LoginComponent } from './components/login/login.component';
 import { NgModule } from '@angular/core';
 import { VisaStatusManagementComponent } from './components/visa-status-management/visa-status-management.component';
+import { EmployeeProfileComponent } from './components/employee-profile/employee-profile.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent},
@@ -15,6 +16,7 @@ const routes: Routes = [
   { path: 'visa', component: VisaStatusManagementComponent},
   { path: 'hiring', component: HiringManagementComponent},
   { path: 'housing', component: HouseManagementComponent},
+  { path: 'hr/employees/:id', component: EmployeeProfileComponent },
   { path: '**', redirectTo: ''}
 ];
 
