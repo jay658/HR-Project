@@ -1,1 +1,50 @@
-<p>login works!</p>
+<mat-card class="login-container">
+  <mat-card-header>
+    <mat-card-title>Login</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div *ngIf="error$ | async as error" class="error-message">
+      {{ error }}
+    </div>
+
+    <form (ngSubmit)="handleLogin()" #loginForm="ngForm" class="login-form">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Username</mat-label>
+        <input
+          matInput
+          [(ngModel)]="username"
+          name="username"
+          required
+          [disabled]="(loading$ | async) || false"
+        />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Password</mat-label>
+        <input
+          matInput
+          type="password"
+          [(ngModel)]="password"
+          name="password"
+          required
+          [disabled]="(loading$ | async) || false"
+        />
+      </mat-form-field>
+
+      <button
+        mat-raised-button
+        color="primary"
+        class="full-width"
+        type="submit"
+        [disabled]="(loading$ | async) || false || !loginForm.form.valid"
+      >
+        <ng-container *ngIf="loading$ | async; else loginText">
+          <mat-spinner diameter="20" class="spinner"></mat-spinner>
+          Logging in...
+        </ng-container>
+        <ng-template #loginText> Login </ng-template>
+      </button>
+    </form>
+  </mat-card-content>
+</mat-card>

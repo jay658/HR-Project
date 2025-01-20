@@ -1,11 +1,17 @@
-import { getEmployees, getEmployeeDetails, testUserRouter } from '../../../controllers/hrControllers/user'
+import {
+  getEmployees,
+  getEmployeeDetails,
+  testUserRouter,
+  login,
+} from "../../../controllers/hrControllers/user";
 
 import express from "express";
 
 const userRouter = express.Router();
 
-userRouter.get('/test', testUserRouter)
-userRouter.get('/employees', getEmployees)
-userRouter.get('/employees/:id', getEmployeeDetails)
+userRouter.post("/login", login);
+userRouter.get("/test", testUserRouter);
+userRouter.get("/employees", getEmployees);
+userRouter.get("/employees/:id", getEmployeeDetails);
 
 export default userRouter;

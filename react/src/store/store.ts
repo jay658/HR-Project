@@ -1,3 +1,4 @@
+
 import authReducer from './authSlice/authSlice';
 import { configureStore } from '@reduxjs/toolkit';
 import counterReducer from './counterSlice/counterSlice';
@@ -17,8 +18,9 @@ export const store = configureStore({
     housing: housingReducer,
     auth: authReducer,
     facilityIssues: facilityIssuesReducer,
-    registration: registrationReducer
-  }
+    registration: registrationReducer,
+  },
+
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
