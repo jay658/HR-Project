@@ -2,6 +2,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 
 import { AddHouseDialogComponent } from './components/add-house-dialog/add-house-dialog.component';
+import { FacilityIssueDialogComponent } from './components/facility-issue-dialog/facility-issue-dialog.component';
 // Components
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -10,7 +11,7 @@ import { AuthInterceptor } from '../interceptors/auth.interceptor';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BrowserModule } from '@angular/platform-browser';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
-import { DatePipe } from '@angular/common'
+import { DatePipe } from '@angular/common';
 import { DocumentEffects } from './store/documents/documents.effects';
 import { EffectsModule } from '@ngrx/effects';
 import { EmployeeEffects } from './store/employee/employees.effects';
@@ -25,19 +26,17 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDialogModule } from '@angular/material/dialog';
-import { MatExpansionModule } from '@angular/material/expansion'
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import {MatGridListModule} from '@angular/material/grid-list';
+import { MatGridListModule } from '@angular/material/grid-list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import {MatSelectModule} from '@angular/material/select';
+import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-
-
-
+import { MatFormField } from '@angular/material/form-field';
 import { MatTableModule } from '@angular/material/table';
 // Material Imports
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -49,7 +48,7 @@ import { OnboardingFormComponent } from './components/hiring-management/onboardi
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 // NgRx
 import { StoreModule } from '@ngrx/store';
-import {TextFieldModule} from '@angular/cdk/text-field';
+import { TextFieldModule } from '@angular/cdk/text-field';
 import { UserEffects } from './store/user/users.effects';
 import { VisaStatusManagementComponent } from './components/visa-status-management/visa-status-management.component';
 
@@ -84,8 +83,8 @@ import { userReducer } from './store/user/users.reducers';
     ConfirmDialogComponent,
     EmployeeProfileComponent,
     HouseDetailComponent,
-    OnboardingFormComponent
-
+    OnboardingFormComponent,
+    FacilityIssueDialogComponent, // Add this component
   ],
   imports: [
     BrowserModule,
@@ -95,7 +94,7 @@ import { userReducer } from './store/user/users.reducers';
     ReactiveFormsModule,
     AppRoutingModule,
 
-    // Material Modules
+    // Material Modules (remove duplicates and organize)
     MatToolbarModule,
     MatMenuModule,
     MatIconModule,
@@ -114,7 +113,7 @@ import { userReducer } from './store/user/users.reducers';
     TextFieldModule,
     MatSelectModule,
 
-    // NgRx Store Configuration
+    // NgRx Store Configuration (keep as is)
     StoreModule.forRoot(
       {
         auth: authReducer,
@@ -122,8 +121,8 @@ import { userReducer } from './store/user/users.reducers';
         users: userReducer,
         housing: housingReducer,
         employee: employeeReducer,
-        onboardings: onboardingReducer, 
-        documents: documentReducer
+        onboardings: onboardingReducer,
+        documents: documentReducer,
       },
       {
         runtimeChecks: {
@@ -140,28 +139,13 @@ import { userReducer } from './store/user/users.reducers';
       HousingEffects,
       EmployeeEffects,
       OnboardingEffects,
-      DocumentEffects
+      DocumentEffects,
     ]),
     StoreDevtoolsModule.instrument({
       maxAge: 25,
       logOnly: environment.production,
     }),
-    BrowserAnimationsModule,
-    MatToolbarModule,
-    MatMenuModule,
-    MatIconModule,
-    MatButtonModule,
-    HttpClientModule,
-    FormsModule,
-    MatTableModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatIconModule,
-    MatProgressSpinnerModule,
-    FormsModule,
-    StoreModule.forFeature('employee', employeeReducer),
-    EffectsModule.forFeature([EmployeeEffects]),
+    // Remove duplicate imports that were at the bottom
   ],
   providers: [
     {
@@ -169,8 +153,8 @@ import { userReducer } from './store/user/users.reducers';
       useClass: AuthInterceptor,
       multi: true,
     },
-    DatePipe
+    DatePipe,
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule {}

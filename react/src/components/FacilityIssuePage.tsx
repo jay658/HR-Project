@@ -33,7 +33,7 @@ const FacilityIssuesPage = () => {
   const { issues, status, error } = useSelector(
     (state: RootState) => state.facilityIssues
   );
-  const { user } = useSelector((state: RootState) => state.auth)
+  const { user } = useSelector((state: RootState) => state.auth);
 
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [commentDialogOpen, setCommentDialogOpen] = useState(false);
@@ -129,12 +129,17 @@ const FacilityIssuesPage = () => {
               py: 0.5,
               borderRadius: 1,
               bgcolor:
-                issue.status === "closed" ? "error.main" : 
-                  issue.status === 'open' ? "success.main": "warning.main",
+                issue.status === "closed"
+                  ? "error.main"
+                  : issue.status === "open"
+                  ? "success.main"
+                  : "warning.main",
               color: "white",
             }}
           >
-            {issue.status === 'inProgress'? 'IN PROGRESS' : issue.status.toUpperCase()}
+            {issue.status === "inProgress"
+              ? "IN PROGRESS"
+              : issue.status.toUpperCase()}
           </Typography>
         </Stack>
 
@@ -142,7 +147,7 @@ const FacilityIssuesPage = () => {
           {issue.description}
         </Typography>
         <Typography color="text.secondary" sx={{ mb: 2 }}>
-          Reported on: {new Date(issue.createdAt).toLocaleDateString('en-US')}
+          Reported on: {new Date(issue.createdAt).toLocaleDateString("en-US")}
         </Typography>
 
         {issue.comments.length > 0 && (
@@ -163,10 +168,13 @@ const FacilityIssuesPage = () => {
                     borderColor: "grey.200",
                   }}
                 >
-                  <Typography variant="body1">{user?.username}</Typography>
+                  <Typography variant="body1">
+                    {comment.createdBy === user?.id ? user.username : "HR"}
+                  </Typography>
                   <Typography variant="body2">{comment.description}</Typography>
                   <Typography variant="caption" color="text.secondary">
-                    Posted on {new Date(comment.timestamp).toLocaleDateString('en-US')}
+                    Posted on{" "}
+                    {new Date(comment.timestamp).toLocaleDateString("en-US")}
                   </Typography>
                 </Box>
               ))}

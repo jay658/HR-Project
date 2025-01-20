@@ -12,7 +12,7 @@ export interface AuthRequest extends Request {
   };
 }
 
-const ignoreRoutes = ['/login', '/registration', '/test']
+const ignoreRoutes = ["/login", "/registration", "/test"];
 
 export const authenticateToken = (userType: 'employee' | 'hr') => {
   return async(
