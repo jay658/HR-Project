@@ -1,0 +1,71 @@
+.container {
+  max-width: 80vw;
+  margin: 20px auto;
+  padding: 20px;
+  font-family: Roboto, Arial, sans-serif;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.status-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.status-card {
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: rgb(242, 241, 241);
+}
+
+.status-card.pending mat-card-title {
+  color: #007bff;
+}
+
+.status-card.rejected mat-card-title {
+  color: #d32f2f;
+}
+
+.status-card.approved mat-card-title {
+  color: #388e3c;
+}
+
+mat-list-item:hover{
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+mat-list-item {
+  border-bottom: 1px solid #eee;
+  background-color: white;
+}
+
+.email {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .status-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+mat-form-field{
+  margin-right: 16px
+}
+
+#invite-user-button{
+  background-color: rgb(242, 241, 241);
+}
+
+#invite-user-button:hover{
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}

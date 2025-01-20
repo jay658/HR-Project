@@ -81,7 +81,7 @@ export const loadUserFromStorage = createAsyncThunk(
       
       if (!user || !token || !isLoggedIn) {
         clearSession()
-        throw new Error('Invalid or missing session data');
+        throw new Error('Please login first');
       }
 
       await axiosInstance.get('/user/validateSession')
@@ -89,7 +89,7 @@ export const loadUserFromStorage = createAsyncThunk(
       return { user, token, isLoggedIn };
     } catch (error) {
       clearSession()
-      return rejectWithValue('Session cannot be found');
+      return rejectWithValue('Please login first');
     }
   }
 );

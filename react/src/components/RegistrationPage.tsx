@@ -1,12 +1,14 @@
 import { AppDispatch, RootState } from '../store/store';
 import { Box, Button, TextField, Typography } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from 'react-redux'
+import { useLocation, useNavigate } from "react-router-dom";
 
+import axios from 'axios';
 import { registerUser } from "../store/registrationSlice/registrationThunks";
-import { useNavigate } from "react-router-dom";
 
 const RegistrationPage: React.FC = () => {
+  const location = useLocation()
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [email, setEmail] = useState<string>("");
@@ -15,6 +17,23 @@ const RegistrationPage: React.FC = () => {
   const registrationState = useSelector((state: RootState) => state.registration);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const validateToken = async() => {
+      try{
+        const token = location.pathname.split('/register/')[1]
+
+        if(!token) throw new Error('Token is missing')
+
+        const res = await axios.post('http://localhost:3000/api/employee/user/register/validate', {token}) 
+        setEmail(res.data)
+      }catch(err){
+        navigate('/')
+      }
+    }
+    
+    validateToken()
+  }, [location.pathname])
+  
   const handleRegister = async () => {
     const registerData = {
       username: username,
@@ -23,9 +42,6 @@ const RegistrationPage: React.FC = () => {
     }
 
     const result = await dispatch(registerUser(registerData));
-
-    console.log(result)
-
 
     if(!result.hasOwnProperty('error')){
       setUsername("");
@@ -70,6 +86,7 @@ const RegistrationPage: React.FC = () => {
         variant="outlined"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
+        disabled={true}
       />
       <Button
         variant="contained"

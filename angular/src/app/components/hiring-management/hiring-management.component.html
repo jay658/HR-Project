@@ -1,1 +1,77 @@
-<p>hiring-management works!</p>
+<div class="container mat-typography">
+  <h1>Onboarding Management</h1>
+  <Form [formGroup]="inviteForm">
+    <mat-form-field class="field" appearance="outline">
+      <mat-label>First Name</mat-label>
+      <input matInput formControlName="firstName"/>
+    </mat-form-field>
+  
+    <mat-form-field class="field" appearance="outline">
+      <mat-label>Last Name</mat-label>
+      <input matInput formControlName="lastName"/>
+    </mat-form-field>
+  
+    <mat-form-field class="field" appearance="outline">
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email"/>
+    </mat-form-field>
+    
+    <button id="invite-user-button" mat-button (click)="handleSendInvite()">Invite a new user</button>
+  </Form>
+
+  <div class="status-grid">
+    <section class="status-section">
+      <mat-card class="status-card pending">
+        <mat-card-header>
+          <mat-card-title>Pending</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-list>
+            <mat-list-item *ngFor="let onboarding of (pendingOnboardings$ | async)">
+              <img mat-list-avatar [src]="onboarding.profilePicture" alt="Profile Picture" />
+              <div mat-line>{{ onboarding.name.firstName }} {{ onboarding.name.lastName}}</div>
+              <div mat-line class="email">{{ onboarding.email }}</div>
+              <button mat-button [routerLink]="['/onboarding', onboarding._id]">View <mat-icon>file_open</mat-icon></button>
+            </mat-list-item>
+          </mat-list>
+        </mat-card-content>
+      </mat-card>
+    </section>
+
+    <section class="status-section">
+      <mat-card class="status-card rejected">
+        <mat-card-header>
+          <mat-card-title>Rejected</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-list>
+            <mat-list-item *ngFor="let onboarding of (rejectedOnboardings$ | async)">
+              <img mat-list-avatar [src]="onboarding.profilePicture" alt="Profile Picture" />
+              <div mat-line>{{ onboarding.name.firstName }} {{ onboarding.name.lastName}}</div>
+              <div mat-line class="email">{{ onboarding.email }}</div>
+              <button mat-button [routerLink]="['/onboarding', onboarding._id]">View <mat-icon>file_open</mat-icon></button>
+            </mat-list-item>
+          </mat-list>
+        </mat-card-content>
+      </mat-card>
+    </section>
+
+    <section class="status-section">
+      <mat-card class="status-card approved">
+        <mat-card-header>
+          <mat-card-title>Approved</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-list>
+            <mat-list-item *ngFor="let onboarding of (approvedOnboardings$ | async)">
+              <img mat-list-avatar [src]="onboarding.profilePicture" alt="Profile Picture" />
+              <div mat-line>{{ onboarding.name.firstName }} {{ onboarding.name.lastName}}</div>
+              <div mat-line class="email">{{ onboarding.email }}</div>
+              <button mat-button [routerLink]="['/onboarding', onboarding._id]">View <mat-icon>file_open</mat-icon></button>
+            </mat-list-item>
+          </mat-list>
+        </mat-card-content>
+      </mat-card>
+    </section>
+  </div>
+</div>

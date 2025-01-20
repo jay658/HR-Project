@@ -1,14 +1,6 @@
 import { createAction, props } from '@ngrx/store'
 
-export type User = {
-  _id: string,
-  username: string,
-  password: string,
-  email: string,
-  onboardingId?: string,
-  personalInfoId?: string,
-  visaApplicationId?: string
-}
+import type { User } from 'src/app/interfaces/Types';
 
 export const loadUsers = createAction('[User API] Load Users')
 export const loadUsersSuccess = createAction(

@@ -1,7 +1,7 @@
 import { createReducer, on } from '@ngrx/store';
 import { loadUsers, loadUsersFailure, loadUsersSuccess } from './users.actions';
 
-import type { User } from './users.actions';
+import type { User } from 'src/app/interfaces/Types';
 
 export interface UserState {
   users: User[];
