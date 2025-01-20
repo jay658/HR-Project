@@ -16,17 +16,25 @@ const DashboardPage: React.FC = () => {
   },[]) 
 
   const getButtonDetails = () => {
-    if (onboarding.status === "pending") {
+    if (onboarding.status === null) {
       return { text: "Start Onboarding", path: "/onboarding" };
+    } else if (onboarding.status === "pending") {
+      return { text: "Review Onboarding", path: "/onboarding" };
     } else if (onboarding.status === "rejected") {
       return { text: "Fix Onboarding", path: "/onboarding" };
     }
     return null;
   };
 
+  const getStatusText = (status: 'approved' | 'rejected' | 'pending' | null) => {
+    if (!status) return 'Not Started';
+    return status.charAt(0).toUpperCase() + status.slice(1);
+  };
+
   const buttonDetails = getButtonDetails();
 
-  const getStatusColor = (status: 'approved' | 'rejected' | 'pending') => {
+  const getStatusColor = (status: 'approved' | 'rejected' | 'pending' | null) => {
+    if(!status) return '#757575'
     if(status === 'pending') return '#007bff'
     if(status === 'rejected') return '#d32f2f'
     return '#388e3c'
@@ -59,12 +67,12 @@ const DashboardPage: React.FC = () => {
             Welcome to your dashboard, <strong>{user?.username}</strong>!
           </Typography>
 
-          <Typography
-            variant="body1"
-            sx={{ mb: 2, textAlign: "center", color: "text.secondary" }}
+            <Typography
+              variant="body1"
+              sx={{ mb: 2, textAlign: "center", color: "text.secondary" }}
           >
-            Your onboarding status is: <strong style={{color: getStatusColor(onboarding.status)}}>{onboarding.status}</strong>
-          </Typography>
+              Your onboarding status is: <strong style={{color: getStatusColor(onboarding.status)}}>{getStatusText(onboarding.status)}</strong>
+            </Typography>
 
           {buttonDetails && (
             <Box sx={{ display: "flex", justifyContent: "center" }}>
