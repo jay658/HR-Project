@@ -1,4 +1,6 @@
-import { getAllUsers, getHousingForUser, login, registerUser, testUserRouter, validateRegistrationToken, validateSession } from "../../../controllers/employeeControllers/user";
+import { getAllUsers, getHousingForUser, login, registerUser, 
+    testUserRouter, validateSession, validateRegistrationToken} 
+from "../../../controllers/employeeControllers/user";
 
 import express from "express";
 

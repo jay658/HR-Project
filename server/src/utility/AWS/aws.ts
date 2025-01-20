@@ -1,11 +1,12 @@
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
-
-import { UploadedFile } from 'express-fileupload'
-import config from '../configs'
+import { GetObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
+import { UploadedFile } from 'express-fileupload';
 import dotenv from 'dotenv'
+import config from '../configs'
 
 dotenv.config()
 
+
+dotenv.config()
 
 const connectToAWS = () => {
   try{

@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
+import VisaApplication from "../../models/VisaApplication";
 
 import { AuthRequest } from "../../middleware/authMiddleware";
 import Document from "../../models/Document";
 import EmployeeUser from "../../models/EmployeeUser";
 import PersonalInfo from "../../models/PersonalInfo";
-import VisaApplication from "../../models/VisaApplication";
 import mongoose from "mongoose";
 import { uploadFileToAWS } from "../../utility/AWS/aws";
 

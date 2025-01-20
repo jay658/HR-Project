@@ -76,15 +76,27 @@ const seed = async () => {
         const userDocs = documents.filter((d) =>
           d.userId.equals(users[idx]._id)
         );
+        
+        // Get visa-related documents for F1 visa holders
+        const visaDocIds = userDocs
+          .filter(d => ['optReceipt', 'optEAD', 'i983', 'i20'].includes(d.type))
+          .map(d => d._id);
+    
         return {
           ...onboarding,
           userId: users[idx]._id,
-          profilePicture: userDocs.find((d) => d.type === "profilePicture")
-            ?._id,
+          profilePicture: userDocs.find((d) => d.type === "profilePicture")?._id,
           driversLicense: {
             ...onboarding.driversLicense,
             document: userDocs.find((d) => d.type === "driverLicense")?._id,
           },
+          employment: {
+            ...onboarding.employment,
+            // Add visa documents if user is F1
+            documents: onboarding.employment.visaType === 'F1(CPT/OPT)' 
+              ? visaDocIds 
+              : onboarding.employment.documents
+          }
         };
       })
     );
@@ -95,22 +107,38 @@ const seed = async () => {
           d.userId.equals(users[idx]._id)
         );
       
+    
+        // Get visa-related documents for F1 visa holders
+        const visaDocIds = userDocs
+          .filter(d => ['optReceipt', 'optEAD', 'i983', 'i20'].includes(d.type))
+          .map(d => d._id);
+    
         return {
           ...info,
           userId: users[idx]._id,
-          profilePicture: userDocs.find((d) => d.type === 'profilePicture')
-            ?._id,
+          profilePicture: userDocs.find((d) => d.type === 'profilePicture')?._id,
           driversLicense: {
             ...info.driversLicense,
             document: userDocs.find((d) => d.type === 'driverLicense')?._id
+          },
+          employment: {
+            ...info.employment,
+            // Add visa documents if user is F1
+            documents: info.employment.visaType === 'F1(CPT/OPT)' 
+              ? visaDocIds 
+              : info.employment.documents
           }
         };
       })
     );
 
     const visaApplications = await VisaApplication.insertMany(
-      seedVisaApplications
+      seedVisaApplications.map((application, idx) => ({
+        ...application,
+        userId: idx === 0 ? users[0]._id : users[3]._id // Assign to John Doe and Kobe Bryant respectively
+      }))
     );
+
 
     const getRandomId = <T extends { _id: Types.ObjectId }>(items: T[]) =>
       items[Math.floor(Math.random() * items.length)]._id;
@@ -121,6 +149,14 @@ const seed = async () => {
       user.apartmentId = randomApartmentId;
       user.onboardingId = onboardingItems[idx]._id;
       if(idx !== janeIdx) user.personalInfoId = personalInfos[idx]._id;
+      user.personalInfoId = personalInfos[idx]._id;
+      
+      // Add visa application IDs for F1 visa holders
+      if (idx === 0) { // John Doe
+        user.visaApplicationId = visaApplications[0]._id;
+      } else if (idx === 3) { // Kobe Bryant
+        user.visaApplicationId = visaApplications[1]._id;
+      }
 
       apartments
         .find((apartment) => apartment._id === randomApartmentId)

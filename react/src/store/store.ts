@@ -12,12 +12,13 @@ export const store = configureStore({
   reducer: {
     counter: counterReducer,
     onboarding: onboardingReducer,
-    visa: visaReducer,
-    personalInfo: personalInfoReducer,
     housing: housingReducer,
     auth: authReducer,
     facilityIssues: facilityIssuesReducer,
     registration: registrationReducer,
+    visa: visaReducer,
+    personalInfo: personalInfoReducer,
+   
   },
 
 });
