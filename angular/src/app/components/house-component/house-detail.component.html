@@ -1,0 +1,83 @@
+<mat-card class="house-detail-card" *ngIf="selectedHouse$ | async as house">
+  <mat-card-header>
+    <mat-card-title>House Details - {{ house.unit }}</mat-card-title>
+    <button mat-icon-button color="primary" (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="info-grid">
+      <!-- Property Information -->
+      <div class="info-section">
+        <h3>Property Information</h3>
+        <mat-list>
+          <mat-list-item>
+            <span class="info-label">Unit:</span>
+            <span class="info-value">{{ house.unit }}</span>
+          </mat-list-item>
+          <mat-list-item>
+            <span class="info-label">Address:</span>
+            <span class="info-value">{{ house.address }}</span>
+          </mat-list-item>
+          <mat-list-item>
+            <span class="info-label">Capacity:</span>
+            <span class="info-value">{{ house.capacity }}</span>
+          </mat-list-item>
+          <mat-list-item>
+            <span class="info-label">Status:</span>
+            <mat-chip-list>
+              <mat-chip
+                [color]="house.status === 'available' ? 'primary' : 'warn'"
+                selected
+              >
+                {{ house.status }}
+              </mat-chip>
+            </mat-chip-list>
+          </mat-list-item>
+        </mat-list>
+      </div>
+
+      <!-- Tenants Information -->
+      <div class="info-section">
+        <h3>Current Tenants</h3>
+        <mat-list>
+          <ng-container *ngIf="house.tenants && house.tenants.length > 0">
+            <mat-list-item *ngFor="let tenant of house.tenants">
+              <div class="tenant-info">
+                <span class="tenant-name">{{ tenant.username }}</span>
+                <span class="tenant-email">{{ tenant.email }}</span>
+              </div>
+            </mat-list-item>
+          </ng-container>
+          <mat-list-item *ngIf="!house.tenants || house.tenants.length === 0">
+            No tenants currently assigned
+          </mat-list-item>
+        </mat-list>
+      </div>
+
+      <!-- Furniture Information -->
+      <div class="info-section">
+        <h3>Furniture Information</h3>
+        <mat-list>
+          <mat-list-item>
+            <span class="info-label">Number of beds:</span>
+            <span class="info-value">5</span>
+          </mat-list-item>
+          <mat-list-item>
+            <span class="info-label">Mattresses:</span>
+            <span class="info-value">5</span>
+          </mat-list-item>
+          <mat-list-item>
+            <span class="info-label">Tables:</span>
+            <span class="info-value">5</span>
+          </mat-list-item>
+          <mat-list-item>
+            <span class="info-label">Chairs:</span>
+            <span class="info-value">5</span>
+          </mat-list-item>
+        </mat-list>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

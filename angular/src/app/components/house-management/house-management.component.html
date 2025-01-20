@@ -1,1 +1,79 @@
-<p>house-management works!</p>
+<!-- housing.component.html -->
+<mat-card class="m-4">
+  <mat-card-header>
+    <mat-card-title>Housing Management</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <!-- Action Button -->
+    <div class="mb-4">
+      <button mat-raised-button color="primary" (click)="openAddDialog()">
+        <mat-icon>add</mat-icon>
+        Add New House
+      </button>
+    </div>
+
+    <!-- Houses Table -->
+    <table mat-table [dataSource]="houses$" class="w-full">
+      <!-- Unit Column -->
+      <ng-container matColumnDef="unit">
+        <th mat-header-cell *matHeaderCellDef>Unit</th>
+        <td mat-cell *matCellDef="let house">{{ house.unit }}</td>
+      </ng-container>
+
+      <!-- Address Column -->
+      <ng-container matColumnDef="address">
+        <th mat-header-cell *matHeaderCellDef>Address</th>
+        <td mat-cell *matCellDef="let house">{{ house.address }}</td>
+      </ng-container>
+
+      <!-- Capacity Column -->
+      <ng-container matColumnDef="capacity">
+        <th mat-header-cell *matHeaderCellDef>Capacity</th>
+        <td mat-cell *matCellDef="let house">{{ house.capacity }}</td>
+      </ng-container>
+
+      <!-- Status Column -->
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let house">
+          <mat-chip-list>
+            <mat-chip
+              [color]="house.status === 'available' ? 'primary' : 'warn'"
+              selected
+            >
+              {{ house.status }}
+            </mat-chip>
+          </mat-chip-list>
+        </td>
+      </ng-container>
+
+      <!-- Tenants Column -->
+      <ng-container matColumnDef="tenants">
+        <th mat-header-cell *matHeaderCellDef>Tenants</th>
+        <td mat-cell *matCellDef="let house">{{ house.tenants.length }}</td>
+      </ng-container>
+
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <td mat-cell *matCellDef="let house">
+          <button
+            mat-icon-button
+            color="warn"
+            (click)="onDeleteHouse(house._id, $event)"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr
+        mat-row
+        *matRowDef="let row; columns: displayedColumns"
+        (click)="onRowClick(row._id)"
+        class="cursor-pointer hover:bg-gray-100"
+      ></tr>
+    </table>
+  </mat-card-content>
+</mat-card>

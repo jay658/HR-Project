@@ -1,26 +1,25 @@
 import {
   createVisa,
   getAllExistVisa,
-  getFileURL,
   getNextRequiredDocument,
   getVisaStatus,
-  getVisaType,
   testVisaRouter,
-  uploadNewDocument
-} from '../../../controllers/employeeControllers/visa'
+  uploadNewDocument,
+  getVisaType,
+  getFileURL,
+} from "../../../controllers/employeeControllers/visa";
 
-import express from 'express'
+import express from "express";
 
-const visaRouter = express.Router()
+const visaRouter = express.Router();
 
-visaRouter.get('/test', testVisaRouter)
-visaRouter.get('/allvisa', getAllExistVisa)
-visaRouter.post('/create', createVisa)
-visaRouter.get('/next-document', getNextRequiredDocument)
-visaRouter.post('/upload', uploadNewDocument)
-visaRouter.get('/status', getVisaStatus)
-visaRouter.get('/visatype', getVisaType)
-visaRouter.post('/getfileurl', getFileURL)
+visaRouter.get("/test", testVisaRouter);
+visaRouter.get("/allvisa", getAllExistVisa);
+visaRouter.post("/create", createVisa);
+visaRouter.get("/next-document", getNextRequiredDocument);
+visaRouter.post("/upload", uploadNewDocument);
+visaRouter.get("/status", getVisaStatus);
+visaRouter.get("/visatype", getVisaType);
+visaRouter.post("/getfileurl", getFileURL);
 
-
-export default visaRouter
+export default visaRouter;

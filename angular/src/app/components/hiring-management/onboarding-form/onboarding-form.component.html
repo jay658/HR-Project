@@ -1,0 +1,171 @@
+<div class="container">
+  <div class="box">
+
+    <div id="image-container">
+      <div>
+        <img mat-list-avatar [src]=" (onboarding$ | async)?.profilePicture || 'https://hr-project-bucket-7g9x3l2p5.s3.us-east-2.amazonaws.com/default-user.jpeg'"/>
+        <h1>
+          {{ (onboarding$ | async)?.name?.firstName }} {{ (onboarding$ | async)?.name?.lastName }}
+          <span>({{( onboarding$ | async)!.status }})</span>
+        </h1>
+        
+      </div>
+      <div id="button-container">
+        <button id="approve-button" mat-button *ngIf="['pending', 'rejected'].includes((onboarding$ | async)!.status)" (click)="handleUpdateStatus('approved')">Accept</button>
+        <button id="reject-button" mat-button *ngIf="(onboarding$ | async)!.status === 'pending'" (click)="handleUpdateStatus('rejected')">Reject</button>
+      </div>
+    </div>
+
+    <Form [formGroup]="onboardingForm">
+      <h2>Name</h2>
+      <ng-container formGroupName="name">
+        <mat-form-field class="field" appearance="outline">
+          <mat-label>First Name</mat-label>
+          <input matInput formControlName="firstName"/>
+        </mat-form-field>
+  
+        <mat-form-field class="field" appearance="outline">
+          <mat-label>Last Name</mat-label>
+          <input matInput formControlName="lastName"/>
+        </mat-form-field>
+  
+        <mat-form-field class="field" appearance="outline" >
+          <mat-label>Middle Name</mat-label>
+          <input matInput formControlName="middleName"/>
+        </mat-form-field>
+  
+        <mat-form-field class="field" appearance="outline" >
+          <mat-label>Preferred Name</mat-label>
+          <input matInput formControlName="preferredName"/>
+        </mat-form-field>
+  
+        <mat-form-field class="field" appearance="outline">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" formControlName="email"/>
+        </mat-form-field>
+  
+        <mat-form-field class="field" appearance="outline">
+          <mat-label>SSN</mat-label>
+          <input matInput formControlName="SSN"/>
+        </mat-form-field>
+  
+        <mat-form-field  appearance="outline">
+          <mat-label>Birthday</mat-label>
+          <input matInput type="date" formControlName="dob"/>
+        </mat-form-field>
+  
+        <mat-form-field appearance="outline">
+          <mat-label>Gender</mat-label>
+          <mat-select formControlName="gender">
+            <mat-option value="male">Male</mat-option>
+            <mat-option value="female">Female</mat-option>
+            <mat-option value="noAnswer">I do not wish to answer</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </ng-container>
+
+      <ng-container formGroupName="address">
+        <h2>Address</h2>
+          <mat-form-field class="field" appearance="outline">
+            <mat-label>Street</mat-label>
+            <input matInput formControlName="street"/>
+          </mat-form-field>
+  
+          <mat-form-field class="field" appearance="outline">
+            <mat-label>Building/Apartment #</mat-label>
+            <input matInput formControlName="building"/>
+          </mat-form-field>
+  
+          <mat-form-field  appearance="outline" >
+            <mat-label>City</mat-label>
+            <input matInput formControlName="city"/>
+          </mat-form-field>
+  
+          <mat-form-field  appearance="outline" >
+            <mat-label>State</mat-label>
+            <input matInput formControlName="state"/>
+          </mat-form-field>
+  
+          <mat-form-field appearance="outline">
+            <mat-label>Zip Code</mat-label>
+            <input matInput formControlName="zipCode" />
+          </mat-form-field>
+      </ng-container>
+
+      <ng-container formGroupName="phone">
+        <h2>Contact Information</h2>
+        <mat-form-field appearance="outline" >
+          <mat-label>Cell Phone #</mat-label>
+          <input matInput formControlName="cell"/>
+        </mat-form-field>
+  
+        <mat-form-field appearance="outline">
+          <mat-label>Work Phone #</mat-label>
+          <input matInput formControlName="work"/>
+        </mat-form-field>
+      </ng-container>
+
+      <ng-container formGroupName="employment">
+        <h2>Employment</h2>
+        <mat-form-field appearance="outline" >
+          <mat-label>Residency Status</mat-label>
+          <input matInput formControlName="residencyStatus"/>
+        </mat-form-field>
+      </ng-container>
+
+      <h2>Emergency Contacts</h2>
+
+      <ng-container formArrayName="emergencyContacts">
+        <ng-container *ngFor="let contact of emergencyContacts.controls; let i = index" [formGroupName]="i">
+
+          <mat-form-field class="field" appearance="outline">
+            <mat-label>First Name</mat-label>
+            <input matInput formControlName="firstName" />
+          </mat-form-field>
+
+          <mat-form-field class="field" appearance="outline">
+            <mat-label>Last Name</mat-label>
+            <input matInput formControlName="lastName" />
+          </mat-form-field>
+
+          <mat-form-field class="field" appearance="outline">
+            <mat-label>Middle Name</mat-label>
+            <input matInput formControlName="middleName" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Email</mat-label>
+            <input matInput formControlName="email" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Phone</mat-label>
+            <input matInput formControlName="phone" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Relationship</mat-label>
+            <input matInput formControlName="relationship" />
+          </mat-form-field>
+        </ng-container>
+      </ng-container>
+    </Form>
+
+    <div *ngIf="(documents$ | async) as documents" class="document-container">
+      <div *ngIf="documents.length === 0" class="no-documents">No Documents Uploaded</div>
+    </div>
+
+    <div class="document-list">
+      <mat-card *ngFor="let document of (documents$ | async)" class="document-card">
+        <mat-card-header>
+          <mat-card-title>{{ document.fileKey }}</mat-card-title>
+          <mat-card-subtitle>{{ document.type }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>Status: {{ document.status }}</p>
+        </mat-card-content>
+          <a mat-button [href]="document.fileUrl" target='_blank'>View <mat-icon>file_open</mat-icon></a>
+      </mat-card>
+    </div>
+  </div>
+</div>

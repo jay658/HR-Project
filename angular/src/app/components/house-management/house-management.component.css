@@ -1,0 +1,107 @@
+/* house-management.component.css */
+
+mat-card {
+  padding: 20px;
+  border-radius: 8px;
+}
+
+mat-card-header {
+  margin-bottom: 24px;
+}
+
+mat-card-title {
+  font-size: 24px;
+  font-weight: 500;
+  color: #1a1a1a;
+}
+
+.mat-table {
+  width: 100%;
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.mat-header-cell {
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+  padding: 16px;
+  border-bottom: 2px solid #f5f5f5;
+}
+
+.mat-cell {
+  padding: 16px;
+  font-size: 14px;
+  color: #333;
+}
+
+.mat-row {
+  transition: background-color 0.2s ease;
+  height: 60px;
+}
+
+.mat-row:hover {
+  background-color: #f8f9fa;
+  cursor: pointer;
+}
+
+/* Button styles */
+.mb-4 {
+  margin-bottom: 24px;
+}
+
+button[mat-raised-button] {
+  height: 40px;
+  padding: 0 24px;
+}
+
+button[mat-raised-button] mat-icon {
+  margin-right: 8px;
+}
+
+/* Chip styles */
+.mat-chip-list {
+  display: inline-block;
+}
+
+.mat-chip {
+  font-size: 13px;
+  min-height: 28px;
+}
+
+/* Action button styles */
+button[mat-icon-button] {
+  transition: background-color 0.2s ease;
+}
+
+button[mat-icon-button]:hover {
+  background-color: rgba(244, 67, 54, 0.1); /* warn color with opacity */
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .mat-header-cell,
+  .mat-cell {
+    padding: 12px 8px;
+  }
+
+  mat-card {
+    padding: 16px;
+    margin: 12px !important;
+  }
+
+  mat-card-title {
+    font-size: 20px;
+  }
+}
+
+/* Optional: Add scrolling for mobile */
+@media (max-width: 600px) {
+  mat-card-content {
+    overflow-x: auto;
+  }
+
+  .mat-table {
+    min-width: 600px;
+  }
+}

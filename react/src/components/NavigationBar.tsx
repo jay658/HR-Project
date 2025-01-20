@@ -26,9 +26,6 @@ const NavigationBar: React.FC = () => {
         <Box sx={{ display: "flex", gap: 1 }}>
           {!isLoggedIn && (
             <>
-              <Button color="inherit" component={Link} to="/registration">
-                Registration
-              </Button>
               <Button color="inherit" component={Link} to="/login">
                 Login
               </Button>
