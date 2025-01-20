@@ -17,12 +17,8 @@ const employeeCorsOptions: CorsOptions = {
   origin: [config.EMPLOYEE_SERVER],
 };
 
-apiRouter.use(
-  "/employee",
-  cors(employeeCorsOptions),
-  authenticateToken,
-  employeeRouter
-);
-apiRouter.use("/hr", cors(hrCorsOptions), hrRouter);
+
+apiRouter.use("/employee", cors(employeeCorsOptions), authenticateToken('employee'), employeeRouter);
+apiRouter.use("/hr", cors(hrCorsOptions), authenticateToken('hr'), hrRouter);
 
 export default apiRouter;
