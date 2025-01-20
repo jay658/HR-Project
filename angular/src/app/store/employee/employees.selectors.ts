@@ -7,7 +7,9 @@ export const selectEmployeeState =
 
 export const selectEmployees = createSelector(
   selectEmployeeState,
-  (state) => state.employees
+  (state) => [...state.employees].sort((a, b) => 
+    a.name.lastName.localeCompare(b.name.lastName)
+  )
 );
 
 export const selectTotalCount = createSelector(
