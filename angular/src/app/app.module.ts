@@ -1,39 +1,56 @@
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { AppRoutingModule } from './app-routing.module';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 
-// Material Imports
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatCardModule } from '@angular/material/card';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatTableModule } from '@angular/material/table';
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatListModule } from '@angular/material/list';
-
-// NgRx
-import { StoreModule } from '@ngrx/store';
-import { EffectsModule } from '@ngrx/effects';
-import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-
-// Environment
-import { environment } from '../environments/environment';
-
+import { AddHouseDialogComponent } from './components/add-house-dialog/add-house-dialog.component';
 // Components
 import { AppComponent } from './app.component';
-import { NavbarComponent } from './components/navbar/navbar.component';
-import { MyCounterComponent } from './components/my-counter/my-counter.component';
-import { HomeComponent } from './components/home/home.component';
+import { AppRoutingModule } from './app-routing.module';
+import { AuthEffects } from './store/auth/auth.effects';
+import { AuthInterceptor } from '../interceptors/auth.interceptor';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { BrowserModule } from '@angular/platform-browser';
+import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
+import { DatePipe } from '@angular/common'
+import { DocumentEffects } from './store/documents/documents.effects';
+import { EffectsModule } from '@ngrx/effects';
+import { EmployeeEffects } from './store/employee/employees.effects';
 import { EmployeeManagementComponent } from './components/employee-management/employee-management.component';
+import { EmployeeProfileComponent } from './components/employee-profile/employee-profile.component';
+import { HiringManagementComponent } from './components/hiring-management/hiring-management.component';
+import { HomeComponent } from './components/home/home.component';
+import { HouseManagementComponent } from './components/house-management/house-management.component';
+import { HousingEffects } from './store/housing/housing.effects';
+import { LoginComponent } from './components/login/login.component';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatExpansionModule } from '@angular/material/expansion'
+import { MatFormFieldModule } from '@angular/material/form-field';
+import {MatGridListModule} from '@angular/material/grid-list';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatListModule } from '@angular/material/list';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import {MatSelectModule} from '@angular/material/select';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+
+
+
+import { MatTableModule } from '@angular/material/table';
+// Material Imports
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MyCounterComponent } from './components/my-counter/my-counter.component';
+import { NavbarComponent } from './components/navbar/navbar.component';
+import { NgModule } from '@angular/core';
+import { OnboardingEffects } from './store/onboardings/onboardings.effects';
+import { OnboardingFormComponent } from './components/hiring-management/onboarding-form/onboarding-form.component';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+// NgRx
+import { StoreModule } from '@ngrx/store';
+import {TextFieldModule} from '@angular/cdk/text-field';
+import { UserEffects } from './store/user/users.effects';
 import { VisaStatusManagementComponent } from './components/visa-status-management/visa-status-management.component';
 import { HiringManagementComponent } from './components/hiring-management/hiring-management.component';
 import { HouseManagementComponent } from './components/house-management/house-management.component';
@@ -45,15 +62,14 @@ import { HouseDetailComponent } from './components/house-component/house-detail.
 
 // Reducers and Effects
 import { authReducer } from './store/auth/auth.reducer';
-import { AuthEffects } from './store/auth/auth.effects';
-import { AuthInterceptor } from '../interceptors/auth.interceptor';
 import { counterReducer } from './store/counter/counter.reducer';
-import { userReducer } from './store/user/users.reducers';
-import { UserEffects } from './store/user/users.effects';
-import { housingReducer } from './store/housing/housing.reducer';
-import { HousingEffects } from './store/housing/housing.effects';
+import { documentReducer } from './store/documents/documents.reducers';
 import { employeeReducer } from './store/employee/employees.reducers';
-import { EmployeeEffects } from './store/employee/employees.effects';
+// Environment
+import { environment } from '../environments/environment';
+import { housingReducer } from './store/housing/housing.reducer';
+import { onboardingReducer } from './store/onboardings/onboardings.reducers';
+import { userReducer } from './store/user/users.reducers';
 
 @NgModule({
   declarations: [
@@ -70,6 +86,7 @@ import { EmployeeEffects } from './store/employee/employees.effects';
     ConfirmDialogComponent,
     EmployeeProfileComponent,
     HouseDetailComponent,
+    OnboardingFormComponent
   ],
   imports: [
     BrowserModule,
@@ -92,7 +109,11 @@ import { EmployeeEffects } from './store/employee/employees.effects';
     MatDialogModule,
     MatChipsModule,
     MatSnackBarModule,
+    MatExpansionModule,
     MatListModule,
+    MatGridListModule,
+    TextFieldModule,
+    MatSelectModule,
 
     // NgRx Store Configuration
     StoreModule.forRoot(
@@ -102,6 +123,8 @@ import { EmployeeEffects } from './store/employee/employees.effects';
         users: userReducer,
         housing: housingReducer,
         employee: employeeReducer,
+        onboardings: onboardingReducer, 
+        documents: documentReducer
       },
       {
         runtimeChecks: {
@@ -117,6 +140,8 @@ import { EmployeeEffects } from './store/employee/employees.effects';
       UserEffects,
       HousingEffects,
       EmployeeEffects,
+      OnboardingEffects,
+      DocumentEffects
     ]),
     StoreDevtoolsModule.instrument({
       maxAge: 25,
@@ -129,7 +154,8 @@ import { EmployeeEffects } from './store/employee/employees.effects';
       useClass: AuthInterceptor,
       multi: true,
     },
+    DatePipe
   ],
-  bootstrap: [AppComponent],
+  bootstrap: [AppComponent]
 })
 export class AppModule {}

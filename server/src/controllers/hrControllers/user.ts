@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
-
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import Document from "../../models/Document";
 import EmployeeUser from "../../models/EmployeeUser";
 import HumanResources from "../../models/HumanResources";
 import PersonalInfo from "../../models/PersonalInfo";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 // Test Router
 const testUserRouter = (_req: Request, res: Response) => {
@@ -137,7 +137,7 @@ const getEmployeeDetails = async (
 
     const personalInfo = await PersonalInfo.findById(
       employee.personalInfoId
-    ).select("-__v -userId -_id -documents -profilePicture +SSN");
+    ).select("-__v -userId -_id -documents -profilePicture");
 
     if (!personalInfo) {
       res.status(404).json({
@@ -219,4 +219,32 @@ const login = async (req: Request, res: Response): Promise<void> => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-export { testUserRouter, getEmployees, getEmployeeDetails, login };
+
+const getDocuments = async(req: Request, res: Response) => {
+  try{
+    const documents = await Document.find()
+
+    res.json(documents)
+  }catch(err){
+    console.log(`There was an error retrieving the documents: ${err}`)
+  }
+}
+
+const getAllEmployees = async(req: Request, res: Response) => {
+  try{
+    const employees = await EmployeeUser.find()
+
+    res.json(employees)
+  }catch(err){
+    console.log(`There was an error getting all employees ${err}`)
+  }
+}
+
+export {
+  testUserRouter,
+  getEmployees,
+  getDocuments,
+  getEmployeeDetails,
+  getAllEmployees,
+  login
+}

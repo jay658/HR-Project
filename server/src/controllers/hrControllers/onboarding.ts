@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 
 import EmployeeUser from '../../models/EmployeeUser';
+import { IOnboardingData } from "../../models/shared/types";
 import Onboarding from '../../models/Onboarding';
 import PersonalInfo from '../../models/PersonalInfo';
 import { onboardingToPersonalInfo } from '../utils/converters';
@@ -20,13 +21,19 @@ const getOnboardings = async (req: Request, res: Response) => {
 
     const filter = status ? { status } : {};
 
-    const onboardings = await Onboarding.find(filter);
+    const onboardings: (Omit<IOnboardingData, 'profilePicture'> & { profilePicture?: { fileUrl: string}})[] = await Onboarding.find(filter).select('+SSN').populate({
+      path: "profilePicture",
+      select: "fileUrl -_id"
+    }).lean<(Omit<IOnboardingData, 'profilePicture'> & { profilePicture?: { fileUrl: string}})[]>()
+    
+    const updatedOnboardings = onboardings.map(onboarding => ({
+      ...onboarding,
+      profilePicture: onboarding.profilePicture?.fileUrl
+    })) 
 
-    res.json(onboardings);
-  } catch (err) {
-    console.log(
-      `There was an error getting the onboardings in the hr route: ${err}`
-    );
+    res.json(updatedOnboardings);
+  }catch(err){
+    console.log(`There was an error getting the onboardings in the hr route: ${err}`);
   }
 };
 
@@ -49,6 +56,7 @@ const updateOnboardingStatus = async (req: Request, res: Response) => {
 
     if (updatedOnboarding.status === 'approved') {
       const user = await EmployeeUser.findById(updatedOnboarding.userId);
+      
       if (!user) throw Error('User not found');
       if (user.personalInfoId) {
         throw Error('User already has a personal info record');
@@ -64,12 +72,15 @@ const updateOnboardingStatus = async (req: Request, res: Response) => {
       await user.save();
 
       res.status(200).json({
-        message: 'Onboarding approved and personal info created'
+        message: 'Onboarding approved and personal info created',
+        updatedOnboarding
       });
+      return
     }
 
     res.status(200).json({
-      message: 'Onboarding rejected.'
+      message: 'Onboarding rejected.',
+      updatedOnboarding
     });
   } catch (err: unknown) {
     console.log(

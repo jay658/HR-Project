@@ -4,7 +4,7 @@ import { selectAllUsers, selectError, selectLoading } from 'src/app/store/user/u
 
 import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
-import { User } from 'src/app/store/user/users.actions';
+import type { User } from 'src/app/interfaces/Types';
 import { loadUsers } from 'src/app/store/user/users.actions';
 
 @Component({

@@ -50,13 +50,13 @@ const RootRedirect: React.FC = () => {
     return <div>Loading...</div>; // Replace with a styled spinner if needed
   }
   // Redirect logic based on user state
-  if (!isLoggedIn) {
-    return <Navigate to='/login' replace />;
-  }
+  // if (!isLoggedIn) {
+  //   return <Navigate to="/login" replace />;
+  // }
   // Redirect to onboarding if not yet completed
-  if (!user?.onboardingId) {
-    return <Navigate to='/onboarding' replace />;
-  }
+  // if (!user?.onboardingId) {
+  //   return <Navigate to="/onboarding" replace />;
+  // }
 
   // Otherwise, redirect to dashboard
   return <Navigate to='/dashboard' replace />;
@@ -74,8 +74,8 @@ const App: React.FC = () => {
             <Route path='/' element={<RootRedirect />} />
 
             {/* Public routes */}
-            <Route path='/login' element={<LoginPage />} />
-            <Route path='/registration' element={<RegistrationPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register/:id" element={<RegistrationPage />} />
 
             {/* Protected routes that require onboarding */}
             <Route

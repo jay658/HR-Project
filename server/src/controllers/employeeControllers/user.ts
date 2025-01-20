@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import Apartment from "../../models/Apartment";
 import { AuthRequest } from "../../middleware/authMiddleware";
 import EmployeeUser from "../../models/EmployeeUser";
+import RegistrationToken from "../../models/RegisterToken";
 import bcrypt from 'bcryptjs'
 import config from "../../utility/configs";
 import jwt from "jsonwebtoken";
@@ -162,11 +163,27 @@ const validateSession = async (req: AuthRequest, res: Response) => {
   }
 }
 
+const validateRegistrationToken = async(req: AuthRequest, res: Response) => {
+  try{
+    const { token } = req.body
+    const registrationToken = await RegistrationToken.findById(token)
+
+    if(!registrationToken || new Date() >= registrationToken.expiresAt){
+      throw new Error('Invalid token')
+    }
+
+    res.json(registrationToken.email)
+  }catch(err){
+    res.status(401).json(err)
+  }
+}
+
 export {
   testUserRouter,
   getAllUsers,
   registerUser,
   login,
   getHousingForUser, 
-  validateSession
+  validateSession,
+  validateRegistrationToken
 }

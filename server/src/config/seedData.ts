@@ -315,59 +315,59 @@ const seedVisaApplications: any[] = [
 const seedDocuments = [
   // john doe (citizen) documents
   {
-    type: "profilePicture",
-    status: "approved",
-    fileKey: "dummy/john_profile.jpg",
-    fileUrl: "http://dummy-s3.com/john_profile.jpg",
+    type: 'profilePicture',
+    status: 'approved',
+    fileKey: 'dummy/john_profile.jpg',
+    fileUrl: 'https://hr-project-bucket-7g9x3l2p5.s3.us-east-2.amazonaws.com/default-user.jpeg'
   },
   {
-    type: "driverLicense",
-    status: "approved",
-    fileKey: "dummy/john_license.pdf",
-    fileUrl: "http://dummy-s3.com/john_license.pdf",
+    type: 'driverLicense',
+    status: 'approved',
+    fileKey: 'dummy/john_license.pdf',
+    fileUrl: 'https://hr-project-bucket-7g9x3l2p5.s3.us-east-2.amazonaws.com/DriversLicense.pdf'
   },
 
   // jane smith (permanent resident) documents
   {
-    type: "profilePicture",
-    status: "approved",
-    fileKey: "dummy/jane_profile.jpg",
-    fileUrl: "http://dummy-s3.com/jane_profile.jpg",
+    type: 'profilePicture',
+    status: 'approved',
+    fileKey: 'dummy/jane_profile.jpg',
+    fileUrl: 'https://hr-project-bucket-7g9x3l2p5.s3.us-east-2.amazonaws.com/default-user.jpeg'
   },
   {
-    type: "driverLicense",
-    status: "approved",
-    fileKey: "dummy/jane_license.pdf",
-    fileUrl: "http://dummy-s3.com/jane_license.pdf",
+    type: 'driverLicense',
+    status: 'approved',
+    fileKey: 'dummy/jane_license.pdf',
+    fileUrl: 'https://hr-project-bucket-7g9x3l2p5.s3.us-east-2.amazonaws.com/DriversLicense.pdf'
   },
 
   // michael brown (nonresident/H1B) documents
   {
-    type: "profilePicture",
-    status: "approved",
-    fileKey: "dummy/michael_profile.jpg",
-    fileUrl: "http://dummy-s3.com/michael_profile.jpg",
+    type: 'profilePicture',
+    status: 'approved',
+    fileKey: 'dummy/michael_profile.jpg',
+    fileUrl: 'https://hr-project-bucket-7g9x3l2p5.s3.us-east-2.amazonaws.com/default-user.jpeg'
   },
   {
-    type: "driverLicense",
-    status: "approved",
-    fileKey: "dummy/michael_license.pdf",
-    fileUrl: "http://dummy-s3.com/michael_license.pdf",
+    type: 'driverLicense',
+    status: 'approved',
+    fileKey: 'dummy/michael_license.pdf',
+    fileUrl: 'https://hr-project-bucket-7g9x3l2p5.s3.us-east-2.amazonaws.com/DriversLicense.pdf'
   },
 
   // kobe bryant documents
   {
-    type: "profilePicture",
-    status: "approved",
-    fileKey: "dummy/kobe_profile.jpg",
-    fileUrl: "http://dummy-s3.com/kobe_profile.jpg",
+    type: 'profilePicture',
+    status: 'approved',
+    fileKey: 'dummy/kobe_profile.jpg',
+    fileUrl: 'https://hr-project-bucket-7g9x3l2p5.s3.us-east-2.amazonaws.com/kobe-bryant-0d4dffb9eac446ec8aa5a5536f6ca1ff.jpg'
   },
   {
-    type: "driverLicense",
-    status: "approved",
-    fileKey: "dummy/kobe_license.pdf",
-    fileUrl: "http://dummy-s3.com/kobe_license.pdf",
-  },
+    type: 'driverLicense',
+    status: 'approved',
+    fileKey: 'dummy/kobe_license.pdf',
+    fileUrl: 'https://hr-project-bucket-7g9x3l2p5.s3.us-east-2.amazonaws.com/DriversLicense.pdf'
+  }
 ];
 
 const seedPersonalInfo = [
