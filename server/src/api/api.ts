@@ -10,11 +10,13 @@ const apiRouter = express.Router();
 
 const hrCorsOptions: CorsOptions = {
   origin: [config.HR_SERVER],
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
 };
 
 const employeeCorsOptions: CorsOptions = {
   origin: [config.EMPLOYEE_SERVER],
 };
+
 
 apiRouter.use("/employee", cors(employeeCorsOptions), authenticateToken('employee'), employeeRouter);
 apiRouter.use("/hr", cors(hrCorsOptions), authenticateToken('hr'), hrRouter);

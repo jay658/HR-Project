@@ -84,7 +84,11 @@
           <ng-container
             *ngIf="house.facilityIssues && house.facilityIssues.length > 0"
           >
-            <mat-list-item *ngFor="let issue of house.facilityIssues">
+            <mat-list-item
+              *ngFor="let issue of house.facilityIssues"
+              (click)="openIssueDialog(issue)"
+              class="clickable-issue"
+            >
               <div class="issue-info">
                 <div class="issue-header">
                   <span class="issue-title">{{ issue.title }}</span>

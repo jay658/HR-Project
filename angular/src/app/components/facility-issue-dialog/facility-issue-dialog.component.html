@@ -1,0 +1,47 @@
+<h2 mat-dialog-title>Update Facility Issue</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="issueForm" class="issue-form">
+    <div class="issue-details">
+      <h3>Issue Details</h3>
+      <p><strong>Title:</strong> {{ data.issue.title }}</p>
+      <p><strong>Description:</strong> {{ data.issue.description }}</p>
+      <p><strong>Reported by:</strong> {{ data.issue.createdBy.username }}</p>
+      <p><strong>Date:</strong> {{ data.issue.createdAt | date : "medium" }}</p>
+    </div>
+
+    <div class="form-fields">
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Status</mat-label>
+        <mat-select formControlName="status">
+          <mat-option *ngFor="let status of statuses" [value]="status">
+            {{ status | titlecase }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Add Comment</mat-label>
+        <textarea
+          matInput
+          formControlName="comment"
+          rows="4"
+          placeholder="Enter your comment here..."
+        >
+        </textarea>
+      </mat-form-field>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="onSubmit()"
+    [disabled]="!issueForm.valid"
+  >
+    Update Issue
+  </button>
+</mat-dialog-actions>
