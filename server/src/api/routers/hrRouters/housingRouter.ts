@@ -1,6 +1,7 @@
 import { Request, Response, Router } from "express";
 import Apartment from "../../../models/Apartment";
 import EmployeeUser from "../../../models/EmployeeUser";
+import FacilityIssue from "../../../models/FacilityIssue";
 import mongoose from "mongoose";
 
 const housingRouter = Router();
@@ -72,6 +73,7 @@ housingRouter.delete("/:id", async (req: Request, res: Response) => {
 });
 
 // Get specific house by ID with tenant information
+// Get specific house by ID with tenant information and facility issues
 housingRouter.get("/:id", async (req: Request, res: Response) => {
   try {
     const houseId = req.params.id;
@@ -80,9 +82,8 @@ housingRouter.get("/:id", async (req: Request, res: Response) => {
     const house = await Apartment.findById(houseId).populate({
       path: "tenants",
       model: "EmployeeUser",
-      select: "username email personalInfoId", // Add or remove fields as needed
+      select: "username email personalInfoId",
       populate: {
-        // Optionally populate nested personal info
         path: "personalInfoId",
         model: "PersonalInfo",
       },
@@ -93,7 +94,22 @@ housingRouter.get("/:id", async (req: Request, res: Response) => {
       return;
     }
 
-    res.json(house);
+    // Find all facility issues for this apartment
+    const facilityIssues = await FacilityIssue.find({
+      apartmentId: houseId,
+    }).populate({
+      path: "createdBy",
+      model: "EmployeeUser",
+      select: "username email",
+    });
+
+    // Combine house data with facility issues
+    const response = {
+      ...house.toObject(),
+      facilityIssues,
+    };
+
+    res.json(response);
   } catch (error) {
     // Check if error is due to invalid ObjectId format
     if (error instanceof mongoose.Error.CastError) {
