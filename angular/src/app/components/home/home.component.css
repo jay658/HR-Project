@@ -1,0 +1,11 @@
+.header-container {
+  padding: 24px 0;
+  margin-bottom: 16px;
+  background-color: var(--mat-toolbar-container-background-color);
+
+  h1 {
+    margin: 0;
+    padding: 0 24px;
+    color: var(--mat-toolbar-container-text-color);
+  }
+}
