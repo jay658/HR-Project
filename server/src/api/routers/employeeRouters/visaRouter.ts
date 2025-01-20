@@ -1,8 +1,10 @@
 import {
   createVisa,
   getAllExistVisa,
+  getFileURL,
   getNextRequiredDocument,
   getVisaStatus,
+  getVisaType,
   testVisaRouter,
   uploadNewDocument
 } from '../../../controllers/employeeControllers/visa'
@@ -17,6 +19,8 @@ visaRouter.post('/create', createVisa)
 visaRouter.get('/next-document', getNextRequiredDocument)
 visaRouter.post('/upload', uploadNewDocument)
 visaRouter.get('/status', getVisaStatus)
+visaRouter.get('/visatype', getVisaType)
+visaRouter.post('/getfileurl', getFileURL)
 
 
 export default visaRouter

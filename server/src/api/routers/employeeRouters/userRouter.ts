@@ -1,11 +1,13 @@
-import { getAllUserRouter, registerRouter, testUserRouter } from '../../../controllers/employeeControllers/user'
+import { getAllUsers, getHousingForUser, login, registerUser, testUserRouter, validateSession } from "../../../controllers/employeeControllers/user";
 
-import express from 'express'
+import express from "express";
 
-const userRouter = express.Router()
+const userRouter = express.Router();
+userRouter.get('/test', testUserRouter);
+userRouter.get('/getusers', getAllUsers);
+userRouter.get("/housing", getHousingForUser);
+userRouter.get('/validateSession', validateSession)
+userRouter.post('/register', registerUser);
+userRouter.post("/login", login);
 
-userRouter.get('/test', testUserRouter)
-userRouter.get('/allusers', getAllUserRouter)
-userRouter.post('/register', registerRouter)
-
-export default userRouter
+export default userRouter;

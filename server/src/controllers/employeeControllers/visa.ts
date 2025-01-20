@@ -1,10 +1,12 @@
 import { Request, Response } from "express";
 
+import { AuthRequest } from "../../middleware/authMiddleware";
 import Document from "../../models/Document";
 import EmployeeUser from "../../models/EmployeeUser";
 import PersonalInfo from "../../models/PersonalInfo";
 import VisaApplication from "../../models/VisaApplication";
 import mongoose from "mongoose";
+import { uploadFileToAWS } from "../../utility/AWS/aws";
 
 const testVisaRouter = (_req: Request, res: Response) => {
   try{
@@ -21,11 +23,11 @@ const getAllExistVisa = async (req : Request, res : Response) : Promise<any> => 
 }
 
 // Create New Visa Application
-const createVisa = async (req: Request, res: Response): Promise<any> => {
+const createVisa = async (req: AuthRequest, res: Response): Promise<any> => {
   try{
-    const {username} = req.body
+    const id = req.user?.userId
 
-    const user = await EmployeeUser.findOne({username: username});
+    const user = await EmployeeUser.findById(id);
 
     if (!user) {
       return res.status(404).json({error : "User not found"})
@@ -58,12 +60,12 @@ const createVisa = async (req: Request, res: Response): Promise<any> => {
 };
 
 // Get next documnet
-const getNextRequiredDocument = async (req: Request, res: Response) : Promise<any> => {
+const getNextRequiredDocument = async (req: AuthRequest, res: Response) : Promise<any> => {
   try{
-    const { username } = req.body;
+    const id = req.user?.userId
 
     // Find user
-    const user = await EmployeeUser.findOne({username : username});
+    const user = await EmployeeUser.findById(id);
     if (!user) {
       return res.status(404).json({error : "User not found"})
     }
@@ -74,7 +76,7 @@ const getNextRequiredDocument = async (req: Request, res: Response) : Promise<an
     }
 
     // Get current document and their status
-    const currentDocuments = await visa.getCurrentDocuments();
+    // const currentDocuments = await visa.getCurrentDocuments();
 
     // Update next required document
     await visa.updateNextStep();
@@ -83,7 +85,6 @@ const getNextRequiredDocument = async (req: Request, res: Response) : Promise<an
     const nextRequiredDoc = visa.getNextRequiredDocument();
 
     return res.status(200).json({
-      currentDocuments,
       nextRequiredDocument: nextRequiredDoc,
       applicationStatus: visa.nextStep
     })
@@ -94,12 +95,12 @@ const getNextRequiredDocument = async (req: Request, res: Response) : Promise<an
 }
 
 // Upload new document
-const uploadNewDocument = async (req : Request, res : Response) : Promise<any> => {
+const uploadNewDocument = async (req : AuthRequest, res : Response) : Promise<any> => {
   try{
-    const { username, type, fileKey, fileURL } = req.body;
-
+    const { type, fileKey, fileURL } = req.body;
+    const id = req.user?.userId
     // Find user
-    const user = await EmployeeUser.findOne({username : username});
+    const user = await EmployeeUser.findById(id);
     if (!user) {
       return res.status(404).json({error : "User not found"})
     }
@@ -118,6 +119,22 @@ const uploadNewDocument = async (req : Request, res : Response) : Promise<any> =
     const personalInfo = await PersonalInfo.findOne({userId:user._id})
     if(!personalInfo){
       return res.status(404).json({error : "Personal Info not found"})
+    }
+
+    // Find and delete any existing document of the same type for this user
+    const existingDoc = await Document.findOne({ userId: user._id, type: type });
+
+    if (existingDoc) {
+      // Remove the document ID from personal info first
+      if (personalInfo.employment?.documents) {
+        personalInfo.employment.documents = personalInfo.employment.documents.filter(
+          docId => !docId.equals(existingDoc._id)
+        );
+        await personalInfo.save();
+      }
+      
+      // Then delete the document
+      await Document.deleteOne({ _id: existingDoc._id });
     }
 
     // Create Document
@@ -139,11 +156,11 @@ const uploadNewDocument = async (req : Request, res : Response) : Promise<any> =
 }
 
 // Get Visa Status
-const getVisaStatus = async (req : Request, res : Response) : Promise<any> => {
-  const { username } = req.body;
+const getVisaStatus = async (req : AuthRequest, res : Response) : Promise<any> => {
+  const id = req.user?.userId
 
   // Find user
-  const user = await EmployeeUser.findOne({username : username});
+  const user = await EmployeeUser.findById(id);
   if (!user) {
     return res.status(404).json({error : "User not found"})
   }
@@ -154,26 +171,69 @@ const getVisaStatus = async (req : Request, res : Response) : Promise<any> => {
     return res.status(404).json({error : "Personal Info not found"})
   }
 
-  const allDocuments = personalInfo.employment?.documents
-  const resultArray = []
-  if(allDocuments){
-    for(let i of allDocuments){
-      const singleDocument = []
-      console.log(i)
-      const document = await Document.findById(i)
-      console.log(document?.status)
-      singleDocument.push(i)
-      singleDocument.push(document?.status)
-      resultArray.push(singleDocument)
-    }
-  }
+  // Get all documents
+  const documentIds = personalInfo.employment?.documents || [];
+  const documents = await Document.find({
+    _id: { $in: documentIds }
+  });
+
   
 
-  return res.status(200).json({allDOcument : resultArray})
+  return res.status(200).json({documents})
 
 }
 
 
+// Check Visa Type from Personal Info
+const getVisaType = async (req : AuthRequest, res : Response) : Promise<any> => {
+  try{
+    const id = req.user?.userId
+    // Find user
+    const user = await EmployeeUser.findById(id);
+    if (!user) {
+      return res.status(404).json({error : "User not found"})
+    }
+
+    // Get personal info
+    const personalInfo = await PersonalInfo.findOne({userId:user._id})
+    if(!personalInfo){
+      return res.status(404).json({error : "Personal Info not found"})
+    }
+
+    if(!personalInfo.employment?.visaType){
+      return res.status(404).json({error: "No Visa Type, please finish onboarding first"})
+    }
+    
+    return res.status(200).json(personalInfo.employment.visaType)
+
+  } catch (error){
+    console.log("There was an error in checking Visa Type: ", error)
+    return res.status(400).json({error})
+  }
+
+}
+
+const getFileURL  = async (req : Request, res : Response) : Promise<any> => {
+  try{
+    const file = req.files?.file
+
+    if(!file){
+      return res.json(404).json({mssg: "No File Uploaded"})
+    }
+    if(Array.isArray(file)) {
+      throw new Error('Only one file at a time')
+    }
+  
+    const url = await uploadFileToAWS(file)
+
+    return res.status(200).json({fileURL: url})
+
+  }catch (error){
+    console.log("There was an error in checking Visa Type: ", error)
+    return res.status(400).json({error})
+  }
+ 
+}
 
 export {
   testVisaRouter,
@@ -181,5 +241,7 @@ export {
   createVisa,
   getNextRequiredDocument,
   uploadNewDocument,
-  getVisaStatus
+  getVisaStatus,
+  getVisaType,
+  getFileURL
 }

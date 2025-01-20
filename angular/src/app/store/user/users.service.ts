@@ -7,7 +7,7 @@ import { User } from './users.actions';
   providedIn: 'root',
 })
 export class UsersService {
-  private apiUrl = 'http://localhost:3000/api/user/allusers';
+  private apiUrl = 'http://localhost:3000/api/hr/user/employees';
 
   constructor(private http: HttpClient) {}
 

@@ -13,6 +13,11 @@ const seedEmployeeUsers = [
     username: 'michael.brown',
     password: 'hashed_password_789',
     email: 'michael.brown@example.com'
+  },
+  {
+    username: 'kobe.bryant',
+    password: 'hashed_password_824',
+    email: 'kobe.bryant@example.com'
   }
 ];
 
@@ -67,7 +72,11 @@ const seedOnboarding = [
       document: null
     },
     employment: {
-      residencyStatus: 'citizen'
+      residencyStatus: 'nonresident',
+      visaType: 'F1(CPT/OPT)',
+      startDate: new Date('2023-03-01'),
+      endDate: new Date('2024-03-01'),
+      documents: []
     },
     profilePicture: null,
     reference: {
@@ -205,6 +214,73 @@ const seedOnboarding = [
         relationship: 'father'
       }
     ]
+  },
+  {
+    status: 'approved',
+    name: {
+      firstName: 'Kobe',
+      lastName: 'Bryant',
+      middleName: 'Bean',
+      preferredName: 'Black Mamba'
+    },
+    gender: 'male',
+    dob: new Date('1978-08-23'),
+    address: {
+      buildingNumber: '824',
+      streetName: 'Lakers Drive',
+      city: 'Los Angeles',
+      state: 'CA',
+      zipCode: '90015'
+    },
+    phone: {
+      work: '555-824-8224',
+      cell: '555-824-2424'
+    },
+    SSN: '824242424',
+    carInfo: {
+      make: 'Ferrari',
+      model: '458 Italia',
+      color: 'Black'
+    },
+    driversLicense: {
+      hasLicense: true,
+      number: 'CA824242424',
+      expirationDate: new Date('2026-08-23'),
+      document: null  // This will be set by the seed script
+    },
+    employment: {
+      residencyStatus: 'nonresident',
+      visaType: 'F1(CPT/OPT)',
+      startDate: new Date('2024-12-09'),
+      endDate: new Date('2025-02-16'),
+      documents: []
+    },
+    profilePicture: null,  // This will be set by the seed script
+    reference: {
+      firstName: 'Phil',
+      lastName: 'Jackson',
+      phone: '555-999-1111',
+      email: 'phil.jackson@example.com',
+      relationship: 'former coach'
+    },
+    emergencyContact: [
+      {
+        firstName: 'Vanessa',
+        lastName: 'Bryant',
+        middleName: null,
+        phone: '555-824-0824',
+        email: 'vanessa.bryant@example.com',
+        relationship: 'spouse'
+      },
+      {
+        firstName: 'Joe',
+        lastName: 'Bryant',
+        middleName: null,
+        phone: '555-824-1111',
+        email: 'joe.bryant@example.com',
+        relationship: 'father'
+      }
+    ]
   }
 ];
 
@@ -254,6 +330,20 @@ const seedDocuments = [
     status: 'approved',
     fileKey: 'dummy/michael_license.pdf',
     fileUrl: 'http://dummy-s3.com/michael_license.pdf'
+  },
+
+  // kobe bryant documents
+  {
+    type: 'profilePicture',
+    status: 'approved',
+    fileKey: 'dummy/kobe_profile.jpg',
+    fileUrl: 'http://dummy-s3.com/kobe_profile.jpg'
+  },
+  {
+    type: 'driverLicense',
+    status: 'approved',
+    fileKey: 'dummy/kobe_license.pdf',
+    fileUrl: 'http://dummy-s3.com/kobe_license.pdf'
   }
 ];
 
@@ -292,7 +382,11 @@ const seedPersonalInfo = [
       document: null
     },
     employment: {
-      residencyStatus: 'citizen'
+      residencyStatus: 'nonresident',
+      visaType: 'F1(CPT/OPT)',
+      startDate: new Date('2023-03-01'),
+      endDate: new Date('2024-03-01'),
+      documents: []
     },
     profilePicture: 'john_profile.jpg',
     reference: {
@@ -432,6 +526,73 @@ const seedPersonalInfo = [
         relationship: 'father'
       }
     ]
+  },
+  {
+    userId: null,  // This will be set by the seed script
+    name: {
+      firstName: 'Kobe',
+      lastName: 'Bryant',
+      middleName: 'Bean'
+    },
+    email: 'kobe.bryant@example.com',
+    gender: 'male',
+    dob: new Date('1978-08-23'),
+    address: {
+      buildingNumber: '824',
+      streetName: 'Lakers Drive',
+      city: 'Los Angeles',
+      state: 'CA',
+      zipCode: '90015'
+    },
+    phone: {
+      work: '555-824-8224',
+      cell: '555-824-2424'
+    },
+    SSN: '824242424',
+    carInfo: {
+      make: 'Ferrari',
+      model: '458 Italia',
+      color: 'Black'
+    },
+    driversLicense: {
+      hasLicense: true,
+      number: 'CA824242424',
+      expirationDate: new Date('2026-08-23'),
+      document: null  // This will be set by the seed script
+    },
+    employment: {
+      residencyStatus: 'nonresident',
+      visaType: 'F1(CPT/OPT)',
+      startDate: new Date('2024-12-09'),
+      endDate: new Date('2025-02-16'),
+      documents: []
+    },
+    profilePicture: null,  // This will be set by the seed script
+    reference: {
+      firstName: 'Phil',
+      lastName: 'Jackson',
+      phone: '555-999-1111',
+      email: 'phil.jackson@example.com',
+      relationship: 'former coach'
+    },
+    emergencyContact: [
+      {
+        firstName: 'Vanessa',
+        lastName: 'Bryant',
+        middleName: null,
+        phone: '555-824-0824',
+        email: 'vanessa.bryant@example.com',
+        relationship: 'spouse'
+      },
+      {
+        firstName: 'Joe',
+        lastName: 'Bryant',
+        middleName: null,
+        phone: '555-824-1111',
+        email: 'joe.bryant@example.com',
+        relationship: 'father'
+      }
+    ]
   }
 ];
 
@@ -469,6 +630,150 @@ const seedFacilityIssue = [
       {
         description: 'Window cannot be properly secured',
         createdBy: null // will be set in seed.ts
+      }
+    ]
+  },
+  {
+    title: 'Malfunctioning Elevator',
+    description: 'Elevator in Building D is stuck on the third floor',
+    createdBy: null,
+    status: 'open',
+    comments: [
+      {
+        description: 'Residents are unable to use the elevator',
+        createdBy: null
+      }
+    ]
+  },
+  {
+    title: 'Faulty Smoke Detector',
+    description: 'Smoke detector in E404 keeps beeping despite no smoke',
+    createdBy: null,
+    status: 'inProgress',
+    comments: [
+      {
+        description: 'Battery replacement did not resolve the issue',
+        createdBy: null
+      }
+    ]
+  },
+  {
+    title: 'Water Heater Failure',
+    description: 'No hot water in apartment F505',
+    createdBy: null,
+    status: 'closed',
+    comments: [
+      {
+        description: 'Technician replaced the heater',
+        createdBy: null
+      }
+    ]
+  },
+  {
+    title: 'Cracked Tile in Lobby',
+    description: 'A large crack is visible in the lobby floor tiles',
+    createdBy: null,
+    status: 'open',
+    comments: [
+      {
+        description: 'Crack seems to be expanding over time',
+        createdBy: null
+      }
+    ]
+  },
+  {
+    title: 'Parking Lot Light Out',
+    description: 'The light in the northeast corner of the parking lot is out',
+    createdBy: null,
+    status: 'inProgress',
+    comments: [
+      {
+        description: 'Awaiting replacement bulb delivery',
+        createdBy: null
+      }
+    ]
+  },
+  {
+    title: 'Broken Door Handle',
+    description: 'The main entrance door handle in Building G is broken',
+    createdBy: null,
+    status: 'closed',
+    comments: [
+      {
+        description: 'Handle replaced and door functioning normally',
+        createdBy: null
+      }
+    ]
+  },
+  {
+    title: 'Clogged Drain in Bathroom',
+    description: 'Shower drain in H606 is clogged and water is backing up',
+    createdBy: null,
+    status: 'open',
+    comments: [
+      {
+        description: 'Attempted to clear drain, but issue persists',
+        createdBy: null
+      }
+    ]
+  },
+  {
+    title: 'Pest Infestation',
+    description: 'Reports of cockroaches in apartments I707 and I708',
+    createdBy: null,
+    status: 'inProgress',
+    comments: [
+      {
+        description: 'Pest control scheduled for next week',
+        createdBy: null
+      }
+    ]
+  },
+  {
+    title: 'Broken Mailbox',
+    description: 'Mailbox for apartment J809 is broken and won’t lock',
+    createdBy: null,
+    status: 'closed',
+    comments: [
+      {
+        description: 'Replaced lock and key provided to resident',
+        createdBy: null
+      }
+    ]
+  },
+  {
+    title: 'Noisy HVAC System',
+    description: 'HVAC in K910 is making loud noises',
+    createdBy: null,
+    status: 'open',
+    comments: [
+      {
+        description: 'Noise worsens when HVAC runs at full power',
+        createdBy: null
+      }
+    ]
+  },
+  {
+    title: 'Flickering Lights',
+    description: 'Hallway lights in Building L are flickering',
+    createdBy: null,
+    status: 'inProgress',
+    comments: [
+      {
+        description: 'Electrician identified wiring issue, repairs ongoing',
+        createdBy: null
+      }
+    ]
+  },
+  {
+    title: 'Leaking Roof',
+    description: 'Water leaking from ceiling in Building M after rain',
+    createdBy: null,
+    status: 'open',
+    comments: [
+      {
+        description: 'Buckets placed to contain leak, awaiting roofer',
+        createdBy: null
       }
     ]
   }

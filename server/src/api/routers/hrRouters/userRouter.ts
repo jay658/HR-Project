@@ -1,8 +1,11 @@
-import express from 'express'
-import { testUserRouter } from '../../../controllers/hrControllers/user'
+import { getEmployees, getEmployeeDetails, testUserRouter } from '../../../controllers/hrControllers/user'
 
-const userRouter = express.Router()
+import express from "express";
+
+const userRouter = express.Router();
 
 userRouter.get('/test', testUserRouter)
+userRouter.get('/employees', getEmployees)
+userRouter.get('/employees/:id', getEmployeeDetails)
 
-export default userRouter
+export default userRouter;
