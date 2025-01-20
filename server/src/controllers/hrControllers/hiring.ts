@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
-import { sendEmail } from "../../utility/EmailJS/emailJS";
+
 import { EmailJSResponseStatus } from "@emailjs/nodejs";
-import RegistrationToken from "../../models/RegisterToken";
 import HumanResources from "../../models/HumanResources";
+import RegistrationToken from "../../models/RegisterToken";
+import { sendEmail } from "../../utility/EmailJS/emailJS";
 
 // Test Router
 const testHiringRouter = (req: Request, res: Response) => {
@@ -29,7 +30,7 @@ const sendRegistrationEmail = async (req: Request, res: Response) : Promise<any>
             hr: user._id
         })
 
-        const response = await sendEmail(registerToken.personName,registerToken.email,`http://localhost:3000/api/employee/user/register/${registerToken._id}`)
+        const response = await sendEmail(registerToken.personName,registerToken.email,`http://localhost:5173/register/${registerToken._id}`)
 
         res.status(200).json({mssg : response})
     }catch(err){
