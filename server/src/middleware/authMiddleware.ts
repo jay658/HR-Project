@@ -19,7 +19,7 @@ export const authenticateToken = async(
   next: NextFunction
 ): Promise<void> => {
 
-  if(ignoreRoutes.some((route) => req.path.includes(route))) return next()
+  if(ignoreRoutes.some((route) => req.path.includes(route)) || req.path.includes('register')) return next()
 
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];

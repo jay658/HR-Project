@@ -1,22 +1,25 @@
 import {
+  extraOnboardingSeed,
+  extraUsersSeed
+} from './extraOnboardingSeed'
+import {
   seedApartments,
   seedDocuments,
   seedEmployeeUsers,
   seedFacilityIssue,
+  seedHumanResources,
   seedOnboarding,
   seedPersonalInfo,
   seedVisaApplications,
-  seedHumanResources,
 } from "./seedData";
-
 
 import Apartment from "../models/Apartment";
 import Document from "../models/Document";
 import EmployeeUser from "../models/EmployeeUser";
 import FacilityIssue from "../models/FacilityIssue";
+import HumanResources from "../models/HumanResources";
 import Onboarding from "../models/Onboarding";
 import PersonalInfo from "../models/PersonalInfo";
-import HumanResources from "../models/HumanResources";
 import { Types } from "mongoose";
 import VisaApplication from "../models/VisaApplication";
 import bcrypt from "bcrypt";
@@ -91,7 +94,7 @@ const seed = async () => {
         const userDocs = documents.filter((d) =>
           d.userId.equals(users[idx]._id)
         );
-
+      
         return {
           ...info,
           userId: users[idx]._id,
@@ -114,14 +117,17 @@ const seed = async () => {
 
     users.forEach((user, idx) => {
       const randomApartmentId = getRandomId(apartments);
+      const janeIdx = users.findIndex(user => user.username === 'jane.smith')
       user.apartmentId = randomApartmentId;
       user.onboardingId = onboardingItems[idx]._id;
-      user.personalInfoId = personalInfos[idx]._id;
+      if(idx !== janeIdx) user.personalInfoId = personalInfos[idx]._id;
 
       apartments
         .find((apartment) => apartment._id === randomApartmentId)
         ?.tenants.push(user._id);
     });
+
+    await PersonalInfo.deleteOne({email:'jane.smith@example.com'})
 
     await Promise.all(users.map((user) => user.save()));
 
@@ -150,7 +156,49 @@ const seed = async () => {
       email: 'notonboarded@test.com'
     });
 
-    console.log('DB seeded');
+    const moreHashedSeedEmployeeUsers = await Promise.all(
+      extraUsersSeed.map(async (user) => ({
+        ...user,
+        password: await bcrypt.hash(user.password, 10), // Hash password with bcrypt
+      }))
+    );
+
+    const moreUsers = await EmployeeUser.insertMany(moreHashedSeedEmployeeUsers);
+
+    const extraProfilePictures = await Document.insertMany(
+      extraOnboardingSeed.map((_onboarding, idx) => ({
+          userId: moreUsers[idx]._id,
+          type: 'profilePicture',
+          status: 'approved',
+          fileKey: 'some-random-key',
+          fileUrl: 'https://hr-project-bucket-7g9x3l2p5.s3.us-east-2.amazonaws.com/default-user.jpeg'
+        }
+       )  
+      )
+    )
+
+    const extraOnboardings = await Onboarding.insertMany(
+      extraOnboardingSeed.map((onboarding, idx) => {
+        return {
+          ...onboarding,
+          userId: moreUsers[idx]._id,
+          driversLicense: {
+            hasLicense: false
+          },
+          employment: {
+            residencyStatus: 'citizen'
+          },
+          profilePicture: extraProfilePictures[idx]._id
+        };
+      })
+    );
+
+    for (const [idx, user] of moreUsers.entries()) {
+      user.onboardingId = extraOnboardings[idx]._id;
+      await user.save(); 
+    }
+
+    console.log("DB seeded");
   } catch (err) {
     console.error(`There was an error seeding the data: ${err}`);
   } finally {
