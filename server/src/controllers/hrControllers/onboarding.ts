@@ -33,7 +33,7 @@ const updateOnboardingStatus = async (req: Request, res: Response) => {
     // need to check auth of the HR user for this route.
     const { status }: { status: string } = req.body;
     const { onboardingId } = req.params;
-    console.log(status, onboardingId)
+    
     if (status !== 'approved' && status !== 'rejected')
       throw Error('Invalid status type.');
 

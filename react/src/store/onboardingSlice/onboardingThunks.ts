@@ -9,7 +9,7 @@ const fetchOnboarding = createAsyncThunk(
     const response = await axiosInstance.get(
       "/onboarding"
     );
-    console.log(response);
+    
     return response.data;
   }
 );

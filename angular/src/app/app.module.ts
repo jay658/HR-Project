@@ -39,6 +39,7 @@ import { HouseManagementComponent } from './components/house-management/house-ma
 import { LoginComponent } from './components/login/login.component';
 import { AddHouseDialogComponent } from './components/add-house-dialog/add-house-dialog.component';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
+import { EmployeeProfileComponent } from './components/employee-profile/employee-profile.component';
 
 // Reducers and Effects
 import { authReducer } from './store/auth/auth.reducer';
@@ -49,6 +50,8 @@ import { userReducer } from './store/user/users.reducers';
 import { UserEffects } from './store/user/users.effects';
 import { housingReducer } from './store/housing/housing.reducer';
 import { HousingEffects } from './store/housing/housing.effects';
+import { employeeReducer } from './store/employee/employees.reducers';
+import { EmployeeEffects } from './store/employee/employees.effects';
 
 @NgModule({
   declarations: [
@@ -63,14 +66,15 @@ import { HousingEffects } from './store/housing/housing.effects';
     LoginComponent,
     AddHouseDialogComponent,
     ConfirmDialogComponent,
+    EmployeeProfileComponent,
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule,
     BrowserAnimationsModule,
     HttpClientModule,
     FormsModule,
-    ReactiveFormsModule, // Required for housing forms
+    ReactiveFormsModule,
+    AppRoutingModule,
 
     // Material Modules
     MatToolbarModule,
@@ -86,13 +90,14 @@ import { HousingEffects } from './store/housing/housing.effects';
     MatChipsModule,
     MatSnackBarModule,
 
-    // NgRx
+    // NgRx Store Configuration
     StoreModule.forRoot(
       {
         auth: authReducer,
         count: counterReducer,
         users: userReducer,
-        housing: housingReducer, // Add housing reducer here
+        housing: housingReducer,
+        employee: employeeReducer,
       },
       {
         runtimeChecks: {
@@ -103,7 +108,12 @@ import { HousingEffects } from './store/housing/housing.effects';
         },
       }
     ),
-    EffectsModule.forRoot([AuthEffects, UserEffects, HousingEffects]), // Add HousingEffects here
+    EffectsModule.forRoot([
+      AuthEffects,
+      UserEffects,
+      HousingEffects,
+      EmployeeEffects,
+    ]),
     StoreDevtoolsModule.instrument({
       maxAge: 25,
       logOnly: environment.production,
