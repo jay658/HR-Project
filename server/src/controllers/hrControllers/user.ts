@@ -138,7 +138,7 @@ const getEmployeeDetails = async (
 
     const personalInfo = await PersonalInfo.findById(
       employee.personalInfoId
-    ).select("-__v -userId -_id -documents -profilePicture +SSN");
+    ).select("-__v -userId -_id -documents -profilePicture");
 
     if (!personalInfo) {
       res.status(404).json({

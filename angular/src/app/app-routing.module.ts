@@ -12,6 +12,7 @@ import { MyCounterComponent } from './components/my-counter/my-counter.component
 
 // Guard
 import { AuthGuard } from './guards/auth.guard';
+import { EmployeeProfileComponent } from './components/employee-profile/employee-profile.component';
 
 const routes: Routes = [
   // Public routes
@@ -27,8 +28,13 @@ const routes: Routes = [
     canActivate: [AuthGuard],
   },
   {
-    path: 'employee-management',
+    path: 'profiles',
     component: EmployeeManagementComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'employees/:id',
+    component: EmployeeProfileComponent,
     canActivate: [AuthGuard],
   },
   {
