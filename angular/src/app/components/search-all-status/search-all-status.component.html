@@ -1,0 +1,73 @@
+<div class="container">
+    <div class="search-container">
+      <input 
+        type="text" 
+        [(ngModel)]="searchQuery" 
+        placeholder="Search by name..."
+        class="search-input"
+        (keyup.enter)="search()"
+      >
+      <button class="action-button view" (click)="search()">Search</button>
+    </div>
+  
+    <div *ngIf="error" class="error-message">
+      {{ error }}
+    </div>
+  
+    <div *ngIf="message" class="success-message">
+      {{ message }}
+    </div>
+  
+    <!-- Documents Modal -->
+    <div *ngIf="selectedDocuments" class="modal-overlay">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>{{ selectedEmployeeName }}'s Documents</h3>
+          <button class="close-button" (click)="closeDocuments()">×</button>
+        </div>
+        <div class="modal-body">
+          <div *ngFor="let doc of selectedDocuments" class="document-item">
+            <a [href]="doc.fileUrl" target="_blank">{{ doc.fileKey }}</a>
+            <span class="document-type">({{ doc.type }})</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="table-container" *ngIf="searchResults.length > 0">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Visa Type</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Remaining</th>
+            <th>Next Action</th>
+            <th>Next Step</th>
+            <th>Documents</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let result of searchResults">
+            <td>{{ getFullName(result.name) }}</td>
+            <td>{{ result.employment.visaType }}</td>
+            <td>{{ formatDate(result.employment.startDate) }}</td>
+            <td>{{ formatDate(result.employment.endDate) }}</td>
+            <td>{{ calculateDaysRemaining(result.employment.endDate) }}</td>
+            <td>{{ result.nextAction }}</td>
+            <td>{{ result.nextStep || 'Not Available' }}</td>
+            <td>
+              <button class="action-button view" (click)="viewDocuments(result)">
+                View
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  
+    <div *ngIf="searchResults.length === 0 && message" class="no-results">
+      No matching employees found.
+    </div>
+  </div>

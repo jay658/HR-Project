@@ -52,12 +52,8 @@ import { StoreModule } from '@ngrx/store';
 import {TextFieldModule} from '@angular/cdk/text-field';
 import { UserEffects } from './store/user/users.effects';
 import { VisaStatusManagementComponent } from './components/visa-status-management/visa-status-management.component';
-import { HiringManagementComponent } from './components/hiring-management/hiring-management.component';
-import { HouseManagementComponent } from './components/house-management/house-management.component';
-import { LoginComponent } from './components/login/login.component';
-import { AddHouseDialogComponent } from './components/add-house-dialog/add-house-dialog.component';
-import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
-import { EmployeeProfileComponent } from './components/employee-profile/employee-profile.component';
+
+import { SearchAllStatusComponent } from './components/search-all-status/search-all-status.component';
 import { HouseDetailComponent } from './components/house-component/house-detail.component';
 
 // Reducers and Effects
@@ -82,11 +78,14 @@ import { userReducer } from './store/user/users.reducers';
     HiringManagementComponent,
     HouseManagementComponent,
     LoginComponent,
+    SearchAllStatusComponent,
+    EmployeeProfileComponent,
     AddHouseDialogComponent,
     ConfirmDialogComponent,
     EmployeeProfileComponent,
     HouseDetailComponent,
     OnboardingFormComponent
+
   ],
   imports: [
     BrowserModule,
@@ -147,6 +146,22 @@ import { userReducer } from './store/user/users.reducers';
       maxAge: 25,
       logOnly: environment.production,
     }),
+    BrowserAnimationsModule,
+    MatToolbarModule,
+    MatMenuModule,
+    MatIconModule,
+    MatButtonModule,
+    HttpClientModule,
+    FormsModule,
+    MatTableModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
+    FormsModule,
+    StoreModule.forFeature('employee', employeeReducer),
+    EffectsModule.forFeature([EmployeeEffects]),
   ],
   providers: [
     {
