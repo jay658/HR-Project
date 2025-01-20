@@ -1,0 +1,169 @@
+<div class="profile-container" *ngIf="employeeDetails$ | async as employee">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Employee Profile</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <!-- NAME -->
+      <section class="info-section">
+        <h3 class="section-title">Name</h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <strong>Full Name:</strong>
+            {{employee.name.firstName}} {{employee.name.lastName}}
+            <span *ngIf="employee.name.preferredName">({{employee.name.preferredName}})</span>
+          </div>
+          <div class="info-item">
+            <strong>Email:</strong> {{employee.email}}
+          </div>
+          <div class="info-item">
+            <strong>SSN:</strong> {{employee?.SSN || 'N/A'}}
+          </div>
+          <div class="info-item">
+            <strong>Date of Birth:</strong> {{formatDateForDisplay(employee.dateOfBirth)}}
+          </div>
+          <div class="info-item">
+            <strong>Gender:</strong> {{employee.gender || 'Not specified'}}
+          </div>
+        </div>
+      </section>
+
+      <!-- ADDRESS -->
+      <section class="info-section">
+        <h3 class="section-title">Address</h3>
+        <div class="info-grid">
+          <div class="info-item full-width">
+            <strong>Street Address:</strong>
+            {{employee.address.buildingNumber}} {{employee.address.streetName}}
+          </div>
+          <div class="info-item">
+            <strong>City:</strong> {{employee.address.city}}
+          </div>
+          <div class="info-item">
+            <strong>State:</strong> {{employee.address.state}}
+          </div>
+          <div class="info-item">
+            <strong>Zip Code:</strong> {{employee.address.zipCode}}
+          </div>
+        </div>
+      </section>
+
+      <!-- CONTACT -->
+      <section class="info-section">
+        <h3 class="section-title">Contact Information</h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <strong>Cell Phone:</strong> {{formatPhoneNumber(employee.phone.cell)}}
+          </div>
+          <div class="info-item">
+            <strong>Work Phone:</strong> {{formatPhoneNumber(employee.phone.work)}}
+          </div>
+        </div>
+      </section>
+
+      <!-- EMPLOYMENT -->
+      <section class="info-section">
+        <h3 class="section-title">Employment</h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <strong>Work Authorization:</strong>
+            {{formatWorkAuth(
+              employee.employment.residencyStatus,
+              employee.employment.visaType,
+              employee.employment.otherVisaTitle
+            )}}
+          </div>
+          <div class="info-item" *ngIf="employee.employment.startDate">
+            <strong>Start Date:</strong> {{formatDateForDisplay(employee.employment.startDate)}}
+          </div>
+          <div class="info-item" *ngIf="employee.employment.endDate">
+            <strong>End Date:</strong> {{formatDateForDisplay(employee.employment.endDate)}}
+          </div>
+        </div>
+      </section>
+
+      <!-- VEHICLE -->
+      <section class="info-section" *ngIf="employee.carInfo">
+        <h3 class="section-title">Vehicle Information</h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <strong>Make:</strong> {{employee.carInfo.make || 'N/A'}}
+          </div>
+          <div class="info-item">
+            <strong>Model:</strong> {{employee.carInfo.model || 'N/A'}}
+          </div>
+          <div class="info-item">
+            <strong>Color:</strong> {{employee.carInfo.color || 'N/A'}}
+          </div>
+        </div>
+      </section>
+
+      <!-- DRIVER'S LICENSE -->
+      <section class="info-section">
+        <h3 class="section-title">Driver's License</h3>
+        <div class="info-grid" *ngIf="employee.driversLicense?.hasLicense">
+          <div class="info-item">
+            <strong>License Number:</strong> {{employee.driversLicense.number}}
+          </div>
+          <div class="info-item">
+            <strong>Expiration Date:</strong> {{formatDateForDisplay(employee.driversLicense.expirationDate)}}
+          </div>
+        </div>
+        <div class="info-item" *ngIf="!employee.driversLicense?.hasLicense">
+          No driver's license information provided
+        </div>
+      </section>
+
+      <!-- REFERENCE -->
+      <section class="info-section" *ngIf="employee.reference">
+        <h3 class="section-title">Reference</h3>
+        <div class="contact-card">
+          <div class="info-grid">
+            <div class="info-item">
+              <strong>Name:</strong> 
+              {{employee.reference.firstName}} {{employee.reference.middleName}} {{employee.reference.lastName}}
+            </div>
+            <div class="info-item">
+              <strong>Phone:</strong> {{formatPhoneNumber(employee.reference.phone)}}
+            </div>
+            <div class="info-item">
+              <strong>Email:</strong> {{employee.reference.email}}
+            </div>
+            <div class="info-item">
+              <strong>Relationship:</strong> {{employee.reference.relationship}}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- EMERGENCY CONTACTS -->
+      <section class="info-section" *ngIf="employee.emergencyContacts?.length">
+        <h3 class="section-title">Emergency Contacts</h3>
+        <div class="contact-card" *ngFor="let contact of employee.emergencyContacts">
+          <div class="info-grid">
+            <div class="info-item">
+              <strong>Name:</strong>
+              {{contact.firstName}} {{contact.lastName}}
+            </div>
+            <div class="info-item">
+              <strong>Phone:</strong> {{formatPhoneNumber(contact.phone)}}
+            </div>
+            <div class="info-item">
+              <strong>Email:</strong> {{contact.email}}
+            </div>
+            <div class="info-item">
+              <strong>Relationship:</strong> {{contact.relationship}}
+            </div>
+          </div>
+        </div>
+      </section>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<mat-spinner *ngIf="loading$ | async"></mat-spinner>
+
+<div class="error-message" *ngIf="error$ | async as error">
+  {{error}}
+</div>

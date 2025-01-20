@@ -1,30 +1,32 @@
-import { Request, Response } from "express";
+import { Request, Response } from 'express';
 
-import EmployeeUser from "../../models/EmployeeUser";
-import Onboarding from "../../models/Onboarding";
+import EmployeeUser from '../../models/EmployeeUser';
+import Onboarding from '../../models/Onboarding';
 import PersonalInfo from '../../models/PersonalInfo';
 import { onboardingToPersonalInfo } from '../utils/converters';
 
 // Test Router
 const testOnboardingRouter = (_req: Request, res: Response) => {
-  try{
+  try {
     res.json('Successfully hit hr onboarding router');
-  }catch(err){
+  } catch (err) {
     console.log(`There was an error in the hr onboarding test route: ${err}`);
   }
 };
 
-const getOnboardings = async(req: Request, res: Response) => {
-  try{
+const getOnboardings = async (req: Request, res: Response) => {
+  try {
     const { status } = req.query;
 
-    const filter = status? { status } : {};
+    const filter = status ? { status } : {};
 
     const onboardings = await Onboarding.find(filter);
 
     res.json(onboardings);
-  }catch(err){
-    console.log(`There was an error getting the onboardings in the hr route: ${err}`);
+  } catch (err) {
+    console.log(
+      `There was an error getting the onboardings in the hr route: ${err}`
+    );
   }
 };
 
@@ -33,7 +35,7 @@ const updateOnboardingStatus = async (req: Request, res: Response) => {
     // need to check auth of the HR user for this route.
     const { status }: { status: string } = req.body;
     const { onboardingId } = req.params;
-    console.log(status, onboardingId)
+    
     if (status !== 'approved' && status !== 'rejected')
       throw Error('Invalid status type.');
 
@@ -41,8 +43,8 @@ const updateOnboardingStatus = async (req: Request, res: Response) => {
       onboardingId,
       { status },
       { new: true }
-    ).select('+SSN');
-  
+    );
+
     if (!updatedOnboarding) throw Error('The onboarding form was not found.');
 
     if (updatedOnboarding.status === 'approved') {
@@ -77,8 +79,4 @@ const updateOnboardingStatus = async (req: Request, res: Response) => {
   }
 };
 
-export {
-  testOnboardingRouter,
-  getOnboardings,
-  updateOnboardingStatus
-}
+export { testOnboardingRouter, getOnboardings, updateOnboardingStatus };

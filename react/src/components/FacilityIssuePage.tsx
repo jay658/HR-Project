@@ -1,38 +1,39 @@
-import { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
 import {
-  Box,
-  Typography,
-  Card,
-  CardContent,
-  CardActions,
-  Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  TextField,
-  DialogActions,
-  Divider,
   Alert,
+  Box,
+  Button,
+  Card,
+  CardActions,
+  CardContent,
   CircularProgress,
-  Stack,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Divider,
   IconButton,
+  Stack,
+  TextField,
+  Typography,
 } from "@mui/material";
-import { MessageSquare, X, Plus, AlertCircle } from "lucide-react";
-import { RootState, AppDispatch } from "../store/store";
+import { AlertCircle, MessageSquare, Plus, X } from "lucide-react";
+import { AppDispatch, RootState } from "../store/store";
 import {
-  fetchIssuesForUser,
-  createFacilityIssue,
+  FacilityIssue,
   addCommentToIssue,
   closeIssue,
-  FacilityIssue,
+  createFacilityIssue,
+  fetchIssuesForUser,
 } from "../store/facilityIssuesSlice/facilityIssuesSlice.ts";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState } from "react";
 
 const FacilityIssuesPage = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { issues, status, error } = useSelector(
     (state: RootState) => state.facilityIssues
   );
+  const { user } = useSelector((state: RootState) => state.auth)
 
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [commentDialogOpen, setCommentDialogOpen] = useState(false);
@@ -128,16 +129,20 @@ const FacilityIssuesPage = () => {
               py: 0.5,
               borderRadius: 1,
               bgcolor:
-                issue.status === "closed" ? "error.main" : "success.main",
+                issue.status === "closed" ? "error.main" : 
+                  issue.status === 'open' ? "success.main": "warning.main",
               color: "white",
             }}
           >
-            {issue.status.toUpperCase()}
+            {issue.status === 'inProgress'? 'IN PROGRESS' : issue.status.toUpperCase()}
           </Typography>
         </Stack>
 
         <Typography color="text.secondary" sx={{ mb: 2 }}>
           {issue.description}
+        </Typography>
+        <Typography color="text.secondary" sx={{ mb: 2 }}>
+          Reported on: {new Date(issue.createdAt).toLocaleDateString('en-US')}
         </Typography>
 
         {issue.comments.length > 0 && (
@@ -158,9 +163,10 @@ const FacilityIssuesPage = () => {
                     borderColor: "grey.200",
                   }}
                 >
+                  <Typography variant="body1">{user?.username}</Typography>
                   <Typography variant="body2">{comment.description}</Typography>
                   <Typography variant="caption" color="text.secondary">
-                    Posted on {new Date(comment.createdAt).toLocaleDateString()}
+                    Posted on {new Date(comment.timestamp).toLocaleDateString('en-US')}
                   </Typography>
                 </Box>
               ))}

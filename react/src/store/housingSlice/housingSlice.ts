@@ -1,5 +1,6 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+
+import { axiosInstance } from "../../interceptor/interceptor";
 
 // Types
 interface Roommate {
@@ -33,8 +34,6 @@ interface HousingState {
   error: string | null;
 }
 
-const API_BASE_URL = "http://localhost:3000/api/employee";
-
 const initialState: HousingState = {
   housingDetails: null,
   loading: false,
@@ -46,12 +45,7 @@ export const fetchHousingDetails = createAsyncThunk(
   "housing/fetchHousingDetails",
   async (_, { rejectWithValue }) => {
     try {
-      const token = localStorage.getItem("token");
-      const response = await axios.get(`${API_BASE_URL}/user/housing`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axiosInstance.get(`/user/housing`);
       return response.data.housingDetails;
     } catch (error) {
       return rejectWithValue(

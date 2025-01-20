@@ -1,4 +1,6 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+
+import { axiosInstance } from "../../interceptor/interceptor";
 
 interface User {
   id: string;
@@ -15,6 +17,7 @@ interface AuthState {
   user: User | null;
   token: string | null;
   loading: boolean;
+  sessionLoading: boolean;
   error: string | null;
 }
 
@@ -23,6 +26,7 @@ const initialState: AuthState = {
   user: null,
   token: null,
   loading: false,
+  sessionLoading: true,
   error: null,
 };
 
@@ -61,6 +65,36 @@ export const loginUser = createAsyncThunk(
   }
 );
 
+const clearSession = () => {
+  localStorage.removeItem('user');
+  localStorage.removeItem('token');
+  localStorage.removeItem('isLoggedIn');
+};
+
+export const loadUserFromStorage = createAsyncThunk(
+  'auth/loadUserFromStorage',
+  async (_, { rejectWithValue }) => {
+    try {
+      const user = JSON.parse(localStorage.getItem('user') || 'null');
+      const token = localStorage.getItem('token');
+      const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+      
+      if (!user || !token || !isLoggedIn) {
+        clearSession()
+        throw new Error('Invalid or missing session data');
+      }
+
+      await axiosInstance.get('/user/validateSession')
+
+      return { user, token, isLoggedIn };
+    } catch (error) {
+      clearSession()
+      return rejectWithValue('Session cannot be found');
+    }
+  }
+);
+
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -73,29 +107,7 @@ const authSlice = createSlice({
       localStorage.removeItem("token");
       localStorage.removeItem("isLoggedIn");
       state.loading = false;
-    },
-    loadUserFromStorage(state) {
-      const storedUser = localStorage.getItem("user");
-      const storedToken = localStorage.getItem("token");
-      const storedIsLoggedIn = localStorage.getItem("isLoggedIn");
-
-      if (storedUser && storedToken && storedIsLoggedIn === "true") {
-        try {
-          state.isLoggedIn = true;
-          state.user = JSON.parse(storedUser);
-          state.token = storedToken;
-        } catch {
-          state.isLoggedIn = false;
-          state.user = null;
-          state.token = null;
-        }
-      } else {
-        state.isLoggedIn = false;
-        state.user = null;
-        state.token = null;
-      }
-      state.loading = false;
-    },
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -112,9 +124,26 @@ const authSlice = createSlice({
       .addCase(loginUser.rejected, (state, action) => {
         state.error = action.payload as string;
         state.loading = false;
+      })
+      .addCase(loadUserFromStorage.pending, (state) => {
+        state.sessionLoading = true;
+        state.error = null;
+      })
+      .addCase(loadUserFromStorage.fulfilled, (state, action) => {
+        state.user = action.payload.user;
+        state.token = action.payload.token;
+        state.isLoggedIn = true;
+        state.sessionLoading = false;
+      })
+      .addCase(loadUserFromStorage.rejected, (state, action) => {
+        state.user = null;
+        state.token = null;
+        state.isLoggedIn = false;
+        state.sessionLoading = false;
+        state.error = action.payload as string; // Handle the error message
       });
   },
 });
 
-export const { logout, loadUserFromStorage } = authSlice.actions;
+export const { logout } = authSlice.actions;
 export default authSlice.reducer;

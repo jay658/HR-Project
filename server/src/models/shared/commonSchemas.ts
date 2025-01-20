@@ -21,7 +21,6 @@ export const profilePictureSchema = {
 export const ssnSchema = {
   type: String,
   required: true,
-  select: false,
   minlength: 9,
   maxlength: 9
 };

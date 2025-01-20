@@ -1,19 +1,38 @@
 import { AppDispatch, RootState } from '../store/store';
+<<<<<<< HEAD
 import React, { useEffect, useRef } from "react";
 import { fetchVisaType, fetchNextDocument, fetchAllDocument,
   uploadFile, createVisa, fetchFileURL
  } from "../store/visaSlice/visaThunks";
 import { useDispatch, useSelector } from 'react-redux'
+=======
+>>>>>>> main
 import {
   Box,
-  Typography,
+  Button,
+  Link,
   List,
   ListItem,
   ListItemText,
+<<<<<<< HEAD
   Button,
   Stack,
   Link
+=======
+  Stack,
+  Typography
+>>>>>>> main
 } from "@mui/material";
+import React, { useEffect, useRef } from "react";
+import {
+  createVisa,
+  fetchAllDocument,
+  fetchFileURL,
+  fetchNextDocument,
+  fetchVisaType,
+  uploadFile
+} from "../store/visaSlice/visaThunks";
+import { useDispatch, useSelector } from 'react-redux'
 
 const VisaStatusPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -38,11 +57,15 @@ const VisaStatusPage: React.FC = () => {
     const file = event.target.files?.[0];
     if (file && selectedDocType) {
       // Handle file
+<<<<<<< HEAD
       console.log(`Uploading file for ${selectedDocType}:`, file);
 
       const fileURLResult = await dispatch(fetchFileURL(file)).unwrap()
 
       console.log("This is handle file: ",fileURLResult.fileURL)
+=======
+      const fileURLResult = await dispatch(fetchFileURL(file)).unwrap()
+>>>>>>> main
       
       const uploadNewDocument = {
         username: "kobe.bryant",
