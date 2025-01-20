@@ -148,6 +148,7 @@ const seed = async () => {
       const janeIdx = users.findIndex(user => user.username === 'jane.smith')
       user.apartmentId = randomApartmentId;
       user.onboardingId = onboardingItems[idx]._id;
+      
       if(idx !== janeIdx) user.personalInfoId = personalInfos[idx]._id;
       user.personalInfoId = personalInfos[idx]._id;
       

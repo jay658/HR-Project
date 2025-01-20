@@ -269,7 +269,7 @@ const seedOnboarding = [
       hasLicense: true,
       number: "CA824242424",
       expirationDate: new Date("2026-08-23"),
-      document: null,
+      document: null, // This will be set by the seed script
     },
     employment: {
       residencyStatus: "nonresident",
@@ -278,7 +278,7 @@ const seedOnboarding = [
       endDate: new Date("2025-02-16"),
       documents: [],
     },
-    profilePicture: null,
+    profilePicture: null, // This will be set by the seed script
     reference: {
       firstName: "Phil",
       lastName: "Jackson",
@@ -308,8 +308,16 @@ const seedOnboarding = [
 ];
 
 const seedVisaApplications: any[] = [
-  // empty since none of our seed users are f1
-  // if we add f1 users later, we'll add their visa applications here
+  {
+    // John Doe's visa application
+    userId: null,
+    nextStep: "i983"
+  },
+  {
+    // Kobe Bryant's visa application
+    userId: null,
+    nextStep: "optReceipt"
+  }
 ];
 
 const seedDocuments = [
@@ -367,7 +375,32 @@ const seedDocuments = [
     status: 'approved',
     fileKey: 'dummy/kobe_license.pdf',
     fileUrl: 'https://hr-project-bucket-7g9x3l2p5.s3.us-east-2.amazonaws.com/DriversLicense.pdf'
-  }
+  },
+
+  // John Visa Application document
+  {
+    type: "optReceipt",
+    status: "approved",
+    fileKey: "dummy/john_opt_receipt.pdf",
+    fileUrl: "http://dummy-s3.com/john_opt_receipt.pdf",
+  },
+  {
+    type: "optEAD",
+    status: "approved",
+    fileKey: "dummy/john_opt_ead.pdf",
+    fileUrl: "http://dummy-s3.com/john_opt_ead.pdf",
+  },
+  {
+    type: "i983",
+    status: "rejected",
+    fileKey: "dummy/john_i983.pdf",
+    fileUrl: "http://dummy-s3.com/john_i983.pdf",
+    feedback: {
+      comment: "The employment dates don't match your I-20. Please correct and resubmit.",
+      updatedAt: new Date("2024-01-15")
+    }
+  },
+
 ];
 
 const seedPersonalInfo = [
