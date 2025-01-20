@@ -1,6 +1,6 @@
 import express from "express";
 import { testManageVisaRouter, getInProgress, sendEmailNotification,
-    approveVisa, rejectVisa, searchEmployee
+    approveVisa, rejectVisa, searchEmployee, getPendingDocument
  } from "../../../controllers/hrControllers/managevisa";
 import { send } from "@emailjs/nodejs";
 
@@ -12,5 +12,6 @@ manageVisaRouter.post('/notification', sendEmailNotification)
 manageVisaRouter.post('/approve',approveVisa)
 manageVisaRouter.post('/reject', rejectVisa)
 manageVisaRouter.get('/search',searchEmployee)
+manageVisaRouter.get('/pending',getPendingDocument)
 
 export default manageVisaRouter;

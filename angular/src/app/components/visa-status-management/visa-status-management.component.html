@@ -1,9 +1,104 @@
 <div class="container">
-    <div *ngIf="response">
-        <p>Server Response: {{ response }}</p>
-    </div>
 
-    <div *ngIf="error" class="error">
-        <p>{{ error }}</p>
+  <div *ngIf="error" class="error-message">
+    {{ error }}
+  </div>
+
+  <div *ngIf="notificationMessage" class="success-message">
+    {{ notificationMessage }}
+  </div>
+
+  <!-- Document Modal -->
+  <div *ngIf="selectedDocument" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Document Details</h3>
+        <button class="close-button" (click)="closeDocument()">×</button>
+      </div>
+      <div class="modal-body">
+        <p class="document-link">
+          File: 
+          <a [href]="selectedDocument.fileUrl" target="_blank">{{ selectedDocument.fileKey }}</a>
+        </p>
+
+        <!-- Reject Comment Form -->
+        <div *ngIf="showRejectComment" class="reject-form">
+          <textarea 
+            [(ngModel)]="rejectComment"
+            placeholder="Please provide a reason for rejection..."
+            class="reject-comment"
+            rows="4"
+          ></textarea>
+          <div class="button-group">
+            <button class="action-button reject" 
+                    (click)="submitReject()" 
+                    [disabled]="!rejectComment.trim()">
+              Submit Rejection
+            </button>
+            <button class="action-button cancel" (click)="showRejectComment = false">
+              Cancel
+            </button>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div *ngIf="!showRejectComment" class="button-group">
+          <button class="action-button approve" (click)="approveDocument()">
+            Approve
+          </button>
+          <button class="action-button reject" (click)="showRejectForm()">
+            Reject
+          </button>
+        </div>
+      </div>
     </div>
+  </div>
+
+  <div class="table-container" *ngIf="visaApplications.length > 0">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Next Step</th>
+          <th>Visa Type</th>
+          <th>Start Date</th>
+          <th>End Date</th>
+          <th>Remaining</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let app of visaApplications">
+          <td>{{app.name}}</td>
+          <td>
+            <span *ngIf="app.action === 'Rejected'">Rejected, Need New Upload {{app.nextStep}}</span>
+            <span *ngIf="app.action === 'Notification'">Need Upload {{app.nextStep}}</span>
+            <span *ngIf="app.action === 'View'">Waiting Approval {{app.nextStep}}</span>
+          </td>
+          <td>{{app.employment.title}}</td>
+          <td>{{formatDate(app.employment.startDate)}}</td>
+          <td>{{formatDate(app.employment.endDate)}}</td>
+          <td>{{app.employment.daysRemaining}}</td>
+          
+          <td>
+            <button *ngIf="app.action === 'View'" 
+                    class="action-button view"
+                    (click)="viewDocument(app)">
+              View
+            </button>
+            <button *ngIf="app.action === 'Notification'" 
+                    class="action-button notification"
+                    (click)="sendNotification(app)">
+              Send Notification
+            </button>
+            <button *ngIf="app.action === 'Rejected'" 
+                    class="action-button rejected"
+                    (click)="sendNotification(app)">
+              Rejected
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>

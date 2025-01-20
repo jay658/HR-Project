@@ -23,6 +23,8 @@ import { VisaStatusManagementComponent } from './components/visa-status-manageme
 import { counterReducer } from './store/counter/counter.reducer';
 import { environment } from '../environments/environment';
 import { userReducer } from './store/user/users.reducers';
+import { FormsModule } from '@angular/forms';
+import { SearchAllStatusComponent } from './components/search-all-status/search-all-status.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +36,8 @@ import { userReducer } from './store/user/users.reducers';
     VisaStatusManagementComponent,
     HiringManagementComponent,
     HouseManagementComponent,
-    LoginComponent
+    LoginComponent,
+    SearchAllStatusComponent
   ],
   imports: [
     BrowserModule,
@@ -54,7 +57,8 @@ import { userReducer } from './store/user/users.reducers';
     MatMenuModule,
     MatIconModule,
     MatButtonModule,
-    HttpClientModule
+    HttpClientModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

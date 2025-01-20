@@ -42,7 +42,12 @@ const getInProgress = async (req: Request, res: Response): Promise<any> => {
             let action = ""
 
             if(existingDoc){
-                action = "View"
+                if (existingDoc.status == "rejected"){
+                    action = "Rejected"
+                }else{
+                    action = "View"
+                }
+                
             }else{
                 action = "Notification"
             }
@@ -69,6 +74,27 @@ const getInProgress = async (req: Request, res: Response): Promise<any> => {
     }
 };
 
+
+const getPendingDocument = async (req: Request, res: Response): Promise<any> => {
+    try{
+
+        const { userId, nextStep } = req.query
+
+        console.log(userId, nextStep)
+        const existingDoc = await Document.findOne({ userId: userId, type: nextStep })
+
+        if(!existingDoc){
+            return res.status(404).json({mssg: "Couldn't get document"})
+        }
+
+        return res.status(200).json({ data: existingDoc});
+
+    }catch(err){
+      console.log(`There was an error in the hr onboarding test route: ${err}`);
+      return res.status(500).json({mssg:err})
+    }
+}
+
 const sendEmailNotification = async (req: Request, res: Response): Promise<any> => {
     try{
         const {receiver_email, receiver_name, nextStep} = req.body
@@ -77,7 +103,7 @@ const sendEmailNotification = async (req: Request, res: Response): Promise<any> 
         
         const response = "Sent Email"
         
-        console.log(response)
+        console.log(response, receiver_email, receiver_name, nextStep)
 
         return res.status(200).json({mssg : response})
     } catch(err){
@@ -215,11 +241,37 @@ const formatEmployeeData = async (personalInfos: any[]) => {
     const formattedResults = [];
 
     for (const info of personalInfos) {
-        // Get approved documents for this user
+        // Get approved documents for display
         const approvedDocs = await Document.find({
             userId: info.userId,
             status: 'approved'
         });
+
+        // Get visa application to get nextStep
+        const visaApplication = await VisaApplication.findOne({
+            userId: info.userId
+        });
+
+        // Determine next action
+        let nextAction = 'Need Upload';
+        
+        if (visaApplication?.nextStep === 'completed') {
+            nextAction = 'Completed';
+        } else if (visaApplication?.nextStep) {
+            // Find current step document to determine next action
+            const currentStepDoc = await Document.findOne({ 
+                userId: info.userId,
+                type: visaApplication.nextStep
+            });
+
+            if (currentStepDoc) {
+                if (currentStepDoc.status === 'rejected') {
+                    nextAction = 'Rejected';
+                } else if (currentStepDoc.status === 'pending') {
+                    nextAction = 'Waiting Approval';
+                }
+            }
+        }
 
         formattedResults.push({
             userId: info.userId,
@@ -234,6 +286,8 @@ const formatEmployeeData = async (personalInfos: any[]) => {
                 startDate: info.employment.startDate,
                 endDate: info.employment.endDate
             },
+            nextStep: visaApplication?.nextStep || null,
+            nextAction: nextAction,
             documents: approvedDocs.map(doc => ({
                 type: doc.type,
                 fileUrl: doc.fileUrl,
@@ -251,5 +305,6 @@ export {
     sendEmailNotification,
     approveVisa,
     rejectVisa,
-    searchEmployee
+    searchEmployee,
+    getPendingDocument
 }

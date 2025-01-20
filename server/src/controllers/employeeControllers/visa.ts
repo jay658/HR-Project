@@ -95,12 +95,12 @@ const getNextRequiredDocument = async (req: AuthRequest, res: Response) : Promis
 }
 
 // Upload new document
-const uploadNewDocument = async (req : AuthRequest, res : Response) : Promise<any> => {
+const uploadNewDocument = async (req : Request, res : Response) : Promise<any> => {
   try{
-    const { type, fileKey, fileURL } = req.body;
-    const id = req.user?.userId
+    const { username, type, fileKey, fileURL } = req.body;
+
     // Find user
-    const user = await EmployeeUser.findById(id);
+    const user = await EmployeeUser.findOne({username : username});
     if (!user) {
       return res.status(404).json({error : "User not found"})
     }
