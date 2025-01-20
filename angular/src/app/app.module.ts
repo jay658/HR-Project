@@ -18,6 +18,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatListModule } from '@angular/material/list';
 
 // NgRx
 import { StoreModule } from '@ngrx/store';
@@ -40,6 +41,7 @@ import { LoginComponent } from './components/login/login.component';
 import { AddHouseDialogComponent } from './components/add-house-dialog/add-house-dialog.component';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
 import { EmployeeProfileComponent } from './components/employee-profile/employee-profile.component';
+import { HouseDetailComponent } from './components/house-component/house-detail.component';
 
 // Reducers and Effects
 import { authReducer } from './store/auth/auth.reducer';
@@ -67,6 +69,7 @@ import { EmployeeEffects } from './store/employee/employees.effects';
     AddHouseDialogComponent,
     ConfirmDialogComponent,
     EmployeeProfileComponent,
+    HouseDetailComponent,
   ],
   imports: [
     BrowserModule,
@@ -89,6 +92,7 @@ import { EmployeeEffects } from './store/employee/employees.effects';
     MatDialogModule,
     MatChipsModule,
     MatSnackBarModule,
+    MatListModule,
 
     // NgRx Store Configuration
     StoreModule.forRoot(

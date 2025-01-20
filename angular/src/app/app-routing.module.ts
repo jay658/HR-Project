@@ -12,6 +12,7 @@ import { MyCounterComponent } from './components/my-counter/my-counter.component
 
 // Guard
 import { AuthGuard } from './guards/auth.guard';
+import { HouseDetailComponent } from './components/house-component/house-detail.component';
 
 const routes: Routes = [
   // Public routes
@@ -44,6 +45,11 @@ const routes: Routes = [
   {
     path: 'housing',
     component: HouseManagementComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'housing/:id',
+    component: HouseDetailComponent,
     canActivate: [AuthGuard],
   },
   {

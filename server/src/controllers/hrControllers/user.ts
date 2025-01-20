@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 
 import bcrypt from "bcryptjs";
-import config from "../../utility/configs";
 import jwt from "jsonwebtoken";
 import EmployeeUser from "../../models/EmployeeUser";
 import HumanResources from "../../models/HumanResources";
