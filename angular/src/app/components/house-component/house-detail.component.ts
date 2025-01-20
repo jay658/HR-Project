@@ -33,4 +33,16 @@ export class HouseDetailComponent implements OnInit {
   goBack() {
     this.router.navigate(['/housing']);
   }
+  getIssueStatusColor(status: string): string {
+    switch (status) {
+      case 'open':
+        return 'warn';
+      case 'inProgress':
+        return 'accent';
+      case 'closed':
+        return 'primary';
+      default:
+        return 'primary';
+    }
+  }
 }

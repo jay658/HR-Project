@@ -5,15 +5,14 @@ import {
   uploadOnboardingFile
 } from '../../../controllers/employeeControllers/onboarding';
 
-import { authenticateToken } from '../../../middleware/authMiddleware';
 import express from 'express';
 
 const onboardingRouter = express.Router();
 
 onboardingRouter
   .get('/test', testOnboardingRouter)
-  .get('/', authenticateToken, getOnboardingForUser)
-  .post('/upload', authenticateToken, uploadOnboardingFile)
-  .put('/update', authenticateToken, updateOnboardingForUser);
+  .get('/', getOnboardingForUser)
+  .post('/upload', uploadOnboardingFile)
+  .put('/update', updateOnboardingForUser);
 
 export default onboardingRouter;

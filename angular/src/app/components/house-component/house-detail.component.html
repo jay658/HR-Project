@@ -78,6 +78,44 @@
           </mat-list-item>
         </mat-list>
       </div>
+      <div class="info-section">
+        <h3>Facility Issues</h3>
+        <mat-list>
+          <ng-container
+            *ngIf="house.facilityIssues && house.facilityIssues.length > 0"
+          >
+            <mat-list-item *ngFor="let issue of house.facilityIssues">
+              <div class="issue-info">
+                <div class="issue-header">
+                  <span class="issue-title">{{ issue.title }}</span>
+                  <mat-chip-list>
+                    <mat-chip
+                      [color]="getIssueStatusColor(issue.status)"
+                      selected
+                    >
+                      {{ issue.status }}
+                    </mat-chip>
+                  </mat-chip-list>
+                </div>
+                <p class="issue-description">{{ issue.description }}</p>
+                <div class="issue-meta">
+                  <span class="issue-reporter"
+                    >Reported by: {{ issue.createdBy.username }}</span
+                  >
+                  <span class="issue-date">{{
+                    issue.createdAt | date : "short"
+                  }}</span>
+                </div>
+              </div>
+            </mat-list-item>
+          </ng-container>
+          <mat-list-item
+            *ngIf="!house.facilityIssues || house.facilityIssues.length === 0"
+          >
+            No facility issues reported
+          </mat-list-item>
+        </mat-list>
+      </div>
     </div>
   </mat-card-content>
 </mat-card>
