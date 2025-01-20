@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
-
+import VisaApplication from "../../models/VisaApplication";
+import Onboarding from "../../models/Onboarding";
 import { AuthRequest } from "../../middleware/authMiddleware";
 import Document from "../../models/Document";
 import EmployeeUser from "../../models/EmployeeUser";
 import PersonalInfo from "../../models/PersonalInfo";
-import VisaApplication from "../../models/VisaApplication";
 import mongoose from "mongoose";
 import { uploadFileToAWS } from "../../utility/AWS/aws";
 
@@ -33,8 +33,22 @@ const createVisa = async (req: AuthRequest, res: Response): Promise<any> => {
       return res.status(404).json({error : "User not found"})
     }
 
-    const visa= await VisaApplication.findById(user.visaApplicationId)
+    // const onboarding = await Onboarding.findById(id)
 
+    // if(onboarding?.status !== 'approved'){
+    //   return res.status(404).json({error : "OnBoarding is not approve, please get approval first."})
+    // }
+
+    const personalInfo = await PersonalInfo.findOne({userId:user._id})
+    if(!personalInfo){
+      return res.status(404).json({error : "No Personal Info, Please finish onboarding first"})
+    }
+
+    if(!personalInfo.employment?.visaType){
+      return res.status(404).json({error: "No Visa Type, please finish onboarding first"})
+    }
+
+    const visa= await VisaApplication.findById(user.visaApplicationId)
     // Create new visa application
     if(!visa){
       const visa = await VisaApplication.create({userId : user._id})
@@ -69,14 +83,17 @@ const getNextRequiredDocument = async (req: AuthRequest, res: Response) : Promis
     if (!user) {
       return res.status(404).json({error : "User not found"})
     }
+
+    // const onboarding = await Onboarding.findById(id)
+    // if(onboarding?.status !== 'approved'){
+    //   return res.status(404).json({error : "OnBoarding is not approve, please get approval first."})
+    // }
+
     // Get visa application
     const visa= await VisaApplication.findById(user.visaApplicationId)
     if (!visa) {
       return res.status(404).json({error : "No Visa application"})
     }
-
-    // Get current document and their status
-    // const currentDocuments = await visa.getCurrentDocuments();
 
     // Update next required document
     await visa.updateNextStep();
@@ -193,6 +210,12 @@ const getVisaType = async (req : AuthRequest, res : Response) : Promise<any> => 
     if (!user) {
       return res.status(404).json({error : "User not found"})
     }
+
+    // const onboarding = await Onboarding.findById(id)
+    // console.log(onboarding)
+    // if(onboarding?.status !== 'approved'){
+    //   return res.status(404).json({error : "Onnot approve, please get approval first."})
+    // }
 
     // Get personal info
     const personalInfo = await PersonalInfo.findOne({userId:user._id})

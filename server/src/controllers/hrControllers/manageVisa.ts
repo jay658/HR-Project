@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import VisaApplication from "../../models/VisaApplication";
 import PersonalInfo from "../../models/PersonalInfo";
 import Document from "../../models/Document";
+import { sendNotificationEmail } from "../../utility/EmailJS/emailJS";
 
 const testManageVisaRouter = (_req: Request, res: Response) => {
     try{
@@ -48,6 +49,7 @@ const getInProgress = async (req: Request, res: Response): Promise<any> => {
                     action = "View"
                 }
                 
+                action = "View"
             }else{
                 action = "Notification"
             }
@@ -99,10 +101,8 @@ const sendEmailNotification = async (req: Request, res: Response): Promise<any> 
     try{
         const {receiver_email, receiver_name, nextStep} = req.body
 
-        // const response = sendNotificationEmail(receiver_name, receiver_email, nextStep)
-        
-        const response = "Sent Email"
-        
+        const response = sendNotificationEmail(receiver_name, receiver_email, nextStep)
+
         console.log(response, receiver_email, receiver_name, nextStep)
 
         return res.status(200).json({mssg : response})
@@ -242,6 +242,7 @@ const formatEmployeeData = async (personalInfos: any[]) => {
 
     for (const info of personalInfos) {
         // Get approved documents for display
+        
         const approvedDocs = await Document.find({
             userId: info.userId,
             status: 'approved'

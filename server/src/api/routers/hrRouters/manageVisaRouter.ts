@@ -1,8 +1,7 @@
 import express from "express";
 import { testManageVisaRouter, getInProgress, sendEmailNotification,
     approveVisa, rejectVisa, searchEmployee, getPendingDocument
- } from "../../../controllers/hrControllers/managevisa";
-import { send } from "@emailjs/nodejs";
+ } from "../../../controllers/hrControllers/manageVisa";
 
 const manageVisaRouter = express.Router();
 

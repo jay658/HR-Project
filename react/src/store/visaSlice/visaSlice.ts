@@ -149,6 +149,8 @@ const visaSlice = createSlice({
         builder
             .addCase(fetchVisaType.fulfilled, (state, action) => {
                 state.visaType = action.payload
+                state.error = action.payload as string;
+                console.log("Action Error:", action.payload)
             }),
 
         builder
@@ -156,7 +158,10 @@ const visaSlice = createSlice({
                 state.documentType = action.payload
                 const actionInfo = getActionMessage(state.documents);
                 state.action = actionInfo.message;
-                console.log("Next Document",state.documentType)
+            }),
+        builder
+            .addCase(fetchNextDocument.rejected, (state, action) => {
+                state.error = action.payload as string;
             }),
         builder
             .addCase(fetchAllDocument.fulfilled, (state, action) => {

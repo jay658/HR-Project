@@ -59,6 +59,8 @@ const OnboardingPage: React.FC = () => {
     optReceipt: null
   });
 
+  
+
   useEffect(() => {
     if (!loading) {
       if (!isLoggedIn) {

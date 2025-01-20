@@ -16,7 +16,11 @@ const fetchVisaType = createAsyncThunk(
     'visa/fetchVisaType',
     async(userData: userData, { rejectWithValue }) => {
         try {
-            const response = await axiosInstance.get('/visa/visatype')
+            const response = await axiosInstance.get('/visa/visatype', {
+                params: {
+                    username: userData.username
+                }
+            })
             // console.log(response.data)
             return response.data
 
@@ -31,7 +35,11 @@ const fetchNextDocument = createAsyncThunk(
     'visa/fetchNextDocument',
     async (userData: userData, { rejectWithValue }) => {
         try{
-            const response = await axiosInstance.get('/visa/next-document')
+            const response = await axiosInstance.get('/visa/next-document', {
+                params: {
+                    username: userData.username
+                }
+            })
             // console.log(response.data)
             return response.data.nextRequiredDocument
 
@@ -46,8 +54,12 @@ const fetchAllDocument = createAsyncThunk(
     'visa/fetchAllDocument',
     async (userData: userData, {rejectWithValue}) => {
         try{
-            const response = await axiosInstance.get('/visa/status')
-            // console.log(response.data)
+            const response = await axiosInstance.get('/visa/status', {
+                params: {
+                    username: userData.username
+                }
+            })
+            console.log("Fetch all document",response.data)
             return response.data
         } catch (error : any){
             console.log(error.response.data)
