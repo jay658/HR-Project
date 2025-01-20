@@ -1,13 +1,9 @@
-<<<<<<< HEAD
-import express, { Request, Response } from "express";
 import bcrypt from 'bcryptjs'
 import jwt from "jsonwebtoken";
 import EmployeeUser from "../../../models/EmployeeUser";
-import { authenticateToken } from "../../auth/authMiddleware";
+import { authenticateToken } from '../../../middleware/authMiddleware';
 import Apartment from "../../../models/Apartment";
-=======
 import { getAllUsers, getHousingForUser, login, registerUser, testUserRouter, validateSession } from "../../../controllers/employeeControllers/user";
->>>>>>> main
 
 import express from "express";
 

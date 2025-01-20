@@ -29,7 +29,6 @@ const sendEmail = async (receiver_name: string, receiver_email: string, message:
     }
 
 };
-<<<<<<< HEAD
 
 const sendNotificationEmail = async (receiver_name: string, receiver_email: string, message: string) => {
     try{
@@ -62,10 +61,5 @@ const sendNotificationEmail = async (receiver_name: string, receiver_email: stri
 export {
     sendEmail,
     sendNotificationEmail
-=======
-  
-export {
-    sendEmail
->>>>>>> main
 }
   

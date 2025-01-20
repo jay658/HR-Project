@@ -5,14 +5,8 @@ import EmployeeUser from '../../models/EmployeeUser';
 import { IPersonalInfoData } from '../../models/shared/types';
 import Onboarding from '../../models/Onboarding';
 import PersonalInfo from '../../models/PersonalInfo';
-<<<<<<< HEAD
-
-// temp test user, await auth
-const currentTestUser = 'user5';
-=======
 import { uploadFileToAWS } from '../../utility/AWS/aws';
 import Document from '../../models/Document';
->>>>>>> main
 
 const testPersonalInfoRouter = (_req: Request, res: Response) => {
   try {

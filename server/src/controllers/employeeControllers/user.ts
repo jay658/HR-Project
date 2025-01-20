@@ -1,17 +1,11 @@
 import { Request, Response } from "express";
-<<<<<<< HEAD
-=======
 
 import Apartment from "../../models/Apartment";
 import { AuthRequest } from "../../middleware/authMiddleware";
->>>>>>> main
 import EmployeeUser from "../../models/EmployeeUser";
 import config from "../../utility/configs";
-<<<<<<< HEAD
-const bcrypt = require('bcryptjs')
-=======
 import jwt from "jsonwebtoken";
->>>>>>> main
+import bcrypt from 'bcryptjs'
 
 // Test Router
 const testUserRouter = (_req: Request, res: Response) => {

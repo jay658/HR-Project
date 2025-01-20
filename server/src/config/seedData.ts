@@ -308,8 +308,16 @@ const seedOnboarding = [
 ];
 
 const seedVisaApplications: any[] = [
-  // empty since none of our seed users are f1
-  // if we add f1 users later, we'll add their visa applications here
+  {
+    // John Doe's visa application
+    userId: null,
+    nextStep: "i983"
+  },
+  {
+    // Kobe Bryant's visa application
+    userId: null,
+    nextStep: "optReceipt"
+  }
 ];
 
 const seedDocuments = [
@@ -367,6 +375,31 @@ const seedDocuments = [
     status: "approved",
     fileKey: "dummy/kobe_license.pdf",
     fileUrl: "http://dummy-s3.com/kobe_license.pdf",
+  },
+
+
+  // John Visa Application document
+  {
+    type: "optReceipt",
+    status: "approved",
+    fileKey: "dummy/john_opt_receipt.pdf",
+    fileUrl: "http://dummy-s3.com/john_opt_receipt.pdf",
+  },
+  {
+    type: "optEAD",
+    status: "approved",
+    fileKey: "dummy/john_opt_ead.pdf",
+    fileUrl: "http://dummy-s3.com/john_opt_ead.pdf",
+  },
+  {
+    type: "i983",
+    status: "rejected",
+    fileKey: "dummy/john_i983.pdf",
+    fileUrl: "http://dummy-s3.com/john_i983.pdf",
+    feedback: {
+      comment: "The employment dates don't match your I-20. Please correct and resubmit.",
+      updatedAt: new Date("2024-01-15")
+    }
   },
 ];
 
