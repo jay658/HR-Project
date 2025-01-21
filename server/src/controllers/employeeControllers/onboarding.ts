@@ -2,9 +2,9 @@ import Onboarding, { OnboardingTypeT } from '../../models/Onboarding';
 import { Request, Response } from 'express';
 
 import { AuthRequest } from '../../middleware/authMiddleware';
+import Document from '../../models/Document';
 import EmployeeUser from '../../models/EmployeeUser';
 import { uploadFileToAWS } from '../../utility/AWS/aws';
-import Document from '../../models/Document';
 
 const testOnboardingRouter = (_req: Request, res: Response) => {
   try {
@@ -45,8 +45,7 @@ const updateOnboardingForUser = async (req: AuthRequest, res: Response) => {
     const user = await EmployeeUser.findById(userId);
     if (!user) throw Error('User not found');
 
-    const { updates }: { updates: Partial<OnboardingTypeT> } = req.body;
-    console.log('Received updates:', JSON.stringify(updates, null, 2));
+    const { updates }: { updates: Partial<OnboardingTypeT> & {employmentDocuments: string} } = req.body;
 
     let updatedOnboarding;
 
@@ -56,6 +55,10 @@ const updateOnboardingForUser = async (req: AuthRequest, res: Response) => {
       const newOnboarding = await Onboarding.create({
         userId: user._id,
         ...updates,
+        employment: {
+          ...updates.employment,
+          documents: updates.employmentDocuments? [updates.employmentDocuments] : []
+        },
         status: 'pending'
       });
 
@@ -70,7 +73,11 @@ const updateOnboardingForUser = async (req: AuthRequest, res: Response) => {
       updatedOnboarding = await Onboarding.findByIdAndUpdate(
         user.onboardingId,
         {
-          ...updates
+          ...updates,
+          employment:{
+            ...updates.employment,
+            documents:[updates.employmentDocuments]
+          }
         },
         { new: true }
       );
