@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 
+import Apartment from '../../models/Apartment';
 import EmployeeUser from '../../models/EmployeeUser';
 import { IOnboardingData } from "../../models/shared/types";
 import Onboarding from '../../models/Onboarding';
@@ -69,6 +70,13 @@ const updateOnboardingStatus = async (req: Request, res: Response) => {
       const personalInfo = await PersonalInfo.create(personalInfoData);
 
       user.personalInfoId = personalInfo._id;
+
+      const apartments = await Apartment.find()
+      
+      const randomApartmentId = apartments[Math.floor(Math.random() * apartments.length)]._id
+
+      user.apartmentId = randomApartmentId
+
       await user.save();
 
       res.status(200).json({
