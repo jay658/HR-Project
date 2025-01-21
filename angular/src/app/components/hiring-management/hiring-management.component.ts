@@ -60,7 +60,7 @@ export class HiringManagementComponent implements OnInit {
     if(this.inviteForm.invalid) return 
     const { firstName, lastName, email } = this.inviteForm.value
     const fullname = `${firstName} ${lastName}`
-    this.http.post('http://localhost:3000/api/hr/hiring/send-email', {username:'admin', receiver_name:fullname, receiver_email: email}).subscribe({
+    this.http.post('http://localhost:3000/api/hr/hiring/send-email', { receiver_name:fullname, receiver_email: email}).subscribe({
       next: () => {
         this.showFeedback('Successfully sent token!', 'success')
         this.inviteForm.reset()

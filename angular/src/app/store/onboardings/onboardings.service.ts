@@ -16,6 +16,6 @@ export class OnboardingService {
   }
 
   updateStatus(status: 'rejected' | 'approved', onboardingId: string): Observable<{ message: string, updatedOnboarding: Onboarding}>{
-    return this.http.put<{message: string, updatedOnboarding: Onboarding}>(`${this.apiUrl}/updateStatus/${onboardingId}`, { status });
+    return this.http.put<{message: string, updatedOnboarding: Onboarding}>(`${this.apiUrl}updateStatus/${onboardingId}`, { status });
   }
 }
