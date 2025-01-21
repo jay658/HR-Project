@@ -51,15 +51,31 @@ const updatePersonalInfo = async (req: AuthRequest, res: Response) => {
       throw Error('User has not onboarded yet');
     }
 
+    const existingInfo = await PersonalInfo.findById(user.personalInfoId);
+    if (!existingInfo) throw Error('Personal info not found');
+
+    const mergedUpdates = {
+      ...updates,
+      driversLicense: {
+        ...existingInfo.driversLicense,
+        ...(updates.driversLicense || {})
+      },
+      employment: {
+        ...existingInfo.employment,
+        ...(updates.employment || {})
+      }
+    };
+
     const updateInfo = await PersonalInfo.findByIdAndUpdate(
       user.personalInfoId,
-      updates,
+      mergedUpdates,
       { new: true }
     );
 
     res.json(updateInfo);
   } catch (error: unknown) {
     console.log(`Error updating personal information: ${error}`);
+    res.status(500).json({ message: `${error}` });
   }
 };
 

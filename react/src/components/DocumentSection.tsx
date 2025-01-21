@@ -164,12 +164,12 @@ export const DocumentsSection: React.FC<DocumentsSectionProps> = ({
                     {doc.fileName}
                   </Typography>
                 </Box>
-                <Chip
+                {/* <Chip
                   label={doc.status}
                   size='small'
                   color={getStatusColor(doc.status)}
                   sx={{ mb: 1 }}
-                />
+                /> */}
                 <Typography
                   variant='caption'
                   display='block'
